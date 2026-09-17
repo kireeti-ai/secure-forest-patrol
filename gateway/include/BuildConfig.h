@@ -53,7 +53,7 @@ struct BackendBuildConfig {
     static constexpr const char* wifiSsid = FOREST_WIFI_SSID;
     static constexpr const char* wifiPassword = FOREST_WIFI_PASSWORD;
     static constexpr const char* developmentBaseUrl = "http://10.38.112.147:8000";
-    static constexpr const char* productionBaseUrl = "https://forest-frontend-dashboard.onrender.com";
+    static constexpr const char* productionBaseUrl = "https://secure-forest-patrol-4cxw.vercel.app";
     static constexpr const char* baseUrl =
         FOREST_PRODUCTION_BACKEND ? productionBaseUrl : developmentBaseUrl;
     static constexpr const char* ingestionKey = FOREST_GATEWAY_INGESTION_KEY;
