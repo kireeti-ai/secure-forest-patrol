@@ -5,7 +5,7 @@
 
 #include "Packet.h"
 
-namespace jalari::protocol
+namespace forest::protocol
 {
 
     class Parser
@@ -14,4 +14,4 @@ namespace jalari::protocol
         static bool parse(const std::uint8_t *data, std::size_t size, Packet &outPacket);
     };
 
-} // namespace jalari::protocol
+} // namespace forest::protocol

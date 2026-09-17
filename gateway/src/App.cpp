@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 
-namespace jalri {
+namespace forest {
 
 namespace {
 constexpr std::uint32_t heartbeatIntervalMs = 5000U;
@@ -76,4 +76,4 @@ void App::printHeartbeat(std::uint32_t currentMs) {
     }
 }
 
-}  // namespace jalri
+}  // namespace forest

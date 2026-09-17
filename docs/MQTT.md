@@ -34,8 +34,8 @@ TLS on port 8883, authenticated. Both sides are already wired for this:
   repo root README / deployment notes). `app/services/mqtt_consumer.py`
   calls `tls_set()` and `username_pw_set()` when these are set.
 - **Gateway**: build with `pio run -e production` (`gateway/platformio.ini`)
-  — this sets `JALRI_MQTT_BROKER_HOST`/`PORT`/`JALRI_MQTT_TLS=1` as build
-  flags. `JALRI_MQTT_USERNAME`/`JALRI_MQTT_PASSWORD` (the credentials
+  — this sets `FOREST_MQTT_BROKER_HOST`/`PORT`/`FOREST_MQTT_TLS=1` as build
+  flags. `FOREST_MQTT_USERNAME`/`FOREST_MQTT_PASSWORD` (the credentials
   created in the HiveMQ Cloud console) must be added to `Secrets.h`
   (gitignored, never a build flag) — see `Secrets.example.h`.
   `BackendIngestionClient` uses `WiFiClientSecure` with `setInsecure()`

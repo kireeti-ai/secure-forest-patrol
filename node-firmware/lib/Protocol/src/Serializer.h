@@ -7,7 +7,7 @@
 #include "Constants.h"
 #include "Packet.h"
 
-namespace jalari::protocol
+namespace forest::protocol
 {
 
     class Serializer
@@ -18,4 +18,4 @@ namespace jalari::protocol
                               std::size_t &outSize);
     };
 
-} // namespace jalari::protocol
+} // namespace forest::protocol

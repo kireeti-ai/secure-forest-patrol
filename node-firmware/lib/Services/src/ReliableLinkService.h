@@ -2,10 +2,10 @@
 
 #include "Packet.h"
 
-namespace jalari::event { class EventBus; }
-namespace jalari::reliable { class AckManager; }
+namespace forest::event { class EventBus; }
+namespace forest::reliable { class AckManager; }
 
-namespace jalari::services
+namespace forest::services
 {
     class ReliableLinkService
     {
@@ -20,4 +20,4 @@ namespace jalari::services
     private:
         reliable::AckManager &ackManager_;
     };
-} // namespace jalari::services
+} // namespace forest::services

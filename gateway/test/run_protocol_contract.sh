@@ -2,8 +2,8 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-NODE_DIR="/Users/kireeti/Desktop/Projects/RESQ/jalari-node-firmware"
-BUILD_DIR="${TMPDIR:-/tmp}/jalri-protocol-contract"
+NODE_DIR="$(cd "$(dirname "$0")/../../node-firmware" && pwd)"
+BUILD_DIR="${TMPDIR:-/tmp}/forest-protocol-contract"
 mkdir -p "$BUILD_DIR"
 
 c++ -std=c++17 \

@@ -1,6 +1,6 @@
 #include "Validator.h"
 
-namespace jalari::protocol
+namespace forest::protocol
 {
 
     bool Validator::isValid(const Packet &packet)
@@ -22,4 +22,4 @@ namespace jalari::protocol
         }
     }
 
-} // namespace jalari::protocol
+} // namespace forest::protocol

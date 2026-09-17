@@ -6,9 +6,9 @@
 #include "Config.h"
 #include "Packet.h"
 
-namespace jalari::node { class NodeManager; }
+namespace forest::node { class NodeManager; }
 
-namespace jalari::protocol
+namespace forest::protocol
 {
     class PacketFactory
     {
@@ -24,4 +24,4 @@ namespace jalari::protocol
         const config::NetworkConfig &networkConfig_;
         std::uint16_t nextSequenceNumber_ = 0;
     };
-} // namespace jalari::protocol
+} // namespace forest::protocol

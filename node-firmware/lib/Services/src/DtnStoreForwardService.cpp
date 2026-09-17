@@ -1,7 +1,7 @@
 #include "DtnStoreForwardService.h"
 #include "IClock.h"
 
-namespace jalari::services
+namespace forest::services
 {
     DtnStoreForwardService::DtnStoreForwardService(hal::IClock &clock, event::EventBus &eventBus, std::uint32_t queueLifetimeMs)
         : clock_(clock), eventBus_(eventBus), queueLifetimeMs_(queueLifetimeMs) {}
@@ -108,4 +108,4 @@ namespace jalari::services
     {
         eventBus_.publish({type, packet});
     }
-} // namespace jalari::services
+} // namespace forest::services

@@ -3,7 +3,7 @@
 #include "Version.h"
 #include <cstdio>
 
-namespace jalari::protocol
+namespace forest::protocol
 {
     PacketFactory::PacketFactory(const node::NodeManager &node, const config::NetworkConfig &networkConfig)
         : node_(node), networkConfig_(networkConfig) {}
@@ -35,4 +35,4 @@ namespace jalari::protocol
         outPacket.destinationId = destinationId;
         outPacket.sequenceNumber = nextSequenceNumber_++;
     }
-} // namespace jalari::protocol
+} // namespace forest::protocol

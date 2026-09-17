@@ -1,12 +1,12 @@
-# Jalri Firmware Communication Contract
+# Forest Firmware Communication Contract
 
 **Verification status:** Software protocol compatibility verified. Physical RF communication not tested; hardware was unavailable.
 
 ## Radio configuration
 
-BoatNode and Gateway compile with the same LoRa settings:
+CheckpointNode and Gateway compile with the same LoRa settings:
 
-| Setting | BoatNode | Gateway |
+| Setting | CheckpointNode | Gateway |
 |---|---:|---:|
 | Frequency | 433 MHz | 433 MHz |
 | Spreading factor | 7 | 7 |
@@ -39,10 +39,10 @@ last 2    CRC-16/CCITT, little-endian
 
 The maximum payload is 48 bytes. CRC is calculated over the header and payload, excluding the two CRC bytes.
 
-## BoatNode → Gateway: Heartbeat
+## CheckpointNode → Gateway: Heartbeat
 
 - Packet type: `2`
-- Source: BoatNode ID (`1` in the current BoatNode configuration)
+- Source: CheckpointNode ID (`1` in the current CheckpointNode configuration)
 - Destination: `0xFF` broadcast
 - Payload length: `13` bytes
 - Total serialized size: `25` bytes
@@ -51,7 +51,7 @@ Heartbeat payload:
 
 ```text
 bytes 0-3   packet ID, uint32 little-endian
-bytes 4-7   BoatNode uptime, uint32 little-endian
+bytes 4-7   CheckpointNode uptime, uint32 little-endian
 byte 8      firmware major
 byte 9      firmware minor
 byte 10     firmware patch
@@ -61,11 +61,11 @@ byte 12     status
 
 The Gateway parser reads the same 32-bit packet ID from payload bytes 0–3 and preserves the 16-bit sequence number from the common header.
 
-## Gateway → BoatNode: HeartbeatAck
+## Gateway → CheckpointNode: HeartbeatAck
 
 - Packet type: `4`
 - Source: Gateway ID `0xFE`
-- Destination: BoatNode ID
+- Destination: CheckpointNode ID
 - Payload length: `9` bytes
 - Total serialized size: `21` bytes
 
@@ -73,17 +73,17 @@ HeartbeatAck payload:
 
 ```text
 bytes 0-3   acknowledged heartbeat packet ID, uint32 little-endian
-byte 4      target BoatNode ID
+byte 4      target CheckpointNode ID
 bytes 5-8   Gateway receive timestamp, uint32 milliseconds
 ```
 
-BoatNode accepts an ACK only when all of the following match:
+CheckpointNode accepts an ACK only when all of the following match:
 
 - packet type is `HeartbeatAck`
 - payload length is 9
 - source is `0xFE`
-- destination is the local BoatNode ID
-- embedded target ID is the local BoatNode ID
+- destination is the local CheckpointNode ID
+- embedded target ID is the local CheckpointNode ID
 - embedded packet ID matches the active heartbeat
 
 Retries resend the same heartbeat packet structure and packet ID.
@@ -136,6 +136,6 @@ Backend deduplication uses `(eventType, nodeId, packetId)`.
 
 ## Software-only verification
 
-`jalri-gateway-firmware/test/run_protocol_contract.sh` compiles and executes the real BoatNode serializer/parser/validator, Gateway parser/validator, and Gateway ACK builder. It verifies heartbeat framing, field widths, CRC rejection, ACK framing, packet ID preservation, source/destination values, and malformed frame rejection.
+`forest-gateway-firmware/test/run_protocol_contract.sh` compiles and executes the real CheckpointNode serializer/parser/validator, Gateway parser/validator, and Gateway ACK builder. It verifies heartbeat framing, field widths, CRC rejection, ACK framing, packet ID preservation, source/destination values, and malformed frame rejection.
 
 This test does not emulate RF, radio timing, antenna behavior, or physical delivery.

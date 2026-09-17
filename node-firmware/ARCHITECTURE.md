@@ -1,4 +1,4 @@
-# Jalari BoatNode Architecture
+# Forest CheckpointNode Architecture
 
 `main.cpp` is the composition root. It creates concrete ESP32 HAL adapters, configuration, and the application graph exactly once. It is the only place that selects ESP32 implementations.
 

@@ -1,7 +1,7 @@
 #include "GatewayService.h"
 #include <Arduino.h>
 
-namespace jalri::gateway {
+namespace forest::gateway {
 
 GatewayService::GatewayService(logging::ILogger& logger,
                                backend::BackendIngestionClient& backendClient,
@@ -23,13 +23,13 @@ void GatewayService::handleReceivedPacket(const lora::RawRadioPacket& packet, lo
         logger_.logRawRx(rxLog);
     }
 
-    jalari::protocol::Packet parsed{};
-    if (!jalari::protocol::Parser::parse(packet.bytes, packet.length, parsed)) {
+    forest::protocol::Packet parsed{};
+    if (!forest::protocol::Parser::parse(packet.bytes, packet.length, parsed)) {
         logger_.logRxError({"ParseFailed", packet.rssiDbm, packet.snrDb, packet.length});
         return;
     }
 
-    if (!jalari::protocol::Validator::isValid(parsed)) {
+    if (!forest::protocol::Validator::isValid(parsed)) {
         logger_.logRxError({"ValidationFailed", packet.rssiDbm, packet.snrDb, packet.length});
         return;
     }
@@ -38,7 +38,7 @@ void GatewayService::handleReceivedPacket(const lora::RawRadioPacket& packet, lo
     bool isDuplicate = false;
     
     // We expect DATA packets for forest events
-    if (parsed.type == jalari::protocol::PacketType::Data) {
+    if (parsed.type == forest::protocol::PacketType::Data) {
         if (parsed.destinationId != 0xFEU && parsed.destinationId != 0xFFU) {
             return; // Not for gateway
         }
@@ -113,4 +113,4 @@ void GatewayService::tick(std::uint32_t currentMs, lora::ILoRaDriver* radioDrive
     if (radioDriver != nullptr) backendClient_.dispatchMessages(*radioDriver);
 }
 
-}  // namespace jalri::gateway
+}  // namespace forest::gateway

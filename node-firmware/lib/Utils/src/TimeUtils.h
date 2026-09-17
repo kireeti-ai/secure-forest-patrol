@@ -2,7 +2,7 @@
 
 #include "IClock.h"
 
-namespace jalari::utils
+namespace forest::utils
 {
     using TimeUtils = hal::IClock;
-} // namespace jalari::utils
+} // namespace forest::utils

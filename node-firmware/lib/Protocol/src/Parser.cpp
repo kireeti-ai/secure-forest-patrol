@@ -4,7 +4,7 @@
 #include "Constants.h"
 #include "Crc16.h"
 
-namespace jalari::protocol
+namespace forest::protocol
 {
 
     bool Parser::parse(const std::uint8_t *data, std::size_t size, Packet &outPacket)
@@ -61,4 +61,4 @@ namespace jalari::protocol
         return true;
     }
 
-} // namespace jalari::protocol
+} // namespace forest::protocol

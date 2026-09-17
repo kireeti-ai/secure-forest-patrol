@@ -1,4 +1,4 @@
-# Canonical Jalri Backend Specification
+# Canonical Forest Backend Specification
 
 **Status:** Contract frozen for future implementation  
 **Authority:** Project decision brief supplied for this phase  
@@ -6,14 +6,14 @@
 
 ## Scope and authority
 
-No official Jalri backend documentation is currently available. This document is therefore the canonical project decision for future backend work. Values introduced here are project decisions, not claims about currently implemented firmware or running infrastructure.
+No official Forest backend documentation is currently available. This document is therefore the canonical project decision for future backend work. Values introduced here are project decisions, not claims about currently implemented firmware or running infrastructure.
 
 No mock data, database tables, API routes, authentication, or WebSockets are created by this document.
 
 ## 1. System architecture
 
 ```text
-BoatNode → SX1278 LoRa → Gateway → Backend → Database → Operations Dashboard
+CheckpointNode → SX1278 LoRa → Gateway → Backend → Database → Operations Dashboard
 ```
 
 The Gateway is the trusted LoRa-to-backend boundary. The frontend is read-oriented and must not directly manipulate telemetry.
@@ -28,7 +28,7 @@ API route → Schema validation → Service → Repository → Database
 
 | Concept | Canonical field | Type | Meaning |
 |---|---|---|---|
-| BoatNode | `nodeId` | Numeric firmware node identifier | Identifies the LoRa node/device. |
+| CheckpointNode | `nodeId` | Numeric firmware node identifier | Identifies the LoRa node/device. |
 | Vessel | `boatId` | Application vessel identifier | Identifies the application vessel record associated with a node. |
 | Gateway | `gatewayId` | Unique identifier | Identifies a gateway. |
 | Packet | `packetId` | 32-bit identifier | Identifies a packet. |
@@ -93,13 +93,13 @@ IP, MAC, CPU, RAM, uptime, temperature, location, connected boats, signal streng
 
 ### 3.4 Heartbeat
 
-**Purpose:** BoatNode liveness communication received by the Gateway.  
+**Purpose:** CheckpointNode liveness communication received by the Gateway.  
 **Status:** PROJECT DECISION; wire compatibility requires firmware verification
 
 | Field | Type | Required | Meaning |
 |---|---|---|---|
 | `packetId` | 32-bit identifier | Required | Packet being received and acknowledged. |
-| `sourceNodeId` | Numeric identifier | Required | BoatNode sending the heartbeat. |
+| `sourceNodeId` | Numeric identifier | Required | CheckpointNode sending the heartbeat. |
 | `destination` | Destination identifier/value | Required | Heartbeat destination. |
 | `sequence` | Sequence number | Required | Heartbeat/message sequence. |
 | `timestamp` | Timestamp | Required | Heartbeat timestamp; clock/source semantics require definition. |
@@ -114,10 +114,10 @@ Packet type is `HeartbeatAck = 4`.
 | Field | Type | Required | Meaning |
 |---|---|---|---|
 | `packetId` | 32-bit identifier | Required | Heartbeat packet being acknowledged. |
-| `targetNodeId` | Numeric identifier | Required | BoatNode that sent the heartbeat. |
+| `targetNodeId` | Numeric identifier | Required | CheckpointNode that sent the heartbeat. |
 | `gatewayTimestamp` | Timestamp | Required | Gateway timestamp for the acknowledgement. |
 
-BoatNode accepts the ACK only when packet type is `HeartbeatAck`, source is the Gateway, target matches its `nodeId`, and packet ID matches the heartbeat currently awaiting acknowledgement.
+CheckpointNode accepts the ACK only when packet type is `HeartbeatAck`, source is the Gateway, target matches its `nodeId`, and packet ID matches the heartbeat currently awaiting acknowledgement.
 
 ### 3.6 Telemetry
 
@@ -160,7 +160,7 @@ BoatNode accepts the ACK only when packet type is `HeartbeatAck`, source is the 
 |---|---|---|---|
 | `alertId` | Alert identifier | Required | Associated emergency alert. |
 | `boatId` | Vessel identifier | Required when source is known | Associated vessel. |
-| `nodeId` | Numeric identifier | Required when source is known | Associated BoatNode. |
+| `nodeId` | Numeric identifier | Required when source is known | Associated CheckpointNode. |
 | `location` | Nullable `Location` | Optional | Emergency location when known. |
 | `createdAt` | Timestamp | Required | SOS creation timestamp. |
 | `status` | `ACTIVE` \| `ACKNOWLEDGED` \| `RESOLVED` | Required | SOS lifecycle. |
@@ -197,7 +197,7 @@ GATEWAY_DISCONNECTED
 
 ### 3.10 System Status
 
-**Purpose:** Status of initial Jalri system components.  
+**Purpose:** Status of initial Forest system components.  
 **Status:** PROJECT DECISION
 
 Initial components:
@@ -235,7 +235,7 @@ These are contract values, not permission to create fabricated records.
 
 ## 5. Heartbeat and ACK protocol
 
-Heartbeat packet type is `2`. BoatNode sends it and Gateway receives and validates it. Normalized concepts are `packetId`, `sourceNodeId`, `destination`, `sequence`, and `timestamp`.
+Heartbeat packet type is `2`. CheckpointNode sends it and Gateway receives and validates it. Normalized concepts are `packetId`, `sourceNodeId`, `destination`, `sequence`, and `timestamp`.
 
 For a valid heartbeat:
 

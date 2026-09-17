@@ -4,7 +4,7 @@
 #include "IRadio.h"
 #include "ISpiBus.h"
 
-namespace jalari::lora
+namespace forest::lora
 {
     class LoRaDriver final : public radio::IRadio
     {
@@ -24,4 +24,4 @@ namespace jalari::lora
         int lastRssi_ = 0;
         float lastSnr_ = 0.0F;
     };
-} // namespace jalari::lora
+} // namespace forest::lora

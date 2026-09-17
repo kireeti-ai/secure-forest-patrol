@@ -1,7 +1,7 @@
 #include "LoRaDriver.h"
 #include <LoRa.h>
 
-namespace jalari::lora
+namespace forest::lora
 {
     LoRaDriver::LoRaDriver(const config::RadioConfig &config, hal::ISpiBus &spiBus) : config_(config), spiBus_(spiBus) {}
     bool LoRaDriver::begin()
@@ -73,4 +73,4 @@ namespace jalari::lora
     int LoRaDriver::rssi() const { return lastRssi_; }
     float LoRaDriver::snr() const { return lastSnr_; }
     bool LoRaDriver::cad() { return false; }
-} // namespace jalari::lora
+} // namespace forest::lora

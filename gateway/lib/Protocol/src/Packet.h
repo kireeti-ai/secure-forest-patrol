@@ -6,7 +6,7 @@
 
 #include "Constants.h"
 
-namespace jalari::protocol
+namespace forest::protocol
 {
 
     enum class PacketType : std::uint8_t
@@ -30,4 +30,4 @@ namespace jalari::protocol
         bool setPayload(const std::uint8_t *data, std::size_t size);
     };
 
-} // namespace jalari::protocol
+} // namespace forest::protocol

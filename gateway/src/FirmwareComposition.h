@@ -6,7 +6,7 @@
 #include "Sx1278LoRaDriver.h"
 #include "BackendIngestionClient.h"
 
-namespace jalri {
+namespace forest {
 
 class FirmwareComposition final {
 public:
@@ -22,4 +22,4 @@ private:
     App app_;
 };
 
-}  // namespace jalri
+}  // namespace forest

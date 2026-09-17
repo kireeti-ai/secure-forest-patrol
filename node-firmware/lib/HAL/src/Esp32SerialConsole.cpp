@@ -1,7 +1,7 @@
 #include "Esp32SerialConsole.h"
 #include <Arduino.h>
 
-namespace jalari::hal {
+namespace forest::hal {
 
 void Esp32SerialConsole::begin(unsigned long baudRate) {
     if (!Serial) {
@@ -35,5 +35,5 @@ bool Esp32SerialConsole::readLine(char *buffer, std::size_t capacity) {
     return false;
 }
 
-} // namespace jalari::hal
+} // namespace forest::hal
 

@@ -4,14 +4,14 @@
 #include <cstdint>
 #include <array>
 
-namespace jalari::config
+namespace forest::config
 {
 
-#ifndef JALARI_NODE_ID
-#define JALARI_NODE_ID 1U
+#ifndef FOREST_NODE_ID
+#define FOREST_NODE_ID 1U
 #endif
-#ifndef JALARI_TEST_MODE
-#define JALARI_TEST_MODE 0
+#ifndef FOREST_TEST_MODE
+#define FOREST_TEST_MODE 0
 #endif
 
     struct RadioConfig
@@ -96,7 +96,7 @@ namespace jalari::config
 
     constexpr FirmwareConfig kDefaultFirmwareConfig{
         {433000000L, 12, 13, 11, 10, 9, 14},
-        {static_cast<std::uint8_t>(JALARI_NODE_ID)},
+        {static_cast<std::uint8_t>(FOREST_NODE_ID)},
         {0xA5U, 4U, 48U, 255U},
         {10000U, 15000U},
         {21, 20},
@@ -104,4 +104,4 @@ namespace jalari::config
         kDefaultNetworkConfig,
     };
 
-} // namespace jalari::config
+} // namespace forest::config

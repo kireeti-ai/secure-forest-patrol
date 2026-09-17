@@ -1,4 +1,4 @@
- # Jalari role architecture
+ # Forest role architecture
 
 This repository owns the shore-side web product. The fisherman/crew/owner/commander/companion application is external and is not implemented under `frontend/`.
 

@@ -1,6 +1,6 @@
 #include "Ds3231.h"
 
-namespace jalari::sensors
+namespace forest::sensors
 {
     namespace
     {
@@ -74,4 +74,4 @@ namespace jalari::sensors
             0x01U, binaryToBcd(sample.day), binaryToBcd(sample.month), binaryToBcd(static_cast<std::uint8_t>(sample.year - 2000U))};
         return bus_.write(kAddress, registers, sizeof(registers));
     }
-} // namespace jalari::sensors
+} // namespace forest::sensors

@@ -1,8 +1,8 @@
 #pragma once
 
-namespace jalri::backend {
+namespace forest::backend {
 
-// Root CA certificates trusted for verifying jalari-frontend-dashboard.onrender.com
+// Root CA certificates trusted for verifying forest-frontend-dashboard.onrender.com
 // Includes GTS Root R4 and GlobalSign Root CA.
 inline constexpr const char* PRODUCTION_ROOT_CA =
     // GTS Root R4 (Google Trust Services)
@@ -68,4 +68,4 @@ inline constexpr const char* PRODUCTION_ROOT_CA =
     "HMUfpIBvFSDJ3gyICh3WZlXi/EjJKSZp4A==\n"
     "-----END CERTIFICATE-----\n";
 
-}  // namespace jalri::backend
+}  // namespace forest::backend

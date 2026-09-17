@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-namespace jalari::hal
+namespace forest::hal
 {
     bool Esp32I2cBus::begin(int sdaPin, int sclPin)
     {
@@ -32,4 +32,4 @@ namespace jalari::hal
         for (std::size_t i = 0; i < size; ++i) Wire.write(data[i]);
         return Wire.endTransmission(true) == 0;
     }
-} // namespace jalari::hal
+} // namespace forest::hal

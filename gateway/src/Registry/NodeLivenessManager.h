@@ -3,7 +3,7 @@
 #include "NodeRegistry.h"
 #include <cstdint>
 
-namespace jalri::registry {
+namespace forest::registry {
 
 class NodeLivenessManager final {
 public:
@@ -21,4 +21,4 @@ private:
     std::uint32_t lastEvaluationMs_{0};
 };
 
-}  // namespace jalri::registry
+}  // namespace forest::registry

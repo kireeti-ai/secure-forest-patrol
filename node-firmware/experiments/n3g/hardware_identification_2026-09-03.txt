@@ -1,4 +1,4 @@
-Jalari N3G hardware identification evidence
+Forest N3G hardware identification evidence
 Date: 2026-09-03
 
 USB enumeration:

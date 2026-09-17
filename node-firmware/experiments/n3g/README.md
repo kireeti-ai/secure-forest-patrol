@@ -6,10 +6,10 @@ must remain over RF.
 
 ## Current inspected configuration
 
-- BoatNode target: `esp32-s3-devkitm-1`, 433 MHz, SF7, BW 125 kHz, CR 4/5,
+- CheckpointNode target: `esp32-s3-devkitm-1`, 433 MHz, SF7, BW 125 kHz, CR 4/5,
   sync word `0x12`, hardware CRC enabled.
 - Serial baud: 115200.
-- Default BoatNode ID: `0x01`; build-time override is `JALARI_NODE_ID`.
+- Default CheckpointNode ID: `0x01`; build-time override is `FOREST_NODE_ID`.
 - Current visible macOS ports at inspection time were
   `/dev/cu.usbmodem5B5E0265961` and `/dev/cu.usbmodem5B5E0268161`.
   Port-to-board mapping must be confirmed locally; it is not inferred here.
@@ -19,8 +19,8 @@ must remain over RF.
 Build distinct identities after selecting the correct board target:
 
 ```text
-build_flags = -D JALARI_NODE_ID=1   # Node A
-build_flags = -D JALARI_NODE_ID=2   # Node B
+build_flags = -D FOREST_NODE_ID=1   # Node A
+build_flags = -D FOREST_NODE_ID=2   # Node B
 ```
 
 Do not flash the same default-ID image to both boards.
@@ -42,7 +42,7 @@ labels. Board clock and host timestamp are not claimed to be synchronized.
 
 ## Development DATA injection
 
-The serial command interface is compiled only when `JALARI_TEST_MODE=1`.
+The serial command interface is compiled only when `FOREST_TEST_MODE=1`.
 Commands are bounded and use the normal `PacketFactory` and transmission queue:
 
 ```text
@@ -58,7 +58,7 @@ existing factory. Use the host helper to send a command:
 python3 experiments/n3g/send_command.py /dev/cu.usbmodemXXXX "SEND_DATA 2 HELLO"
 ```
 
-Build the two test images with distinct IDs and `JALARI_TEST_MODE=1`. The
+Build the two test images with distinct IDs and `FOREST_TEST_MODE=1`. The
 current repository has only an ESP32-S3 environment; do not claim the classic
 ESP32 is supported until its board target and pin mapping are confirmed.
 
@@ -80,7 +80,7 @@ distance, start/end time, packet count, and failure injections.
 2. **B → A basic link** — reverse the roles and compare asymmetric results.
 3. **ACK/reliability** — use a controlled unicast DATA source if available;
    compare ACK events, timeout, retries, and exhaustion. The command interface
-   is available only in the explicitly selected `JALARI_TEST_MODE=1` builds.
+   is available only in the explicitly selected `FOREST_TEST_MODE=1` builds.
 4. **PDR** — send a known count, preferably 100 packets per direction and five
    trials when practical; count RF RX records by `(source, sequence)`.
 5. **Latency** — compute TX-to-RX and, when correlated, TX-to-ACK latency from
@@ -112,7 +112,7 @@ distance, start/end time, packet count, and failure injections.
 | N3F multi-hop recovery | No | Yes | At least three nodes |
 | DTN partial behavior | Conditional; no current DATA injector | Yes | No for software |
 | Three-hop mesh | No | Yes | At least four endpoints/nodes as applicable |
-| Gateway mesh | No with only these BoatNodes | Yes | Physical Gateway or approved gateway board |
+| Gateway mesh | No with only these CheckpointNodes | Yes | Physical Gateway or approved gateway board |
 
 ## MAC status
 
