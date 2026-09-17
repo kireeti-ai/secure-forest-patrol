@@ -28,6 +28,7 @@ export function SystemStatusOverview() {
     status.database,
     status.ledgerVerification,
   ] : [];
+  const loraConnected = status && status.gateway.status === "CONNECTED" && status.fieldLayer.status === "OPERATIONAL";
 
   return (
     <div className="system-status-page">
@@ -35,6 +36,16 @@ export function SystemStatusOverview() {
         <h1>System Architecture Status</h1>
         <p>Forest patrol system operational health overview.</p>
       </header>
+      {loraConnected && (
+        <Card style={{ marginBottom: "1rem", background: "#ecfdf5", border: "1px solid #bbf7d0" }}>
+          <div style={{ padding: "1rem 1.25rem" }}>
+            <strong style={{ color: "#166534" }}>Both the LoRa sensor and the LoRa gateway are connected and running.</strong>
+            <p style={{ color: "#166534", margin: "6px 0 0" }}>
+              If you want any additional details, tell me which telemetry or node status you would like to inspect.
+            </p>
+          </div>
+        </Card>
+      )}
       <Card>
         <div style={{ padding: "1rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
           {!status ? (

@@ -120,6 +120,7 @@ export function Overview() {
 
   const gw = gateways[0];
   const isDemoMode = checkpoints.some((c) => c.isDemo) || patrols.some((p) => p.isDemo);
+  const isLoraConnected = !!gw && (gw.loraStatus === "ACTIVE" || gw.loraStatus === "CONNECTED") && nodes.some((n) => n.loraActivity === "ACTIVE" || n.health === "HEALTHY");
 
   return (
     <div className="overview-page">
@@ -147,6 +148,20 @@ export function Overview() {
           </span>
         )}
       </header>
+
+      {isLoraConnected && (
+        <Card style={{ marginTop: "1.25rem", padding: "1rem 1.25rem", background: "#ecfdf5", border: "1px solid #bbf7d0" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
+            <div>
+              <strong style={{ color: "#166534", fontSize: "0.96rem" }}>Both the LoRa sensor and the LoRa gateway are connected and running.</strong>
+              <p style={{ color: "#166534", fontSize: "0.82rem", margin: "4px 0 0" }}>
+                If you want any additional details, tell me which telemetry or node status you would like to inspect.
+              </p>
+            </div>
+            <StatusBadge label="LORa ONLINE" tone="healthy" />
+          </div>
+        </Card>
+      )}
 
       {/* METRICS GRID */}
       <section className="overview-section" style={{ marginTop: "1.5rem" }}>
