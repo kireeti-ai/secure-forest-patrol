@@ -32,6 +32,20 @@
 #define JALRI_MQTT_BROKER_PORT 1883
 #endif
 
+#ifndef JALRI_MQTT_TLS
+#define JALRI_MQTT_TLS 0
+#endif
+
+// MQTT broker credentials are a real secret and must come from Secrets.h
+// (gitignored) in any build that sets JALRI_MQTT_TLS=1 -- never committed.
+#ifndef JALRI_MQTT_USERNAME
+#define JALRI_MQTT_USERNAME ""
+#endif
+
+#ifndef JALRI_MQTT_PASSWORD
+#define JALRI_MQTT_PASSWORD ""
+#endif
+
 namespace jalri {
 
 struct BackendBuildConfig {
@@ -51,6 +65,9 @@ struct BackendBuildConfig {
     // build flag, not a committed production secret).
     static constexpr const char* mqttBrokerHost = JALRI_MQTT_BROKER_HOST;
     static constexpr std::uint16_t mqttBrokerPort = JALRI_MQTT_BROKER_PORT;
+    static constexpr bool mqttTls = static_cast<bool>(JALRI_MQTT_TLS);
+    static constexpr const char* mqttUsername = JALRI_MQTT_USERNAME;
+    static constexpr const char* mqttPassword = JALRI_MQTT_PASSWORD;
 };
 
 struct BuildConfig {

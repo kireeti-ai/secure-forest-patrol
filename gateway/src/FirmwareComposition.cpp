@@ -12,7 +12,10 @@ FirmwareComposition::FirmwareComposition()
                       BackendBuildConfig::ingestionKey,
                       BackendBuildConfig::gatewayId,
                       BackendBuildConfig::mqttBrokerHost,
-                      BackendBuildConfig::mqttBrokerPort}),
+                      BackendBuildConfig::mqttBrokerPort,
+                      BackendBuildConfig::mqttTls,
+                      BackendBuildConfig::mqttUsername,
+                      BackendBuildConfig::mqttPassword}),
       gatewayService_(logger_, backendClient_),
       app_(loraDriver_, gatewayService_, logger_) {
     backendClient_.setLogger(&logger_);

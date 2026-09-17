@@ -4,6 +4,7 @@
 #include <cstddef>
 
 #include <WiFi.h>
+#include <WiFiClientSecure.h>
 #include <PubSubClient.h>
 
 #include "LoRaTypes.h"
@@ -22,6 +23,11 @@ struct BackendConfig {
     std::uint8_t gatewayId;
     const char* mqttBrokerHost;
     std::uint16_t mqttBrokerPort;
+    // Production brokers (e.g. HiveMQ Cloud) require TLS + auth; local dev
+    // Mosquitto does not. See docs/MQTT.md.
+    bool mqttTls;
+    const char* mqttUsername;
+    const char* mqttPassword;
 };
 
 // A forest event as the gateway actually has it today: LoRa source/sequence
@@ -82,7 +88,8 @@ private:
     void logLine(const char* line);
 
     BackendConfig config_;
-    WiFiClient wifiClient_;
+    WiFiClient plainClient_;
+    WiFiClientSecure secureClient_;
     PubSubClient mqttClient_;
     logging::ILogger* logger_{nullptr};
 

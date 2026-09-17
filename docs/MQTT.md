@@ -1,10 +1,14 @@
 # MQTT: Gateway → Backend Transport
 
-**Status:** IMPLEMENTED (backend consumer + firmware publisher), TESTED
-LOCALLY (backend unit tests, in-process), SIMULATED end-to-end (via
-`backend/scripts/simulate_mqtt_gateway.py`). Physical Gateway → broker →
-backend delivery is NOT IMPLEMENTED for the full signed-event path — see
-the gap explained in `docs/GATEWAY_BACKEND_CONTRACT.md`.
+**Status:** IMPLEMENTED (backend consumer + firmware publisher). TESTED
+LOCALLY (backend unit tests, in-process) and PHYSICALLY VERIFIED for the
+Wi-Fi + MQTT transport link itself (a real Gateway connected to a local
+broker over its own Wi-Fi and published; confirmed via serial logs and
+broker logs). SIMULATED end-to-end for the full signed-event path (via
+`backend/scripts/simulate_mqtt_gateway.py`) — a physical Gateway → broker →
+backend run with a *real signed* event is still NOT IMPLEMENTED, because
+node-firmware doesn't produce signed events yet. See
+`docs/GATEWAY_BACKEND_CONTRACT.md`.
 
 MQTT is the primary Gateway → Backend event transport. The HTTP routes
 under `/api/ingest/gateway/*` remain a working fallback/management path —
@@ -15,22 +19,35 @@ rejected, or persisted between the two transports.
 
 ## Broker
 
-Local development: a self-hosted Mosquitto broker via the repo-root
+**Local development**: a self-hosted Mosquitto broker via the repo-root
 `docker-compose.yml` (`docker compose up mosquitto`), configured by
 `mosquitto/mosquitto.conf`. No TLS, no authentication — this is fine for a
 broker bound to `localhost` during development, but **must not** be used
 as-is in production.
 
-Production **must** enable both:
+**Production**: a managed cloud broker (HiveMQ Cloud, serverless tier) —
+TLS on port 8883, authenticated. Both sides are already wired for this:
 
-- **Authentication**: a `password_file` on the broker; the backend and
-  every Gateway connect with credentials (`MQTT_USERNAME`/`MQTT_PASSWORD`
-  env vars on the backend; `BackendConfig` on the Gateway, sourced the same
-  way `ingestionKey` is — via `Secrets.h`, never committed).
-  Never commit broker credentials, tokens, or TLS private keys to the repo.
-- **TLS**: a `listener 8883` with `cafile`/`certfile`/`keyfile` on the
-  broker; `MQTT_TLS=true` on the backend; `WiFiClientSecure` (not the plain
-  `WiFiClient` used today) on the Gateway.
+- **Backend**: set `MQTT_BROKER_HOST`, `MQTT_BROKER_PORT=8883`,
+  `MQTT_USERNAME`, `MQTT_PASSWORD`, `MQTT_TLS=true` as environment
+  variables on the deployment host (see the production env var list in the
+  repo root README / deployment notes). `app/services/mqtt_consumer.py`
+  calls `tls_set()` and `username_pw_set()` when these are set.
+- **Gateway**: build with `pio run -e production` (`gateway/platformio.ini`)
+  — this sets `JALRI_MQTT_BROKER_HOST`/`PORT`/`JALRI_MQTT_TLS=1` as build
+  flags. `JALRI_MQTT_USERNAME`/`JALRI_MQTT_PASSWORD` (the credentials
+  created in the HiveMQ Cloud console) must be added to `Secrets.h`
+  (gitignored, never a build flag) — see `Secrets.example.h`.
+  `BackendIngestionClient` uses `WiFiClientSecure` with `setInsecure()`
+  (encrypts the link but does not pin/validate the broker's certificate —
+  a deliberate tradeoff to avoid a CA bundle that would eventually expire
+  and brick the device; event authenticity is still guaranteed at the
+  application layer by the ECC signature + hash chain regardless of
+  transport, so this does not weaken the system's core tamper-evidence
+  guarantee — it only means an active MITM impersonating the broker isn't
+  detected at the TLS layer).
+
+Never commit broker credentials, tokens, or TLS private keys to the repo.
 
 ## Topics
 

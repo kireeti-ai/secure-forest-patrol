@@ -10,7 +10,21 @@ constexpr int kProtocolVersion = 4;  // matches jalari::protocol wire format
 }  // namespace
 
 BackendIngestionClient::BackendIngestionClient(const BackendConfig& config)
-    : config_(config), mqttClient_(wifiClient_) {
+    : config_(config) {
+    if (config_.mqttTls) {
+        // Certificate validation is intentionally skipped (setInsecure())
+        // rather than pinning a CA bundle that will eventually expire and
+        // brick the device. This still gets an encrypted link (protects
+        // MQTT_USERNAME/MQTT_PASSWORD from passive sniffing); it does not
+        // protect against an active MITM impersonating the broker. That
+        // gap is acceptable here because event authenticity is guaranteed
+        // at the application layer regardless of transport (ECC signature
+        // + hash chain, verified by the backend) -- see docs/MQTT.md.
+        secureClient_.setInsecure();
+        mqttClient_.setClient(secureClient_);
+    } else {
+        mqttClient_.setClient(plainClient_);
+    }
     mqttClient_.setServer(config_.mqttBrokerHost, config_.mqttBrokerPort);
 }
 
@@ -80,7 +94,10 @@ void BackendIngestionClient::tickMqtt(std::uint32_t currentMs) {
         mqttState_ = LinkState::Connecting;
         char clientId[24];
         snprintf(clientId, sizeof(clientId), "gw-%02X", config_.gatewayId);
-        if (mqttClient_.connect(clientId)) {
+        const bool connected = (config_.mqttUsername != nullptr && config_.mqttUsername[0] != '\0')
+            ? mqttClient_.connect(clientId, config_.mqttUsername, config_.mqttPassword)
+            : mqttClient_.connect(clientId);
+        if (connected) {
             mqttState_ = LinkState::Connected;
             logLine("[MQTT] CONNECTED");
         }
