@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <vector>
 
-namespace jalri::registry {
+namespace forest::registry {
 
 enum class OnlineStatus {
     unknown,
@@ -55,4 +55,4 @@ private:
     std::uint32_t offlineTimeoutMs_;
 };
 
-}  // namespace jalri::registry
+}  // namespace forest::registry

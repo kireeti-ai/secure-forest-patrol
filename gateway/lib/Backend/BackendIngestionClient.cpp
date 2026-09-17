@@ -2,11 +2,11 @@
 
 #include <ArduinoJson.h>
 
-namespace jalri::backend {
+namespace forest::backend {
 
 namespace {
 constexpr const char* kTopicNodeStatus = "forest/events/node-status";
-constexpr int kProtocolVersion = 4;  // matches jalari::protocol wire format
+constexpr int kProtocolVersion = 4;  // matches forest::protocol wire format
 }  // namespace
 
 BackendIngestionClient::BackendIngestionClient(const BackendConfig& config)
@@ -164,4 +164,4 @@ void BackendIngestionClient::dispatchMessages(lora::ILoRaDriver& /*radioDriver*/
     // path. Nothing to do today: the outbox is drained from tick() above.
 }
 
-}  // namespace jalri::backend
+}  // namespace forest::backend

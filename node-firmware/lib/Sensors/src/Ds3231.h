@@ -4,7 +4,7 @@
 
 #include "II2cBus.h"
 
-namespace jalari::sensors
+namespace forest::sensors
 {
     struct RtcSample
     {
@@ -31,4 +31,4 @@ namespace jalari::sensors
         hal::II2cBus &bus_;
         bool initialized_ = false;
     };
-} // namespace jalari::sensors
+} // namespace forest::sensors

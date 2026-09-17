@@ -1,6 +1,6 @@
-# Jalri Gateway Firmware Architecture
+# Forest Gateway Firmware Architecture
 
-This repository contains firmware for the Jalri Maritime Edge Gateway.
+This repository contains firmware for the Forest Maritime Edge Gateway.
 
 The Gateway receive path depends only on protocol integration interfaces:
 
@@ -12,7 +12,7 @@ The application layer depends on interfaces and contains no Arduino APIs.
 Platform-specific work remains behind HAL and driver boundaries.
 
 `MockPacketParser` and `MockPacketValidator` are compile-time placeholders only.
-They must be replaced by adapters over the future shared `jalri-protocol` library.
+They must be replaced by adapters over the future shared `forest-protocol` library.
 
 Future modules such as `DeviceRegistry`, `PacketRouter`, `MQTTBridge`,
 `CommandDispatcher`, and `HealthMonitor` should be attached through constructor

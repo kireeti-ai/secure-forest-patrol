@@ -1,6 +1,6 @@
 #include "Logger.h"
 
-namespace jalari::utils
+namespace forest::utils
 {
 
     Logger::Logger(hal::IConsole &console) : console_(console)
@@ -16,8 +16,8 @@ namespace jalari::utils
 
     void Logger::log_(LogLevel level, const char *tag, const char *message) const
     {
-        if (static_cast<unsigned char>(level) < JALARI_LOG_LEVEL) return;
+        if (static_cast<unsigned char>(level) < FOREST_LOG_LEVEL) return;
         console_.print("["); console_.print(tag); console_.print("] "); console_.println(message);
     }
 
-} // namespace jalari::utils
+} // namespace forest::utils

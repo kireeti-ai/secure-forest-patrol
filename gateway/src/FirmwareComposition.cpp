@@ -1,7 +1,7 @@
 #include "FirmwareComposition.h"
 #include "BuildConfig.h"
 
-namespace jalri {
+namespace forest {
 
 FirmwareComposition::FirmwareComposition()
     : logger_(),
@@ -25,4 +25,4 @@ App& FirmwareComposition::app() {
     return app_;
 }
 
-}  // namespace jalri
+}  // namespace forest

@@ -13,7 +13,7 @@
 #include "DtnStoreForwardService.h"
 #include "PacketFactory.h"
 
-namespace jalari
+namespace forest
 {
     App::App(radio::IRadio &radio, node::NodeManager &node, queue::PacketQueue &packetQueue, event::EventBus &eventBus,
              services::ReliableLinkService &reliableLinkService,
@@ -149,4 +149,4 @@ namespace jalari
         default: break;
         }
     }
-} // namespace jalari
+} // namespace forest

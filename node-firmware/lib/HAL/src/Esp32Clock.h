@@ -2,7 +2,7 @@
 
 #include "IClock.h"
 
-namespace jalari::hal
+namespace forest::hal
 {
     class Esp32Clock final : public IClock { public: std::uint32_t millis() const override; };
-} // namespace jalari::hal
+} // namespace forest::hal

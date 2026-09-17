@@ -1,27 +1,27 @@
-# Jalari BoatNode Firmware
+# Forest CheckpointNode Firmware
 
-Embedded firmware for the Jalri BoatNode — the vessel-side component of the Jalri maritime safety system. The BoatNode transmits periodic heartbeats and supports reliable data communication over LoRa using a custom binary protocol.
+Embedded firmware for the Forest CheckpointNode — the vessel-side component of the Forest maritime safety system. The CheckpointNode transmits periodic heartbeats and supports reliable data communication over LoRa using a custom binary protocol.
 
 ## Overview
 
-The BoatNode firmware runs on an ESP32-S3 microcontroller paired with an SX1278 LoRa transceiver (433 MHz). It implements a modular, interface-driven architecture designed around dependency injection, fixed-memory infrastructure, and deterministic polling.
+The CheckpointNode firmware runs on an ESP32-S3 microcontroller paired with an SX1278 LoRa transceiver (433 MHz). It implements a modular, interface-driven architecture designed around dependency injection, fixed-memory infrastructure, and deterministic polling.
 
 The firmware handles:
 
-- Periodic heartbeat transmission to the Jalri Gateway
+- Periodic heartbeat transmission to the Forest Gateway
 - Reliable unicast data communication with acknowledgement tracking and retry
 - Neighbor discovery and link-quality metric collection
 - Packet forwarding infrastructure (currently configured for local-only delivery)
 
-## Role in Jalri
+## Role in Forest
 
 ```text
-[ BoatNode ] --LoRa--> [ Gateway ] --HTTP--> [ Backend ] --> [ Dashboard ]
+[ CheckpointNode ] --LoRa--> [ Gateway ] --HTTP--> [ Backend ] --> [ Dashboard ]
      ▲                                                            
   This repo                                                       
 ```
 
-The BoatNode is the origin of all vessel-side communication. It transmits heartbeat and data packets over LoRa, which are received, validated, and acknowledged by the Jalri Gateway.
+The CheckpointNode is the origin of all vessel-side communication. It transmits heartbeat and data packets over LoRa, which are received, validated, and acknowledged by the Forest Gateway.
 
 ## Implemented Features
 
@@ -85,7 +85,7 @@ Dependencies point inward. Only HAL and LoRaDriver include Arduino or third-part
 ## Project Structure
 
 ```text
-jalari-node-firmware/
+forest-node-firmware/
 ├── include/
 │   ├── Config.h          # FirmwareConfig: radio, node, protocol, power, reliability, network
 │   ├── Constants.h       # Compile-time sizes and capacities
@@ -153,8 +153,8 @@ bounded and expires after 10 seconds. Broadcast DATA (`0xFF`) is locally deliver
 without a unicast ACK. These behaviors are host-tested; RF behavior is not validated.
 
 - **Host tests**: `test/run_n1_tests.sh` covers protocol, ACK, retry, immediate TX failure, duplicate, queue, destination, broadcast, invalid packet, and TTL behavior.
-- **Protocol contract test**: A cross-repository host test exists in [`jalri-gateway-firmware/test/`](../jalri-gateway-firmware/test/protocol_contract_test.cpp) that validates BoatNode packet serialization against Gateway parsing.
-- **Hardware validation**: Not performed. Physical RF communication between BoatNode and Gateway has not been tested.
+- **Protocol contract test**: A cross-repository host test exists in [`forest-gateway-firmware/test/`](../forest-gateway-firmware/test/protocol_contract_test.cpp) that validates CheckpointNode packet serialization against Gateway parsing.
+- **Hardware validation**: Not performed. Physical RF communication between CheckpointNode and Gateway has not been tested.
 
 ### N2C — Failure and Recovery Validation
 
@@ -209,8 +209,8 @@ Bundle Protocol semantics are not implemented.
 
 ## Integration
 
-- **Gateway**: The BoatNode transmits protocol v4 packets that the [Gateway firmware](../jalri-gateway-firmware/) receives, parses, validates, and acknowledges. `PreviousHop` identifies the immediate transmitter; forwarding remains a later N2 milestone.
-- **Protocol contract**: Verified through a host-compilable contract test that serializes a BoatNode heartbeat and parses it with the Gateway's parser/validator.
+- **Gateway**: The CheckpointNode transmits protocol v4 packets that the [Gateway firmware](../forest-gateway-firmware/) receives, parses, validates, and acknowledges. `PreviousHop` identifies the immediate transmitter; forwarding remains a later N2 milestone.
+- **Protocol contract**: Verified through a host-compilable contract test that serializes a CheckpointNode heartbeat and parses it with the Gateway's parser/validator.
 
 ## Intentional Non-Changes
 

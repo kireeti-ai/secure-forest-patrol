@@ -1,12 +1,12 @@
-# JALRI Backend Data Contract
+# FOREST Backend Data Contract
 
 **Status:** Contract not yet defined  
-**Source:** [`docs/JALRI_SPECIFICATION.md`](./JALRI_SPECIFICATION.md)  
+**Source:** [`docs/FOREST_SPECIFICATION.md`](./FOREST_SPECIFICATION.md)  
 **Scope:** Backend foundation only
 
 ## Source-of-truth rule
 
-The current Jalri specification states that the official project documentation is pending and marks product capabilities, fields, protocols, and workflows as **NOT SPECIFIED IN SOURCE DOCUMENTATION**.
+The current Forest specification states that the official project documentation is pending and marks product capabilities, fields, protocols, and workflows as **NOT SPECIFIED IN SOURCE DOCUMENTATION**.
 
 This document records that boundary for backend work. It does not create application entities, infer fields, or establish an API/database contract.
 
@@ -21,7 +21,7 @@ No canonical backend entities are currently defined. The candidate areas below w
 
 | Field | Type | Required | Description | Source |
 |---|---|---|---|---|
-| No fields defined | — | — | NOT SPECIFIED | `docs/JALRI_SPECIFICATION.md`, BoatNode section |
+| No fields defined | — | — | NOT SPECIFIED | `docs/FOREST_SPECIFICATION.md`, CheckpointNode section |
 
 Identifiers, relationships, timestamps, enumerations, lifecycle, and persistence requirements are **NOT SPECIFIED**.
 
@@ -32,7 +32,7 @@ Identifiers, relationships, timestamps, enumerations, lifecycle, and persistence
 
 | Field | Type | Required | Description | Source |
 |---|---|---|---|---|
-| No fields defined | — | — | NOT SPECIFIED | `docs/JALRI_SPECIFICATION.md`, Gateway section |
+| No fields defined | — | — | NOT SPECIFIED | `docs/FOREST_SPECIFICATION.md`, Gateway section |
 
 Gateway identity, communication state, ingestion payload, timestamps, and relationships are **NOT SPECIFIED**.
 

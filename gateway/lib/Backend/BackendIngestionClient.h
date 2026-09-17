@@ -11,9 +11,9 @@
 #include "Packet.h"
 #include "ILogger.h"
 
-namespace jalri::lora { class ILoRaDriver; }
+namespace forest::lora { class ILoRaDriver; }
 
-namespace jalri::backend {
+namespace forest::backend {
 
 struct BackendConfig {
     const char* wifiSsid;
@@ -104,4 +104,4 @@ private:
     std::size_t outboxCount_{0};
 };
 
-}  // namespace jalri::backend
+}  // namespace forest::backend

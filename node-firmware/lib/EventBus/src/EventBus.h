@@ -7,7 +7,7 @@
 #include "Constants.h"
 #include "Packet.h"
 
-namespace jalari::event
+namespace forest::event
 {
     enum class Type : unsigned char
     {
@@ -60,4 +60,4 @@ namespace jalari::event
     private:
         std::array<IEventListener *, constants::kEventBusMaxListeners> listeners_{};
     };
-} // namespace jalari::event
+} // namespace forest::event

@@ -11,7 +11,7 @@
 #include <freertos/portmacro.h>
 #endif
 
-namespace jalari::queue
+namespace forest::queue
 {
     class PacketQueue
     {
@@ -35,4 +35,4 @@ namespace jalari::queue
         mutable portMUX_TYPE mutex_ = portMUX_INITIALIZER_UNLOCKED;
 #endif
     };
-} // namespace jalari::queue
+} // namespace forest::queue

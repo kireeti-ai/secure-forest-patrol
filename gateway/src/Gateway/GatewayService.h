@@ -10,7 +10,7 @@
 #include "GatewayAckHandler.h"
 #include "BackendIngestionClient.h"
 
-namespace jalri::gateway {
+namespace forest::gateway {
 
 class GatewayService final {
 public:
@@ -43,4 +43,4 @@ private:
     std::uint32_t lastTablePrintMs_{0};
 };
 
-}  // namespace jalri::gateway
+}  // namespace forest::gateway

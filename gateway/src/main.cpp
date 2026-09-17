@@ -4,7 +4,7 @@
 #include <Arduino.h>
 
 namespace {
-jalri::FirmwareComposition* composition = nullptr;
+forest::FirmwareComposition* composition = nullptr;
 bool loopCheckpointPrinted = false;
 }
 
@@ -22,7 +22,7 @@ void setup() {
 
     Serial.println("[BOOT] 2: Constructing FirmwareComposition");
     Serial.flush();
-    composition = new jalri::FirmwareComposition();
+    composition = new forest::FirmwareComposition();
 
     Serial.println("[BOOT] 3: App constructed & starting initialization");
     Serial.flush();

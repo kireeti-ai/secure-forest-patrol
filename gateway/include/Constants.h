@@ -2,7 +2,7 @@
 
 #include <cstddef>
 
-namespace jalari::constants
+namespace forest::constants
 {
 
     constexpr std::size_t kPacketHeaderSize = 8;
@@ -21,4 +21,4 @@ namespace jalari::constants
     constexpr std::uint32_t kDtnQueueLifetimeMs = 300000U;
     constexpr std::size_t kDtnProcessingBatchSize = 2U;
 
-} // namespace jalari::constants
+} // namespace forest::constants

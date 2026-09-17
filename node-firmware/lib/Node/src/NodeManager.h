@@ -4,13 +4,13 @@
 
 #include "Config.h"
 
-namespace jalari::node
+namespace forest::node
 {
 
     enum class DeviceRole : std::uint8_t
     {
         Unknown = 0,
-        BoatNode = 1,
+        CheckpointNode = 1,
         ShoreGateway = 2,
     };
 
@@ -38,4 +38,4 @@ namespace jalari::node
         NodeStatus status_ = NodeStatus::Booting;
     };
 
-} // namespace jalari::node
+} // namespace forest::node

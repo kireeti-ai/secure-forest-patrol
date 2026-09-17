@@ -2,7 +2,7 @@
 
 #include "EventBus.h"
 
-namespace jalari
+namespace forest
 {
     namespace event { class EventBus; }
     namespace node { class NodeManager; }
@@ -45,4 +45,4 @@ namespace jalari
         std::uint8_t testPayload_[constants::kMaxPayloadSize]{};
         bool initialized_ = false;
     };
-} // namespace jalari
+} // namespace forest

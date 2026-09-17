@@ -1,4 +1,4 @@
-# JALRI Project Specification
+# FOREST Project Specification
 
 **Specification status:** Source documentation pending  
 **Implementation status:** Documentation only  
@@ -6,7 +6,7 @@
 
 ## Source-of-truth statement
 
-The official Jalri project documentation was not included in the material available for this phase. The available material defines how the specification must be documented, but does not define product capabilities, hardware, protocols, fields, roles, or workflows.
+The official Forest project documentation was not included in the material available for this phase. The available material defines how the specification must be documented, but does not define product capabilities, hardware, protocols, fields, roles, or workflows.
 
 Accordingly, every undefined item below is explicitly marked **NOT SPECIFIED IN SOURCE DOCUMENTATION**. No product behavior, hardware capability, data field, API, protocol, or role is inferred from common maritime software patterns.
 
@@ -18,13 +18,13 @@ Accordingly, every undefined item below is explicitly marked **NOT SPECIFIED IN 
 
 **NOT SPECIFIED IN SOURCE DOCUMENTATION.**
 
-The implementation repository currently has separate `frontend/`, `backend/`, and `docs/` directories from Phase 0. That repository layout is not evidence of the final Jalri product architecture.
+The implementation repository currently has separate `frontend/`, `backend/`, and `docs/` directories from Phase 0. That repository layout is not evidence of the final Forest product architecture.
 
-## 3. BoatNode
+## 3. CheckpointNode
 
 **NOT SPECIFIED IN SOURCE DOCUMENTATION.**
 
-The term “BoatNode” appears in the phase instructions as a possible system component, but no device definition, hardware, firmware behavior, identity, payload, or lifecycle is provided.
+The term “CheckpointNode” appears in the phase instructions as a possible system component, but no device definition, hardware, firmware behavior, identity, payload, or lifecycle is provided.
 
 ## 4. Gateway
 
@@ -134,7 +134,7 @@ The phase instructions provide an example flow, but do not establish it as the o
 
 **NOT SPECIFIED IN SOURCE DOCUMENTATION.**
 
-No data movement can be documented between BoatNode, LoRa, gateway, cloud/backend, database, dashboard, or app without the official documentation.
+No data movement can be documented between CheckpointNode, LoRa, gateway, cloud/backend, database, dashboard, or app without the official documentation.
 
 ## 22. Hardware and software responsibilities
 
@@ -144,7 +144,7 @@ No hardware components, purposes, devices, interfaces, sensors, or responsibilit
 
 ### Software layers
 
-The responsibilities of BoatNode firmware, gateway firmware, backend, database, dashboard, mobile/app, and AI/ML are all:
+The responsibilities of CheckpointNode firmware, gateway firmware, backend, database, dashboard, mobile/app, and AI/ML are all:
 
 **NOT SPECIFIED IN SOURCE DOCUMENTATION.**
 
@@ -176,7 +176,7 @@ No feature may be classified as planned until the official project documentation
 
 All requested product areas are currently unclear because the official documentation was not provided. Each requires source documentation before implementation:
 
-- BoatNode and gateway behavior
+- CheckpointNode and gateway behavior
 - LoRa communication and network protocol
 - Gateway-to-cloud communication
 - Backend services and APIs
@@ -214,7 +214,7 @@ These are placeholders for documentation tracking only, not data models or imple
 |---|---|---|
 | Product purpose | NOT SPECIFIED IN SOURCE DOCUMENTATION | UNSPECIFIED |
 | System architecture | NOT SPECIFIED IN SOURCE DOCUMENTATION | UNSPECIFIED |
-| BoatNode | NOT SPECIFIED IN SOURCE DOCUMENTATION | UNSPECIFIED |
+| CheckpointNode | NOT SPECIFIED IN SOURCE DOCUMENTATION | UNSPECIFIED |
 | Gateway | NOT SPECIFIED IN SOURCE DOCUMENTATION | UNSPECIFIED |
 | LoRa communication | NOT SPECIFIED IN SOURCE DOCUMENTATION | UNSPECIFIED |
 | LoRa protocol | NOT SPECIFIED IN SOURCE DOCUMENTATION | UNSPECIFIED |

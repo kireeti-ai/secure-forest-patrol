@@ -1,7 +1,7 @@
 #include "NodeRegistryService.h"
 #include <Arduino.h>
 
-namespace jalri::registry {
+namespace forest::registry {
 
 NodeRegistryService::NodeRegistryService(std::uint32_t offlineTimeoutMs)
     : livenessManager_(offlineTimeoutMs) {}
@@ -65,4 +65,4 @@ void NodeRegistryService::printStats() {
     Serial.flush();
 }
 
-}  // namespace jalri::registry
+}  // namespace forest::registry

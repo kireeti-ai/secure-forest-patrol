@@ -5,7 +5,7 @@
 #include <LoRa.h>
 #include <SPI.h>
 
-namespace jalri::lora {
+namespace forest::lora {
 
 namespace {
 
@@ -126,4 +126,4 @@ bool Sx1278LoRaDriver::send(const std::uint8_t* data, std::size_t length) {
     return res;
 }
 
-}  // namespace jalri::lora
+}  // namespace forest::lora

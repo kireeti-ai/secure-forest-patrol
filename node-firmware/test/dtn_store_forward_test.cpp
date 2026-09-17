@@ -12,27 +12,27 @@
 #include "PacketQueue.h"
 #include "RouteTable.h"
 
-class Clock final : public jalari::hal::IClock {
+class Clock final : public forest::hal::IClock {
 public:
     std::uint32_t millis() const override { return now; }
     std::uint32_t now = 100U;
 };
 
-class Listener final : public jalari::event::IEventListener {
+class Listener final : public forest::event::IEventListener {
 public:
-    void onEvent(const jalari::event::Event &event) override {
-        if (event.type == jalari::event::Type::DtnPacketQueued) ++queued;
-        if (event.type == jalari::event::Type::DtnPacketDequeued) ++dequeued;
-        if (event.type == jalari::event::Type::DtnPacketExpired) ++expired;
-        if (event.type == jalari::event::Type::DtnPacketDropped) ++dropped;
-        if (event.type == jalari::event::Type::DtnPacketForwarded) ++forwarded;
+    void onEvent(const forest::event::Event &event) override {
+        if (event.type == forest::event::Type::DtnPacketQueued) ++queued;
+        if (event.type == forest::event::Type::DtnPacketDequeued) ++dequeued;
+        if (event.type == forest::event::Type::DtnPacketExpired) ++expired;
+        if (event.type == forest::event::Type::DtnPacketDropped) ++dropped;
+        if (event.type == forest::event::Type::DtnPacketForwarded) ++forwarded;
     }
     int queued = 0, dequeued = 0, expired = 0, dropped = 0, forwarded = 0;
 };
 
-static jalari::protocol::Packet packet(std::uint16_t sequence, std::uint8_t destination = 0xFEU) {
-    jalari::protocol::Packet result;
-    result.type = jalari::protocol::PacketType::Data;
+static forest::protocol::Packet packet(std::uint16_t sequence, std::uint8_t destination = 0xFEU) {
+    forest::protocol::Packet result;
+    result.type = forest::protocol::PacketType::Data;
     result.sourceId = 0x01U;
     result.destinationId = destination;
     result.previousHopId = 0x01U;
@@ -45,11 +45,11 @@ static jalari::protocol::Packet packet(std::uint16_t sequence, std::uint8_t dest
 }
 
 int main() {
-    using namespace jalari;
+    using namespace forest;
     config::NetworkConfig config{};
     config.maximumHopCount = 16U;
     config::NodeConfig nodeConfig{0x01U};
-    node::NodeManager node(nodeConfig, node::DeviceRole::BoatNode);
+    node::NodeManager node(nodeConfig, node::DeviceRole::CheckpointNode);
     Clock clock;
     routing::RouteTable routes(node.id(), 1000U);
     forwarding::DynamicForwardingStrategy strategy(node.id(), routes, clock);

@@ -1,5 +1,5 @@
 #include "PacketQueue.h"
-namespace jalari::queue
+namespace forest::queue
 {
     void PacketQueue::lock_() const
     {
@@ -44,4 +44,4 @@ namespace jalari::queue
     bool PacketQueue::full() const { lock_(); const bool result = size_ == packets_.size(); unlock_(); return result; }
     std::size_t PacketQueue::size() const { lock_(); const std::size_t result = size_; unlock_(); return result; }
     void PacketQueue::clear() { lock_(); head_ = 0; tail_ = 0; size_ = 0; unlock_(); }
-} // namespace jalari::queue
+} // namespace forest::queue

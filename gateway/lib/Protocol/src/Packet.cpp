@@ -1,6 +1,6 @@
 #include "Packet.h"
 
-namespace jalari::protocol
+namespace forest::protocol
 {
 
     bool Packet::setPayload(const std::uint8_t *data, std::size_t size)
@@ -21,4 +21,4 @@ namespace jalari::protocol
 
 
 
-} // namespace jalari::protocol
+} // namespace forest::protocol

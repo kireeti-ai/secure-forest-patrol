@@ -2,7 +2,7 @@
 
 #include "NodeManager.h"
 
-namespace jalari::reliable
+namespace forest::reliable
 {
     bool DuplicatePacketCache::isDuplicateAndRemember(std::uint8_t sourceId, std::uint16_t sequenceNumber,
                                                       std::uint32_t nowMs, std::uint32_t expiryMs)
@@ -178,4 +178,4 @@ namespace jalari::reliable
         for (PendingTransmission &pending : pending_) if (!pending.active) return &pending;
         return nullptr;
     }
-} // namespace jalari::reliable
+} // namespace forest::reliable

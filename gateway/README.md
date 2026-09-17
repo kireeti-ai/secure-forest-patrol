@@ -1,6 +1,6 @@
-# Jalri Gateway Firmware
+# Forest Gateway Firmware
 
-Embedded firmware for the Jalri Maritime Edge Gateway. The Gateway receives LoRa packets from BoatNodes, validates them, transmits acknowledgements, tracks registered devices, and forwards heartbeat events to the Jalri backend over HTTP.
+Embedded firmware for the Forest Maritime Edge Gateway. The Gateway receives LoRa packets from CheckpointNodes, validates them, transmits acknowledgements, tracks registered devices, and forwards heartbeat events to the Forest backend over HTTP.
 
 ## Overview
 
@@ -10,24 +10,24 @@ The firmware handles:
 
 - Continuous LoRa packet reception
 - Protocol v4 packet parsing and validation
-- Heartbeat ACK and Data ACK transmission back to BoatNodes
+- Heartbeat ACK and Data ACK transmission back to CheckpointNodes
 - Duplicate packet detection
 - Device registration and liveness tracking
-- Wi-Fi connectivity and HTTP POST ingestion to the Jalri backend
+- Wi-Fi connectivity and HTTP POST ingestion to the Forest backend
 
-## Role in Jalri
+## Role in Forest
 
 ```text
-[ BoatNode ] --LoRa--> [ Gateway ] --HTTP--> [ Backend ] --> [ Dashboard ]
+[ CheckpointNode ] --LoRa--> [ Gateway ] --HTTP--> [ Backend ] --> [ Dashboard ]
                             ▲
                          This repo
 ```
 
-The Gateway is the bridge between the LoRa mesh network and the IP-based backend infrastructure. It receives BoatNode packets over LoRa and pushes events to the backend via Wi-Fi.
+The Gateway is the bridge between the LoRa mesh network and the IP-based backend infrastructure. It receives CheckpointNode packets over LoRa and pushes events to the backend via Wi-Fi.
 
 ## Implemented Features
 
-- **LoRa reception** — continuous listening for BoatNode packets via SX1278 driver
+- **LoRa reception** — continuous listening for CheckpointNode packets via SX1278 driver
 - **Packet parsing** — protocol v4 binary packet parser extracting header fields, including `PreviousHop`, payload, and CRC
 - **Packet validation** — preamble, version, CRC-16, and structural integrity checks
 - **Heartbeat ACK transmission** — 22-byte acknowledgement packets constructed and sent over LoRa (preamble 0xA5, protocol v4, type 4, CRC-16)
@@ -82,7 +82,7 @@ All application-layer code depends on interfaces. Platform-specific work stays b
 ## Project Structure
 
 ```text
-jalri-gateway-firmware/
+forest-gateway-firmware/
 ├── include/
 │   └── BuildConfig.h         # Wi-Fi credentials, backend URL, gateway ID, firmware version
 ├── src/
@@ -122,7 +122,7 @@ jalri-gateway-firmware/
 │       ├── SerialLogger.h/.cpp      # Serial logging implementation
 │       └── ILogger.h               # Logger interface
 ├── test/
-│   ├── protocol_contract_test.cpp   # Host-compilable BoatNode↔Gateway protocol test
+│   ├── protocol_contract_test.cpp   # Host-compilable CheckpointNode↔Gateway protocol test
 │   ├── run_protocol_contract.sh     # Test runner script
 │   ├── host/Arduino.h              # Minimal Arduino stub for host compilation
 │   └── README.md
@@ -136,14 +136,14 @@ jalri-gateway-firmware/
 
 Configuration is defined in [`BuildConfig.h`](include/BuildConfig.h). The default
 environment uses the development backend. The production environment explicitly
-defines `JALRI_PRODUCTION_BACKEND=1`; it does not change the development default.
+defines `FOREST_PRODUCTION_BACKEND=1`; it does not change the development default.
 
 | Setting | Description | Default |
 |---|---|---|
 | `wifiSsid` | Wi-Fi network name | `""` (empty — must be set per deployment) |
 | `wifiPassword` | Wi-Fi password | `""` (empty) |
 | `developmentBaseUrl` | Development backend API base URL | `http://172.20.10.3:8000` |
-| `productionBaseUrl` | Production backend API base URL | `https://jalari-frontend-dashboard.onrender.com` |
+| `productionBaseUrl` | Production backend API base URL | `https://forest-frontend-dashboard.onrender.com` |
 | `baseUrl` | Selected backend API base URL | Development URL by default |
 | `gatewayId` | Gateway node ID | `0xFE` |
 | `firmwareVersion` | Firmware version string | `"0.1.0"` |
@@ -175,14 +175,14 @@ Platform environments are pre-configured for macOS (`/dev/cu.usbmodem5B5E0268161
 ## Testing
 
 Gateway DATA duplicate state is bounded to 32 entries and expires after 10 seconds,
-which exceeds the direct BoatNode ACK timeout and retry window. Valid Gateway-directed
+which exceeds the direct CheckpointNode ACK timeout and retry window. Valid Gateway-directed
 DATA receives a type-3 ACK; broadcast DATA is processed without a unicast ACK. ACK
 transmission failures are observable in `GatewayStats::ackTxFailures`; no Gateway ACK
 retry protocol is implemented. Multi-hop and RF validation remain unimplemented.
 
 ### Protocol Contract Test
 
-A host-compilable test validates the BoatNode → Gateway packet round-trip:
+A host-compilable test validates the CheckpointNode → Gateway packet round-trip:
 
 ```bash
 cd test
@@ -190,15 +190,15 @@ cd test
 ```
 
 This test:
-1. Creates a BoatNode heartbeat packet using the node firmware's PacketFactory/Serializer
+1. Creates a CheckpointNode heartbeat packet using the node firmware's PacketFactory/Serializer
 2. Parses it with the Gateway's PacketParser and validates with PacketValidator
 3. Verifies all header fields (source, destination, packet ID, type, payload length)
-4. Builds a Gateway heartbeat ACK and verifies it parses correctly on the BoatNode side
+4. Builds a Gateway heartbeat ACK and verifies it parses correctly on the CheckpointNode side
 5. Tests rejection of malformed packets (corrupted CRC, wrong source, wrong type)
 
 ### Hardware Validation
 
-Not performed. The firmware builds successfully for the target platform, but physical RF communication between BoatNode and Gateway has not been tested with actual hardware.
+Not performed. The firmware builds successfully for the target platform, but physical RF communication between CheckpointNode and Gateway has not been tested with actual hardware.
 
 ## Current Status
 
@@ -220,14 +220,14 @@ Not performed. The firmware builds successfully for the target platform, but phy
 
 ## Integration
 
-- **BoatNode**: Receives protocol v4 packets from the [BoatNode firmware](../jalari-node-firmware/). Both share compatible packet formats verified by the protocol contract test.
-- **Backend**: Sends `HEARTBEAT_RECEIVED` events via HTTP POST to `/api/ingest/gateway` on the [Jalri backend](../website/backend/). The JSON payload includes nodeId, packetId, destination, sequence, packetSize, receivedAtMs, rssi, and snr.
+- **CheckpointNode**: Receives protocol v4 packets from the [CheckpointNode firmware](../forest-node-firmware/). Both share compatible packet formats verified by the protocol contract test.
+- **Backend**: Sends `HEARTBEAT_RECEIVED` events via HTTP POST to `/api/ingest/gateway` on the [Forest backend](../website/backend/). The JSON payload includes nodeId, packetId, destination, sequence, packetSize, receivedAtMs, rssi, and snr.
 - **Protocol version**: v4 (preamble `0xA5`, 11-byte header with `PreviousHop`, TTL, and hop count; maximum packet size 61 bytes)
 
 ## Future Work
 
-- Replace MockPacketParser/MockPacketValidator with shared `jalri-protocol` library adapters
+- Replace MockPacketParser/MockPacketValidator with shared `forest-protocol` library adapters
 - MQTT bridge for persistent connectivity
-- Command dispatch from backend to BoatNodes
+- Command dispatch from backend to CheckpointNodes
 - Health monitoring and diagnostics
 - Physical hardware validation and RF testing

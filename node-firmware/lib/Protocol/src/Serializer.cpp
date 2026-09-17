@@ -3,7 +3,7 @@
 #include "Config.h"
 #include "Crc16.h"
 
-namespace jalari::protocol
+namespace forest::protocol
 {
 
     bool Serializer::serialize(const Packet &packet,
@@ -41,4 +41,4 @@ namespace jalari::protocol
         return true;
     }
 
-} // namespace jalari::protocol
+} // namespace forest::protocol

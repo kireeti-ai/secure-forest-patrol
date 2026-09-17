@@ -22,23 +22,23 @@ namespace
 {
     struct FirmwareComposition
     {
-        jalari::hal::Esp32SerialConsole console;
-        jalari::utils::Logger logger{console};
-        jalari::hal::Esp32Clock clock;
-        jalari::hal::Esp32Delay delay;
-        jalari::hal::Esp32SpiBus spiBus;
-        jalari::hal::Esp32I2cBus i2cBus;
-        jalari::sensors::Ds3231 rtc{i2cBus};
-        jalari::node::NodeManager node{jalari::config::kDefaultFirmwareConfig.node, jalari::node::DeviceRole::BoatNode};
-        jalari::lora::LoRaDriver radio{jalari::config::kDefaultFirmwareConfig.radio, spiBus};
-        jalari::protocol::PacketFactory packetFactory{node, jalari::config::kDefaultFirmwareConfig.network};
-        jalari::queue::PacketQueue packetQueue;
-        jalari::event::EventBus eventBus;
-        jalari::reliable::AckManager ackManager{jalari::config::kDefaultFirmwareConfig.reliability, node, packetFactory, packetQueue, clock};
-        jalari::services::ReliableLinkService reliableLinkService{ackManager};
-        jalari::services::DtnStoreForwardService dtnService{clock, eventBus};
+        forest::hal::Esp32SerialConsole console;
+        forest::utils::Logger logger{console};
+        forest::hal::Esp32Clock clock;
+        forest::hal::Esp32Delay delay;
+        forest::hal::Esp32SpiBus spiBus;
+        forest::hal::Esp32I2cBus i2cBus;
+        forest::sensors::Ds3231 rtc{i2cBus};
+        forest::node::NodeManager node{forest::config::kDefaultFirmwareConfig.node, forest::node::DeviceRole::CheckpointNode};
+        forest::lora::LoRaDriver radio{forest::config::kDefaultFirmwareConfig.radio, spiBus};
+        forest::protocol::PacketFactory packetFactory{node, forest::config::kDefaultFirmwareConfig.network};
+        forest::queue::PacketQueue packetQueue;
+        forest::event::EventBus eventBus;
+        forest::reliable::AckManager ackManager{forest::config::kDefaultFirmwareConfig.reliability, node, packetFactory, packetQueue, clock};
+        forest::services::ReliableLinkService reliableLinkService{ackManager};
+        forest::services::DtnStoreForwardService dtnService{clock, eventBus};
         
-        jalari::App app{radio, node, packetQueue, eventBus, reliableLinkService, dtnService, logger, packetFactory, console};
+        forest::App app{radio, node, packetQueue, eventBus, reliableLinkService, dtnService, logger, packetFactory, console};
     };
     FirmwareComposition &firmware() { static FirmwareComposition composition; return composition; }
 
@@ -75,7 +75,7 @@ void setup()
         }
     }
     // Probe DS3231 directly
-    jalari::sensors::RtcSample probeSample;
+    forest::sensors::RtcSample probeSample;
     if (firmware().rtc.read(probeSample) && probeSample.timeValid) {
         ds3231Found = true;
         Serial.printf("[RTC OK] DS3231 Hardware Time: %04u-%02u-%02u %02u:%02u:%02u\n",
@@ -111,13 +111,13 @@ void loop()
     if (currentMs - lastPingMs > 10000) {
         lastPingMs = currentMs;
         
-        jalari::sensors::RtcSample rtcSample;
+        forest::sensors::RtcSample rtcSample;
         bool rtcOk = false;
         if (ds3231Found) {
             rtcOk = firmware().rtc.read(rtcSample);
         }
         
-        jalari::protocol::Packet testPacket;
+        forest::protocol::Packet testPacket;
         // Payload: [Year-2000, Month, Day, Hour, Minute, Second, Temp_H, Temp_L, DummyByte]
         uint8_t testPayload[9] = {0};
         if (rtcOk && rtcSample.timeValid) {

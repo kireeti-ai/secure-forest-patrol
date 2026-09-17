@@ -39,7 +39,7 @@ def capture(label, port, baud, output, stop):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Capture two Jalari serial logs")
+    parser = argparse.ArgumentParser(description="Capture two Forest serial logs")
     parser.add_argument("node_a_port")
     parser.add_argument("node_b_port")
     parser.add_argument("--baud", type=int, default=115200)
