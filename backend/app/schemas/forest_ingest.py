@@ -14,7 +14,8 @@ can verify authenticity and history integrity offline-first.
 
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
+import re
 
 
 class GatewayMeta(BaseModel):
@@ -78,8 +79,16 @@ class IngestResult(BaseModel):
 
 class RfidScanIngest(BaseModel):
     type: str = Field(pattern="^RFID_SCAN$")
-    node_id: str
-    uid: str
-    seq: int
+    node_id: str = Field(min_length=1, max_length=64)
+    uid: str = Field(min_length=8, max_length=29)
+    seq: int = Field(ge=0, le=4294967295)
     rssi: int
     snr: float
+
+    @field_validator("uid")
+    @classmethod
+    def normalize_uid(cls, value: str) -> str:
+        normalized = value.strip().upper().replace("-", ":")
+        if not re.fullmatch(r"[0-9A-F]{2}(?::[0-9A-F]{2}){3,9}", normalized):
+            raise ValueError("uid must be colon-separated hexadecimal bytes")
+        return normalized

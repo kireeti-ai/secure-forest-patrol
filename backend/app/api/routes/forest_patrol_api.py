@@ -8,6 +8,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.api.dependencies.database import get_db
+from app.core.security import require_roles
 from app.models.officer import PatrolOfficer
 from app.models.patrol_event import PatrolEvent
 from app.schemas.forest import PatrolResponse
@@ -51,7 +52,7 @@ def _officer_names(db: Session, officer_ids: set[str]) -> dict[str, str]:
 def list_patrols(node_id: str | None = Query(default=None),
                  checkpoint_id: str | None = Query(default=None),
                  limit: int = Query(default=200, le=1000),
-                 db: Session = Depends(get_db)) -> list[PatrolResponse]:
+                 db: Session = Depends(get_db), _: object = Depends(require_roles("ADMIN", "OPERATOR"))) -> list[PatrolResponse]:
     stmt = select(PatrolEvent).order_by(
         PatrolEvent.event_created_at.desc()).limit(limit)
     if node_id:
@@ -64,7 +65,7 @@ def list_patrols(node_id: str | None = Query(default=None),
 
 
 @router.get("/patrols/{event_id}", response_model=PatrolResponse)
-def get_patrol(event_id: str, db: Session = Depends(get_db)) -> PatrolResponse:
+def get_patrol(event_id: str, db: Session = Depends(get_db), _: object = Depends(require_roles("ADMIN", "OPERATOR"))) -> PatrolResponse:
     row = db.scalar(select(PatrolEvent).where(PatrolEvent.event_id == event_id))
     if not row:
         raise HTTPException(status_code=404, detail="Patrol event not found")

@@ -46,7 +46,7 @@ def test_acoustic_review_workflow(client, db_session, seeded_data):
                         headers={"Authorization": f"Bearer {token}"},
                         json={"review_status": target})
         assert r.status_code == 200, r.text
-        assert r.json()["review_status"] == target
+        assert r.json()["reviewStatus"] == target
 
 
 def test_inference_not_confirmed_automatically(client, db_session, seeded_data):

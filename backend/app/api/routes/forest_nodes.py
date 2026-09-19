@@ -14,6 +14,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.api.dependencies.database import get_db
+from app.core.security import require_roles
 from app.models.checkpoint import Checkpoint
 from app.models.forest_node import ForestNode
 from app.schemas.forest import (
@@ -47,13 +48,13 @@ def checkpoint_out(c: Checkpoint) -> CheckpointResponse:
 
 
 @router.get("/nodes", response_model=list[NodeResponse])
-def list_nodes(db: Session = Depends(get_db)) -> list[NodeResponse]:
+def list_nodes(db: Session = Depends(get_db), _: object = Depends(require_roles("ADMIN", "OPERATOR"))) -> list[NodeResponse]:
     return [node_out(n) for n in db.scalars(
         select(ForestNode).order_by(ForestNode.node_id))]
 
 
 @router.post("/nodes", response_model=NodeResponse, status_code=status.HTTP_201_CREATED)
-def create_node(payload: NodeCreate, db: Session = Depends(get_db)) -> NodeResponse:
+def create_node(payload: NodeCreate, db: Session = Depends(get_db), _: object = Depends(require_roles("ADMIN"))) -> NodeResponse:
     """Register a field node and its ECC public key (the signature trust anchor).
 
     Registering ``public_key`` provisions signature verification for that
@@ -76,7 +77,7 @@ def create_node(payload: NodeCreate, db: Session = Depends(get_db)) -> NodeRespo
 
 
 @router.get("/nodes/{node_id}", response_model=NodeResponse)
-def get_node(node_id: str, db: Session = Depends(get_db)) -> NodeResponse:
+def get_node(node_id: str, db: Session = Depends(get_db), _: object = Depends(require_roles("ADMIN", "OPERATOR"))) -> NodeResponse:
     node = db.scalar(select(ForestNode).where(ForestNode.node_id == node_id))
     if not node:
         raise HTTPException(status_code=404, detail=f"Node '{node_id}' not found")
@@ -85,7 +86,7 @@ def get_node(node_id: str, db: Session = Depends(get_db)) -> NodeResponse:
 
 @router.patch("/nodes/{node_id}", response_model=NodeResponse)
 def update_node(node_id: str, payload: NodeUpdate,
-                db: Session = Depends(get_db)) -> NodeResponse:
+                db: Session = Depends(get_db), _: object = Depends(require_roles("ADMIN"))) -> NodeResponse:
     """Update node metadata / rotate the registered public key."""
     node = db.scalar(select(ForestNode).where(ForestNode.node_id == node_id))
     if not node:
@@ -99,6 +100,6 @@ def update_node(node_id: str, payload: NodeUpdate,
 
 
 @router.get("/checkpoints", response_model=list[CheckpointResponse])
-def list_checkpoints(db: Session = Depends(get_db)) -> list[CheckpointResponse]:
+def list_checkpoints(db: Session = Depends(get_db), _: object = Depends(require_roles("ADMIN", "OPERATOR"))) -> list[CheckpointResponse]:
     return [checkpoint_out(c) for c in db.scalars(
         select(Checkpoint).order_by(Checkpoint.checkpoint_id))]

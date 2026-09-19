@@ -1,4 +1,4 @@
-  export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+  export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://secure-forest-patrol-4cxw.vercel.app";
 
 function authHeaders(): Record<string, string> {
   return {};
@@ -345,26 +345,27 @@ const MOCK_SYSTEM_STATUS: ForestSystemStatus = {
 };
 
 // ============================================================
-// API FETCHERS WITH CLEAN DEMO FALLBACKS
+// Production API fetchers. Failed requests return empty/unknown state; the
+// dashboard must never present fabricated operational records as real data.
 // ============================================================
 
 export async function fetchCheckpoints(): Promise<Checkpoint[]> {
   try {
     const res = await fetch(`${API_BASE_URL}/api/forest/checkpoints`, { cache: "no-store", headers: authHeaders() });
-    if (!res.ok) return MOCK_CHECKPOINTS;
+    if (!res.ok) return [];
     return (await res.json()).map(normalizeCheckpoint);
   } catch {
-    return MOCK_CHECKPOINTS;
+    return [];
   }
 }
 
 export async function fetchPatrols(): Promise<PatrolRecord[]> {
   try {
     const res = await fetch(`${API_BASE_URL}/api/forest/patrols`, { cache: "no-store", headers: authHeaders() });
-    if (!res.ok) return MOCK_PATROLS;
+    if (!res.ok) return [];
     return (await res.json()).map(normalizePatrol);
   } catch {
-    return MOCK_PATROLS;
+    return [];
   }
 }
 
@@ -372,31 +373,31 @@ export async function fetchPatrolById(id: string): Promise<PatrolRecord | null> 
   try {
     const res = await fetch(`${API_BASE_URL}/api/forest/patrols/${encodeURIComponent(id)}`, { cache: "no-store", headers: authHeaders() });
     if (!res.ok) {
-      return MOCK_PATROLS.find((p) => p.id === id || p.eventId === id) || MOCK_PATROLS[0];
+      return null;
     }
     return normalizePatrol(await res.json());
   } catch {
-    return MOCK_PATROLS.find((p) => p.id === id || p.eventId === id) || MOCK_PATROLS[0];
+    return null;
   }
 }
 
 export async function fetchOfficers(): Promise<Officer[]> {
   try {
     const res = await fetch(`${API_BASE_URL}/api/forest/officers`, { cache: "no-store", headers: authHeaders() });
-    if (!res.ok) return MOCK_OFFICERS;
+    if (!res.ok) return [];
     return (await res.json()).map(normalizeOfficer);
   } catch {
-    return MOCK_OFFICERS;
+    return [];
   }
 }
 
 export async function fetchAcousticEvents(): Promise<AcousticEvent[]> {
   try {
     const res = await fetch(`${API_BASE_URL}/api/forest/acoustic-events`, { cache: "no-store", headers: authHeaders() });
-    if (!res.ok) return MOCK_ACOUSTIC_EVENTS;
+    if (!res.ok) return [];
     return (await res.json()).map(normalizeAcoustic);
   } catch {
-    return MOCK_ACOUSTIC_EVENTS;
+    return [];
   }
 }
 
@@ -404,61 +405,61 @@ export async function fetchAcousticEventById(id: string): Promise<AcousticEvent 
   try {
     const res = await fetch(`${API_BASE_URL}/api/forest/acoustic-events/${encodeURIComponent(id)}`, { cache: "no-store", headers: authHeaders() });
     if (!res.ok) {
-      return MOCK_ACOUSTIC_EVENTS.find((a) => a.id === id || a.eventId === id) || MOCK_ACOUSTIC_EVENTS[0];
+      return null;
     }
     return normalizeAcoustic(await res.json());
   } catch {
-    return MOCK_ACOUSTIC_EVENTS.find((a) => a.id === id || a.eventId === id) || MOCK_ACOUSTIC_EVENTS[0];
+    return null;
   }
 }
 
 export async function fetchLedger(): Promise<LedgerRecord[]> {
   try {
     const res = await fetch(`${API_BASE_URL}/api/forest/ledger`, { cache: "no-store", headers: authHeaders() });
-    if (!res.ok) return MOCK_LEDGER_RECORDS;
+    if (!res.ok) return [];
     return (await res.json()).map(normalizeLedger);
   } catch {
-    return MOCK_LEDGER_RECORDS;
+    return [];
   }
 }
 
 export async function fetchGateways(): Promise<GatewayStatus[]> {
   try {
     const res = await fetch(`${API_BASE_URL}/api/forest/gateways`, { cache: "no-store", headers: authHeaders() });
-    if (!res.ok) return [MOCK_GATEWAY];
+    if (!res.ok) return [];
     return (await res.json()).map(normalizeGateway);
   } catch {
-    return [MOCK_GATEWAY];
+    return [];
   }
 }
 
 export async function fetchNodes(): Promise<FieldNode[]> {
   try {
     const res = await fetch(`${API_BASE_URL}/api/forest/nodes`, { cache: "no-store", headers: authHeaders() });
-    if (!res.ok) return MOCK_NODES;
+    if (!res.ok) return [];
     return (await res.json()).map(normalizeNode);
   } catch {
-    return MOCK_NODES;
+    return [];
   }
 }
 
 export async function fetchSyncHistory(): Promise<SyncLog[]> {
   try {
     const res = await fetch(`${API_BASE_URL}/api/forest/sync-history`, { cache: "no-store", headers: authHeaders() });
-    if (!res.ok) return MOCK_SYNC_LOGS;
+    if (!res.ok) return [];
     return (await res.json()).map(normalizeSyncLog);
   } catch {
-    return MOCK_SYNC_LOGS;
+    return [];
   }
 }
 
 export async function fetchForestSystemStatus(): Promise<ForestSystemStatus> {
   try {
     const res = await fetch(`${API_BASE_URL}/api/forest/system-status`, { cache: "no-store", headers: authHeaders() });
-    if (!res.ok) return MOCK_SYSTEM_STATUS;
+    if (!res.ok) return { gateway: null, nodes: [], database: "UNKNOWN", lastUpdated: null, isDemo: false } as unknown as ForestSystemStatus;
     return await res.json();
   } catch {
-    return MOCK_SYSTEM_STATUS;
+    return { gateway: null, nodes: [], database: "UNKNOWN", lastUpdated: null, isDemo: false } as unknown as ForestSystemStatus;
   }
 }
 

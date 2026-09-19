@@ -154,11 +154,11 @@ defines `FOREST_PRODUCTION_BACKEND=1`; it does not change the development defaul
 ## Build
 
 ```bash
-# Build development configuration (default)
+# Build production configuration (default on the Windows gateway)
 pio run
 
 # Build production backend configuration explicitly
-pio run -e production
+pio run -e production-windows
 
 # Build for Windows environment
 pio run -e windows

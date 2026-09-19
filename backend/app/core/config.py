@@ -69,7 +69,9 @@ def get_cors_origins() -> list[str]:
         return [origin.strip() for origin in configured.split(",") if origin.strip()]
     if get_environment() == "development":
         return ["http://localhost:3000", "http://127.0.0.1:3000"]
-    return []
+    # The deployed dashboard and API share the production Vercel origin.
+    # Operators can override this with FOREST_CORS_ORIGINS for a custom domain.
+    return ["https://secure-forest-patrol-4cxw.vercel.app"]
 
 
 class MqttConfig:

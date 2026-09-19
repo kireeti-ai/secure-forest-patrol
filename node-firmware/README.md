@@ -128,6 +128,21 @@ All configuration is defined in [`Config.h`](include/Config.h) as an immutable `
 
 ## Build
 
+### RC522 wiring used by the RFID node firmware
+
+| RC522 pin | ESP32-S3 GPIO |
+|---|---:|
+| SCK | 35 |
+| MISO | 37 |
+| MOSI | 36 |
+| SS / SDA | 4 |
+| RST | 5 |
+
+The RC522 and SX1278 use separate SPI pin mappings. The RFID firmware switches
+the shared Arduino SPI object to the RC522 while reading a card and back to the
+SX1278 mapping (`SCK=12`, `MISO=13`, `MOSI=11`, `CS=10`) immediately before
+transmitting the RFID packet. Keep both modules powered at 3.3 V and share GND.
+
 ```bash
 # Build (default environment: esp32-s3-devkitm-1)
 pio run

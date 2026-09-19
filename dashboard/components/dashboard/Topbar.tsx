@@ -20,6 +20,8 @@ const routeTitles: Record<string, string> = {
   "/dashboard/nodes": "Field Node Monitoring",
   "/dashboard/sync-history": "Offline DTN Synchronization History",
   "/dashboard/system-status": "System Architecture Status",
+  "/dashboard/rfid-events": "Live RFID Attendance Events",
+  "/dashboard/my-attendance": "My RFID Attendance",
 };
 
 export function Topbar({ sidebarOpen, onMenuClick }: TopbarProps) {

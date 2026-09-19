@@ -21,6 +21,7 @@ from app.schemas.forest_ingest import (
     RfidScanIngest,
 )
 from app.services.forest_acoustic import ingest_acoustic_event
+from app.services.rfid import ingest_rfid_scan as persist_rfid_scan
 from app.services.forest_gateway_svc import report_gateway_status
 from app.services.forest_patrol import UnknownNodeError, ingest_patrol_event
 from app.services.ws_manager import broadcast_acoustic_outcome, broadcast_gateway_status, broadcast_patrol_outcome, broadcast_rfid_scan
@@ -72,8 +73,9 @@ def gateway_status(payload: GatewayStatusReport,
     broadcast_gateway_status(result["gateway_id"])
     return result
 
-@router.post("/rfid-scan", response_model=IngestResult)
-def ingest_rfid_scan(payload: RfidScanIngest):
+@router.post("/rfid-scan", status_code=202)
+def ingest_rfid_scan(payload: RfidScanIngest, db: Session = Depends(get_db)) -> JSONResponse:
     """Accept an RFID scan from a Gateway."""
-    broadcast_rfid_scan(payload.dict())
-    return JSONResponse(status_code=202, content={"outcome": "ACCEPTED"})
+    body, duplicate = persist_rfid_scan(db, payload)
+    broadcast_rfid_scan(body)
+    return JSONResponse(status_code=200 if duplicate else 202, content=body)

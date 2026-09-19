@@ -1,218 +1,186 @@
 #include <Arduino.h>
-#include <Wire.h>
-#include "App.h"
+#include <SPI.h>
+#include <MFRC522.h>
+#include <LoRa.h>
+
 #include "Config.h"
-#include "Esp32Clock.h"
-#include "Esp32Delay.h"
-#include "Esp32SerialConsole.h"
-#include "Esp32SpiBus.h"
-#include "Esp32I2cBus.h"
-#include "EventBus.h"
-#include "LoRaDriver.h"
-#include "Logger.h"
-#include "NodeManager.h"
+#include "Packet.h"
+#include "Serializer.h"
 #include "PacketFactory.h"
-#include "PacketQueue.h"
-#include "AckManager.h"
-#include "ReliableLinkService.h"
-#include "DtnStoreForwardService.h"
-#include "Ds3231.h"
-#include "RfidReader.h"
+#include "NodeManager.h"
 
-namespace
-{
-    struct FirmwareComposition
-    {
-        forest::hal::Esp32SerialConsole console;
-        forest::utils::Logger logger{console};
-        forest::hal::Esp32Clock clock;
-        forest::hal::Esp32Delay delay;
-        forest::hal::Esp32SpiBus spiBus;
-        forest::hal::Esp32I2cBus i2cBus;
-        forest::sensors::Ds3231 rtc{i2cBus};
-        forest::sensors::RfidReader rfid;
-        forest::node::NodeManager node{forest::config::kDefaultFirmwareConfig.node, forest::node::DeviceRole::CheckpointNode};
-        forest::lora::LoRaDriver radio{forest::config::kDefaultFirmwareConfig.radio, spiBus};
-        forest::protocol::PacketFactory packetFactory{node, forest::config::kDefaultFirmwareConfig.network};
-        forest::queue::PacketQueue packetQueue;
-        forest::event::EventBus eventBus;
-        forest::reliable::AckManager ackManager{forest::config::kDefaultFirmwareConfig.reliability, node, packetFactory, packetQueue, clock};
-        forest::services::ReliableLinkService reliableLinkService{ackManager};
-        forest::services::DtnStoreForwardService dtnService{clock, eventBus};
-        
-        forest::App app{radio, node, packetQueue, eventBus, reliableLinkService, dtnService, logger, packetFactory, console};
-    };
-    FirmwareComposition &firmware() { static FirmwareComposition composition; return composition; }
+// RC522 wiring. These can be overridden with PlatformIO build flags when a
+// different node board is used.
+#ifndef FOREST_RFID_SCK_PIN
+#define FOREST_RFID_SCK_PIN 35
+#endif
+#ifndef FOREST_RFID_MISO_PIN
+#define FOREST_RFID_MISO_PIN 37
+#endif
+#ifndef FOREST_RFID_MOSI_PIN
+#define FOREST_RFID_MOSI_PIN 36
+#endif
+#ifndef FOREST_RFID_SS_PIN
+#define FOREST_RFID_SS_PIN 4
+#endif
+#ifndef FOREST_RFID_RST_PIN
+#define FOREST_RFID_RST_PIN 5
+#endif
 
-    uint32_t lastPingMs = 0;
-    bool ds3231Found = false;
-    uint32_t lastRfidReadMs = 0;
-    std::array<std::uint8_t, 10> lastRfidUid{};
-    std::size_t lastRfidUidSize = 0U;
+#define SCK_PIN   FOREST_RFID_SCK_PIN
+#define MISO_PIN  FOREST_RFID_MISO_PIN
+#define MOSI_PIN  FOREST_RFID_MOSI_PIN
+#define SS_PIN    FOREST_RFID_SS_PIN
+#define RST_PIN   FOREST_RFID_RST_PIN
+
+#define LORA_CS   10
+#define LORA_RST  9
+#define LORA_DIO0 14
+
+MFRC522 rfid(SS_PIN, RST_PIN);
+forest::node::NodeManager nodeManager(forest::config::kDefaultFirmwareConfig.node, forest::node::DeviceRole::CheckpointNode);
+forest::protocol::PacketFactory packetFactory(nodeManager, forest::config::kDefaultFirmwareConfig.network);
+
+// The RC522 and SX1278 use different SPI pins on this board.  Both drivers
+// use Arduino's SPI object, so select the device's pin mapping before using
+// it. Their chip-select lines remain high while the other device is active.
+void selectRfidSpi() {
+  digitalWrite(LORA_CS, HIGH);
+  SPI.end();
+  SPI.begin(SCK_PIN, MISO_PIN, MOSI_PIN, SS_PIN);
 }
 
-void setup()
-{
-    Serial.begin(115200);
-    delay(1000);
-
-    Serial.println("\n==========================================");
-    Serial.println("  SECURE FOREST PATROL - NODE FIRMWARE   ");
-    Serial.println("==========================================");
-    Serial.flush();
-
-    bool radioOk = firmware().app.begin();
-    if (radioOk) {
-        Serial.println("SX1278: SUCCESS");
-    } else {
-        Serial.println("[ERROR] SX1278 initialization failed");
-    }
-    Serial.flush();
-
-    // Initialize RTC bus
-    firmware().rtc.begin(8, 7); // User specified SDA=8, SCL=7
-    const auto &sensorConfig = forest::config::kDefaultFirmwareConfig.sensors;
-    const bool rfidOk = firmware().rfid.begin(
-        forest::config::kDefaultFirmwareConfig.radio.sckPin,
-        forest::config::kDefaultFirmwareConfig.radio.misoPin,
-        forest::config::kDefaultFirmwareConfig.radio.mosiPin,
-        sensorConfig.rfidSsPin,
-        sensorConfig.rfidResetPin);
-    if (rfidOk) {
-        Serial.println("RC522 Firmware Version: 0x82");
-        Serial.println("RC522: SUCCESS");
-    } else {
-        Serial.println("[ERROR] RC522 initialization failed");
-    }
-
-    Serial.println("\n--- [I2C BUS SCANNER (SDA: 8, SCL: 7)] ---");
-    uint8_t count = 0;
-    for (uint8_t addr = 1; addr < 127; ++addr) {
-        Wire.beginTransmission(addr);
-        if (Wire.endTransmission() == 0) {
-            Serial.printf("Found I2C device at 0x%02X\n", addr);
-            count++;
-            if (addr == 0x68) ds3231Found = true;
-        }
-    }
-    // Probe DS3231 directly
-    forest::sensors::RtcSample probeSample;
-    if (firmware().rtc.read(probeSample) && probeSample.timeValid) {
-        ds3231Found = true;
-        Serial.printf("[RTC OK] DS3231 Hardware Time: %04u-%02u-%02u %02u:%02u:%02u\n",
-                      probeSample.year, probeSample.month, probeSample.day,
-                      probeSample.hour, probeSample.minute, probeSample.second);
-    } else {
-        Serial.println("[RTC INFO] DS3231 Hardware Not Valid or Unset. Using Fallback Software Clock.");
-    }
-    Serial.println("-------------------------------------------\n");
-    Serial.flush();
-    
-    // Setup a dummy forest event for testing connection
-    lastPingMs = firmware().clock.millis();
+void selectLoRaSpi() {
+  digitalWrite(SS_PIN, HIGH);
+  SPI.end();
+  SPI.begin(12, 13, 11, LORA_CS);
+  LoRa.setSPI(SPI);
 }
 
-static uint32_t lastHeartbeatMs = 0;
+void setup() {
+  Serial.begin(115200);
+  delay(1000);
 
-void loop()
-{
-    uint32_t currentMs = firmware().clock.millis();
+  Serial.println();
+  Serial.println("==========================================");
+  Serial.println("  SIMPLE RFID -> LORA NODE SENSOR FIRMWARE");
+  Serial.println("==========================================");
+  Serial.printf("[PIN] RC522 SCK=%d MISO=%d MOSI=%d SS=%d RST=%d\n",
+                SCK_PIN, MISO_PIN, MOSI_PIN, SS_PIN, RST_PIN);
+  Serial.printf("[PIN] LoRa  SCK=%d MISO=%d MOSI=%d CS=%d RST=%d DIO0=%d\n",
+                12, 13, 11, LORA_CS, LORA_RST, LORA_DIO0);
 
-    if (currentMs - lastRfidReadMs >= 250U) {
-        lastRfidReadMs = currentMs;
-        std::array<std::uint8_t, 10> uid{};
-        std::size_t uidSize = 0U;
-        if (firmware().rfid.readUid(uid, uidSize) &&
-            (uidSize != lastRfidUidSize || uid != lastRfidUid)) {
-            std::array<std::uint8_t, forest::constants::kMaxPayloadSize> payload{};
-            payload[0] = 0x52U;
-            payload[1] = 0x01U;
-            payload[2] = static_cast<std::uint8_t>(uidSize);
-            for (std::size_t index = 0U; index < uidSize; ++index) {
-                payload[3U + index] = uid[index];
-            }
-            forest::protocol::Packet rfidPacket;
-            const bool packetCreated = firmware().packetFactory.createData(
-                0xFEU, payload.data(), 3U + uidSize, rfidPacket);
-            const bool packetQueued = packetCreated && firmware().packetQueue.enqueue(rfidPacket);
-            if (packetQueued) {
-                lastRfidUid = uid;
-                lastRfidUidSize = uidSize;
-                Serial.println("==============================");
-                Serial.println("RFID CARD DETECTED");
-                Serial.println("==============================");
-                Serial.print("UID: ");
-                for (std::size_t i = 0; i < uidSize; ++i) {
-                    Serial.printf("%02X%s", uid[i], (i == uidSize - 1) ? "" : ":");
-                }
-                Serial.println("\n");
-                Serial.println("LoRa Packet:");
-                Serial.printf("RFID_SCAN|NODE_%02X|", forest::config::kDefaultFirmwareConfig.node.nodeId);
-                for (std::size_t i = 0; i < uidSize; ++i) {
-                    Serial.printf("%02X%s", uid[i], (i == uidSize - 1) ? "" : ":");
-                }
-                Serial.printf("|%u\n\n", rfidPacket.sequenceNumber);
-                Serial.println("Sending packet...");
-                Serial.println("TX SUCCESS");
-            } else {
-                Serial.println("[ERROR] RFID read failed");
-            }
-        }
-    }
+  pinMode(SS_PIN, OUTPUT);
+  digitalWrite(SS_PIN, HIGH);
+  pinMode(LORA_CS, OUTPUT);
+  digitalWrite(LORA_CS, HIGH);
 
-    firmware().app.update();
+  // Initialize RC522
+  selectRfidSpi();
+  rfid.PCD_Init();
+  delay(100);
+  rfid.PCD_SetAntennaGain(MFRC522::RxGain_max);
+  Serial.print("RC522 Firmware: 0x");
+  Serial.println(rfid.PCD_ReadRegister(MFRC522::VersionReg), HEX);
+  Serial.println("RC522 READY");
 
-    if (currentMs - lastHeartbeatMs > 5000) {
-        lastHeartbeatMs = currentMs;
-        Serial.printf("[NODE HEARTBEAT] Uptime: %lu ms | LoRa Radio: %s | DTN Queue Size: %zu\n",
-                      static_cast<unsigned long>(currentMs),
-                      firmware().radio.isInitialized() ? "OK" : "RADIO_DISCONNECTED",
-                      firmware().dtnService.size());
-        Serial.flush();
-    }
+  // Initialize LoRa
+  selectLoRaSpi();
+  LoRa.setPins(LORA_CS, LORA_RST, LORA_DIO0);
+  if (LoRa.begin(433000000)) {
+    LoRa.setSpreadingFactor(7);
+    LoRa.setSignalBandwidth(125000L);
+    LoRa.setCodingRate4(5);
+    LoRa.setSyncWord(0x12);
+    LoRa.enableCrc();
+    Serial.println("SX1278 LoRa: READY");
+    Serial.println("[LORA] Frequency=433000000 SF=7 BW=125000 CR=4/5 Sync=0x12 CRC=ON");
+  } else {
+    Serial.println("SX1278 LoRa: FAILED");
+    Serial.println("[LORA DIAG] Check SX1278 3.3V, GND, antenna, and pins 12/13/11/10/9/14");
+  }
 
-    if (currentMs - lastPingMs > 10000) {
-        lastPingMs = currentMs;
-        
-        forest::sensors::RtcSample rtcSample;
-        bool rtcOk = false;
-        if (ds3231Found) {
-            rtcOk = firmware().rtc.read(rtcSample);
-        }
-        
-        forest::protocol::Packet testPacket;
-        // Payload: [Year-2000, Month, Day, Hour, Minute, Second, Temp_H, Temp_L, DummyByte]
-        uint8_t testPayload[9] = {0};
-        if (rtcOk && rtcSample.timeValid) {
-            testPayload[0] = static_cast<uint8_t>(rtcSample.year >= 2000 ? rtcSample.year - 2000 : 0);
-            testPayload[1] = rtcSample.month;
-            testPayload[2] = rtcSample.day;
-            testPayload[3] = rtcSample.hour;
-            testPayload[4] = rtcSample.minute;
-            testPayload[5] = rtcSample.second;
-            testPayload[6] = static_cast<uint8_t>((rtcSample.temperatureCentiC >> 8) & 0xFF);
-            testPayload[7] = static_cast<uint8_t>(rtcSample.temperatureCentiC & 0xFF);
-        } else {
-            // Fallback timestamp if RTC not responding: 2026-09-17 12:00:00
-            testPayload[0] = 26; // 2026
-            testPayload[1] = 9;  // Sept
-            testPayload[2] = 17; // 17th
-            testPayload[3] = 12; // 12:00:00
-            testPayload[4] = 0;
-            testPayload[5] = 0;
-            constexpr std::int16_t fallbackTemperatureCentiC = 2500; // 25.00 C
-            testPayload[6] = static_cast<std::uint8_t>((fallbackTemperatureCentiC >> 8) & 0xFF);
-            testPayload[7] = static_cast<std::uint8_t>(fallbackTemperatureCentiC & 0xFF);
-        }
-        testPayload[8] = 0xAA; // dummy byte
-        
-        // 0xFE is the Gateway's ID in this architecture
-        if (firmware().packetFactory.createData(0xFEU, testPayload, sizeof(testPayload), testPacket)) {
-            firmware().packetQueue.enqueue(testPacket);
-            Serial.printf("[NODE TX] Packet #%u enqueued directly to LoRa TX Queue (0xFE). RTC: %s\n", 
-                          testPacket.sequenceNumber,
-                          rtcOk ? "Hardware DS3231" : "Fallback Software Clock");
-            Serial.flush();
-        }
-    }
+  Serial.println("\nPlace RFID card on reader...");
+}
+
+void loop() {
+  selectRfidSpi();
+
+  // Wait for new card
+  if (!rfid.PICC_IsNewCardPresent()) {
+    delay(50);
+    return;
+  }
+  if (!rfid.PICC_ReadCardSerial()) {
+    Serial.println("Card detected but UID read failed");
+    delay(500);
+    return;
+  }
+
+  Serial.println();
+  Serial.println(">>> CARD DETECTED <<<");
+  Serial.print("UID: ");
+  for (byte i = 0; i < rfid.uid.size; i++) {
+    if (rfid.uid.uidByte[i] < 0x10) Serial.print("0");
+    Serial.print(rfid.uid.uidByte[i], HEX);
+    if (i < rfid.uid.size - 1) Serial.print(":");
+  }
+  Serial.println();
+
+  // Create the payload bytes
+  std::array<std::uint8_t, forest::constants::kMaxPayloadSize> payload{};
+  payload[0] = 0x52U; // 'R'
+  payload[1] = 0x01U; // Version
+  payload[2] = rfid.uid.size;
+  for (std::size_t i = 0; i < rfid.uid.size; ++i) {
+      payload[3 + i] = rfid.uid.uidByte[i];
+  }
+
+  // These commands still target the RC522, so finish them before changing
+  // the SPI pin mapping for the LoRa transmitter.
+  rfid.PICC_HaltA();
+  rfid.PCD_StopCrypto1();
+
+  // Format packet with CRC for the Gateway
+  forest::protocol::Packet rfidPacket;
+  if (packetFactory.createData(0xFEU, payload.data(), 3 + rfid.uid.size, rfidPacket)) {
+      std::array<std::uint8_t, 58> buffer{};
+      std::size_t encodedSize = 0;
+
+      // Serialize to binary
+      if (forest::protocol::Serializer::serialize(rfidPacket, buffer, encodedSize)) {
+          Serial.printf("[NODE TX] DATA source=0x%02X destination=0x%02X sequence=%u bytes=%u payload=%u\n",
+                        rfidPacket.sourceId, rfidPacket.destinationId,
+                        rfidPacket.sequenceNumber, static_cast<unsigned>(encodedSize),
+                        static_cast<unsigned>(rfidPacket.payloadSize));
+          Serial.print("[NODE TX] HEX: ");
+          for (std::size_t i = 0; i < encodedSize; ++i) {
+              Serial.printf("%02X%s", buffer[i], (i + 1U == encodedSize) ? "" : " ");
+          }
+          Serial.println();
+
+          // Send over LoRa
+          selectLoRaSpi();
+          LoRa.idle();
+          LoRa.beginPacket();
+          LoRa.write(buffer.data(), encodedSize);
+          if (LoRa.endPacket() == 1) {
+              Serial.println("[NODE TX] LoRa endPacket=SUCCESS (radio completed transmission)");
+          } else {
+              Serial.println("[NODE TX] LoRa endPacket=FAILED");
+          }
+          LoRa.receive();
+      }
+      else {
+          Serial.println("[NODE TX] Packet serialization FAILED");
+      }
+  }
+  else {
+      Serial.println("[NODE TX] RFID packet creation FAILED");
+  }
+
+  // Return to the RC522 mapping so it is ready for the next card scan.
+  selectRfidSpi();
+
+  delay(1000); // Wait 1 second before allowing next scan
 }
