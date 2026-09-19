@@ -14,10 +14,10 @@ namespace forest::config
 #define FOREST_TEST_MODE 0
 #endif
 #ifndef FOREST_RFID_SS_PIN
-#define FOREST_RFID_SS_PIN 15
+#define FOREST_RFID_SS_PIN 4
 #endif
 #ifndef FOREST_RFID_RST_PIN
-#define FOREST_RFID_RST_PIN 16
+#define FOREST_RFID_RST_PIN 5
 #endif
 
     struct RadioConfig

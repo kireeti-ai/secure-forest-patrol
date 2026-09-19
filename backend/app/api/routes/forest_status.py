@@ -11,6 +11,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.api.dependencies.database import get_db
+from app.core.security import require_roles
 from app.models.acoustic_event import AcousticEvent
 from app.models.checkpoint import Checkpoint
 from app.models.enums import (
@@ -30,7 +31,7 @@ router = APIRouter(prefix="/api/forest", tags=["forest"])
 
 
 @router.get("/system-status")
-def forest_system_status(db: Session = Depends(get_db)) -> dict:
+def forest_system_status(db: Session = Depends(get_db), _: object = Depends(require_roles("ADMIN", "OPERATOR"))) -> dict:
     try:
         db.execute(select(1))
         db_ok = True

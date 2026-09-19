@@ -1,12 +1,25 @@
 #include "BackendIngestionClient.h"
 
 #include <ArduinoJson.h>
+#include <cstring>
 
 namespace forest::backend {
 
 namespace {
 constexpr const char* kTopicNodeStatus = "forest/events/node-status";
 constexpr int kProtocolVersion = 4;  // matches forest::protocol wire format
+
+const char* wifiStatusName(wl_status_t status) {
+    switch (status) {
+        case WL_CONNECTED: return "CONNECTED";
+        case WL_NO_SSID_AVAIL: return "NO_SSID_AVAILABLE";
+        case WL_CONNECT_FAILED: return "CONNECT_FAILED";
+        case WL_CONNECTION_LOST: return "CONNECTION_LOST";
+        case WL_DISCONNECTED: return "DISCONNECTED";
+        case WL_IDLE_STATUS: return "IDLE";
+        default: return "UNKNOWN";
+    }
+}
 }  // namespace
 
 BackendIngestionClient::BackendIngestionClient(const BackendConfig& config)
@@ -30,9 +43,13 @@ BackendIngestionClient::BackendIngestionClient(const BackendConfig& config)
 
 void BackendIngestionClient::begin() {
     WiFi.mode(WIFI_STA);
+    WiFi.setAutoReconnect(true);
+    WiFi.persistent(false);
     WiFi.begin(config_.wifiSsid, config_.wifiPassword);
     wifiState_ = LinkState::Connecting;
-    logLine("[WIFI] CONNECTING");
+    Serial.printf("[WIFI] CONNECTING | SSID=%s | status=%s(%d)\n",
+                  config_.wifiSsid != nullptr ? config_.wifiSsid : "<unset>",
+                  wifiStatusName(WiFi.status()), static_cast<int>(WiFi.status()));
 }
 
 void BackendIngestionClient::logLine(const char* line) {
@@ -44,8 +61,12 @@ void BackendIngestionClient::logLine(const char* line) {
 void BackendIngestionClient::tick(std::uint32_t currentMs) {
     tickWifi(currentMs);
     tickMqtt(currentMs);
-    if (wifiState_ == LinkState::Connected && mqttState_ == LinkState::Connected) {
-        mqttClient_.loop();
+    if (wifiState_ == LinkState::Connected) {
+        if (mqttState_ == LinkState::Connected) {
+            mqttClient_.loop();
+        }
+        // RFID scans have a dedicated HTTP ingestion contract.  Do not make
+        // attendance delivery depend on an unrelated MQTT broker connection.
         drainOutbox();
     }
 }
@@ -54,16 +75,27 @@ void BackendIngestionClient::tickWifi(std::uint32_t currentMs) {
     const bool up = WiFi.status() == WL_CONNECTED;
     if (up && wifiState_ != LinkState::Connected) {
         wifiState_ = LinkState::Connected;
-        logLine("[WIFI] CONNECTED");
+        Serial.printf("[WIFI] CONNECTED | SSID=%s IP=%s GW=%s DNS=%s RSSI=%d dBm MAC=%s\n",
+                      WiFi.SSID().c_str(), WiFi.localIP().toString().c_str(),
+                      WiFi.gatewayIP().toString().c_str(),
+                      WiFi.dnsIP().toString().c_str(),
+                      WiFi.RSSI(),
+                      WiFi.macAddress().c_str());
+        Serial.flush();
     } else if (!up && wifiState_ == LinkState::Connected) {
         wifiState_ = LinkState::Disconnected;
-        logLine("[WIFI] DISCONNECTED");
+        Serial.printf("[WIFI] DISCONNECTED | status=%s(%d)\n",
+                      wifiStatusName(WiFi.status()), static_cast<int>(WiFi.status()));
+        Serial.flush();
     }
     if (!up && (currentMs - lastWifiAttemptMs_) >= kReconnectIntervalMs) {
         lastWifiAttemptMs_ = currentMs;
+        Serial.printf("[WIFI] DISCONNECTED | status=%s(%d)\n",
+                      wifiStatusName(WiFi.status()), static_cast<int>(WiFi.status()));
         wifiState_ = LinkState::Connecting;
         WiFi.disconnect();
         WiFi.begin(config_.wifiSsid, config_.wifiPassword);
+        Serial.printf("[WIFI] RECONNECTING | SSID=%s\n", config_.wifiSsid != nullptr ? config_.wifiSsid : "<unset>");
     }
 }
 
@@ -129,6 +161,13 @@ void BackendIngestionClient::drainOutbox() {
 }
 
 bool BackendIngestionClient::publishEnvelope(const ForestEventEnvelope& envelope) {
+    if (envelope.hasRfid) {
+        return publishRfidHttp(envelope);
+    }
+    // Non-RFID telemetry follows the existing MQTT transport and remains in
+    // the outbox until the broker reconnects.
+    if (mqttState_ != LinkState::Connected) return false;
+
     JsonDocument doc;
     char gatewayIdStr[8];
     snprintf(gatewayIdStr, sizeof(gatewayIdStr), "GW-%02X", config_.gatewayId);
@@ -149,16 +188,6 @@ bool BackendIngestionClient::publishEnvelope(const ForestEventEnvelope& envelope
         doc["event_created_at"] = rtcIso;
         doc["temperature_c"] = envelope.temperatureC;
     }
-    if (envelope.hasRfid) {
-        publishRfidHttp(envelope);
-        char uid[21]{};
-        for (std::size_t index = 0U; index < envelope.rfidUidLength; ++index) {
-            snprintf(uid + (index * 2U), sizeof(uid) - (index * 2U), "%02X", envelope.rfidUid[index]);
-        }
-        doc["sensor_type"] = "rfid";
-        doc["rfid_uid"] = uid;
-    }
-
     char buffer[256];
     const size_t len = serializeJson(doc, buffer, sizeof(buffer));
     Serial.printf("[MQTT PUBLISH] topic=%s node=%s seq=%u\n", kTopicNodeStatus, nodeIdStr,
@@ -179,7 +208,13 @@ bool BackendIngestionClient::publishRfidHttp(const ForestEventEnvelope& envelope
     HTTPClient http;
     char url[256];
     snprintf(url, sizeof(url), "%s/api/ingest/gateway/rfid-scan", config_.baseUrl);
-    http.begin(url);
+    const bool useTls = std::strncmp(config_.baseUrl, "https://", 8U) == 0;
+    if (useTls) {
+        secureClient_.setInsecure();
+        http.begin(secureClient_, url);
+    } else {
+        http.begin(url);
+    }
     http.addHeader("Content-Type", "application/json");
 
     JsonDocument doc;

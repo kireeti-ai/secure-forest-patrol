@@ -45,6 +45,10 @@ SPIClass loraSpi(FSPI);
 }  // namespace
 
 bool Sx1278LoRaDriver::begin() {
+    Serial.println("[LoRa] Configuring SX1278");
+    Serial.printf("[LoRa] Pins SCK=%d MISO=%d MOSI=%d CS=%d RST=%d DIO0=%d\n",
+                  loraSck, loraMiso, loraMosi, loraCs, loraReset, loraDio0);
+    Serial.println("[LoRa] Frequency=433000000 SF=7 BW=125000 CR=4/5 Sync=0x12 CRC=ON");
     pinMode(loraCs, OUTPUT);
     digitalWrite(loraCs, HIGH);
 
@@ -71,6 +75,8 @@ bool Sx1278LoRaDriver::begin() {
     // Polling mode: no onReceive callback, no SPI-in-ISR hazard.
     // parsePacket() is called every tick from the main loop.
     LoRa.receive();
+
+    Serial.println("[LoRa] RX listening");
 
     return true;
 }

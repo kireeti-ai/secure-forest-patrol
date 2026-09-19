@@ -12,6 +12,7 @@ from sqlalchemy.orm import Session
 
 from app.api.dependencies.database import get_db
 from app.api.routes.forest_nodes import checkpoint_out
+from app.core.security import require_roles
 from app.models.checkpoint import Checkpoint
 from app.models.officer import PatrolOfficer
 from app.models.patrol_event import PatrolEvent
@@ -70,7 +71,7 @@ def _off_out(o: PatrolOfficer, stats: _OfficerStats | None = None) -> OfficerRes
 @router.post("/checkpoints", response_model=CheckpointResponse,
              status_code=status.HTTP_201_CREATED)
 def create_checkpoint(payload: CheckpointCreate,
-                      db: Session = Depends(get_db)) -> CheckpointResponse:
+                      db: Session = Depends(get_db), _: object = Depends(require_roles("ADMIN"))) -> CheckpointResponse:
     if db.scalar(select(Checkpoint).where(Checkpoint.checkpoint_id == payload.checkpoint_id)):
         raise HTTPException(status_code=409, detail="Checkpoint already exists")
     row = Checkpoint(checkpoint_id=payload.checkpoint_id, name=payload.name,
@@ -89,7 +90,7 @@ def create_checkpoint(payload: CheckpointCreate,
 
 @router.get("/checkpoints/{checkpoint_id}", response_model=CheckpointResponse)
 def get_checkpoint(checkpoint_id: str,
-                   db: Session = Depends(get_db)) -> CheckpointResponse:
+                   db: Session = Depends(get_db), _: object = Depends(require_roles("ADMIN", "OPERATOR"))) -> CheckpointResponse:
     row = db.scalar(select(Checkpoint).where(Checkpoint.checkpoint_id == checkpoint_id))
     if not row:
         raise HTTPException(status_code=404, detail="Checkpoint not found")
@@ -98,7 +99,7 @@ def get_checkpoint(checkpoint_id: str,
 
 @router.patch("/checkpoints/{checkpoint_id}", response_model=CheckpointResponse)
 def update_checkpoint(checkpoint_id: str, payload: CheckpointUpdate,
-                      db: Session = Depends(get_db)) -> CheckpointResponse:
+                      db: Session = Depends(get_db), _: object = Depends(require_roles("ADMIN"))) -> CheckpointResponse:
     row = db.scalar(select(Checkpoint).where(Checkpoint.checkpoint_id == checkpoint_id))
     if not row:
         raise HTTPException(status_code=404, detail="Checkpoint not found")
@@ -111,7 +112,7 @@ def update_checkpoint(checkpoint_id: str, payload: CheckpointUpdate,
 
 
 @router.get("/officers", response_model=list[OfficerResponse])
-def list_officers(db: Session = Depends(get_db)) -> list[OfficerResponse]:
+def list_officers(db: Session = Depends(get_db), _: object = Depends(require_roles("ADMIN", "OPERATOR"))) -> list[OfficerResponse]:
     officers = list(db.scalars(select(PatrolOfficer).order_by(PatrolOfficer.officer_id)))
     stats = _officer_stats(db, [o.officer_id for o in officers])
     return [_off_out(o, stats.get(o.officer_id)) for o in officers]
@@ -120,7 +121,7 @@ def list_officers(db: Session = Depends(get_db)) -> list[OfficerResponse]:
 @router.post("/officers", response_model=OfficerResponse,
              status_code=status.HTTP_201_CREATED)
 def create_officer(payload: OfficerCreate,
-                   db: Session = Depends(get_db)) -> OfficerResponse:
+                   db: Session = Depends(get_db), _: object = Depends(require_roles("ADMIN"))) -> OfficerResponse:
     if db.scalar(select(PatrolOfficer).where(PatrolOfficer.officer_id == payload.officer_id)):
         raise HTTPException(status_code=409, detail="Officer already exists")
     row = PatrolOfficer(officer_id=payload.officer_id, name=payload.name,

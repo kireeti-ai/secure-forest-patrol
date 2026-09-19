@@ -25,6 +25,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.api.routes import (
+    auth,
     forest_acoustic_api,
     forest_checkpoints,
     forest_ingest,
@@ -33,8 +34,10 @@ from app.api.routes import (
     forest_patrol_api,
     forest_status,
     forest_ws,
+    rfid_attendance,
 )
 from app.core.config import get_cors_origins
+from app.core.security import seed_default_users
 from app.services.errors import ResourceConflictError, ResourceNotFoundError
 from app.services.mqtt_consumer import consumer as mqtt_consumer
 from app.services.ws_manager import manager as ws_manager
@@ -77,6 +80,13 @@ async def lifespan(_: FastAPI):
     ws_manager.bind_loop(loop)
     mqtt_consumer.start(loop)
     try:
+        try:
+            from app.api.dependencies.database import get_db
+            db = next(get_db())
+            seed_default_users(db)
+            db.close()
+        except Exception:
+            pass
         yield
     finally:
         mqtt_consumer.stop()
@@ -118,6 +128,10 @@ def health() -> dict:
     """Liveness probe. Reports process health only -- it makes no DB claims."""
     return {"status": "healthy"}
 
+
+# Auth and identity
+app.include_router(auth.router)
+app.include_router(rfid_attendance.router)
 
 # Ingestion (Gateway -> backend, HTTP fallback/management path)
 app.include_router(forest_ingest.router)

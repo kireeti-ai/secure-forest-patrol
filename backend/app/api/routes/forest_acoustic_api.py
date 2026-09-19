@@ -10,6 +10,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.api.dependencies.database import get_db
+from app.core.security import require_roles
 from app.models.acoustic_event import AcousticEvent
 from app.schemas.forest import AcousticResponse, AcousticReviewUpdate
 
@@ -33,7 +34,7 @@ def acoustic_out(e: AcousticEvent) -> AcousticResponse:
 @router.get("/acoustic-events", response_model=list[AcousticResponse])
 def list_acoustic(review_status: str | None = Query(default=None),
                   limit: int = Query(default=200, le=1000),
-                  db: Session = Depends(get_db)) -> list[AcousticResponse]:
+                  db: Session = Depends(get_db), _: object = Depends(require_roles("ADMIN", "OPERATOR"))) -> list[AcousticResponse]:
     stmt = select(AcousticEvent).order_by(
         AcousticEvent.event_created_at.desc()).limit(limit)
     if review_status:
@@ -42,7 +43,7 @@ def list_acoustic(review_status: str | None = Query(default=None),
 
 
 @router.get("/acoustic-events/{event_id}", response_model=AcousticResponse)
-def get_acoustic(event_id: str, db: Session = Depends(get_db)) -> AcousticResponse:
+def get_acoustic(event_id: str, db: Session = Depends(get_db), _: object = Depends(require_roles("ADMIN", "OPERATOR"))) -> AcousticResponse:
     row = db.scalar(select(AcousticEvent).where(AcousticEvent.event_id == event_id))
     if not row:
         raise HTTPException(status_code=404, detail="Acoustic event not found")
@@ -51,7 +52,7 @@ def get_acoustic(event_id: str, db: Session = Depends(get_db)) -> AcousticRespon
 
 @router.post("/acoustic-events/{event_id}/review", response_model=AcousticResponse)
 def review_acoustic(event_id: str, payload: AcousticReviewUpdate,
-                    db: Session = Depends(get_db)) -> AcousticResponse:
+                    db: Session = Depends(get_db), _: object = Depends(require_roles("ADMIN"))) -> AcousticResponse:
     """Move an ML detection through the human review workflow.
 
     ``review_status`` is the operational truth; the ML ``classification`` on

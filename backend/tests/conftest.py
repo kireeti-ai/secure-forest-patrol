@@ -15,8 +15,9 @@ from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from app.api.dependencies.database import get_db
+from app.core.security import hash_password
 from app.main import app
-from app.models import Base, Checkpoint, ForestNode, Gateway, PatrolOfficer
+from app.models import Base, Checkpoint, ForestNode, Gateway, PatrolOfficer, User
 
 
 @pytest.fixture()
@@ -54,6 +55,8 @@ def client(db_session: Session):
 
 @pytest.fixture()
 def seeded_data(db_session: Session):
+    admin = User(email="admin@forest.local", full_name="Admin User", password_hash=hash_password("ForestAdmin123!"), role="ADMIN")
+    operator = User(email="operator@forest.local", full_name="Operator User", password_hash=hash_password("ForestOperator123!"), role="OPERATOR")
     db_session.add_all([
         ForestNode(node_id="FN-001", checkpoint_id="CP-001"),
         ForestNode(node_id="FN-002", checkpoint_id="CP-002"),
@@ -61,6 +64,8 @@ def seeded_data(db_session: Session):
         Checkpoint(checkpoint_id="CP-002", name="River Crossing", zone_id="ZONE-B"),
         PatrolOfficer(officer_id="OFF-001", name="Test Officer"),
         Gateway(gateway_id="GW-01", name="Test Gateway"),
+        admin,
+        operator,
     ])
     db_session.commit()
-    return {"nodes": ["FN-001", "FN-002"], "checkpoints": ["CP-001", "CP-002"]}
+    return {"nodes": ["FN-001", "FN-002"], "checkpoints": ["CP-001", "CP-002"], "admin": admin, "operator": operator}

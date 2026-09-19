@@ -21,11 +21,15 @@
 #endif
 
 #ifndef FOREST_PRODUCTION_BACKEND
-#define FOREST_PRODUCTION_BACKEND 1
+#define FOREST_PRODUCTION_BACKEND 0
 #endif
 
 #ifndef FOREST_MQTT_BROKER_HOST
+#if FOREST_PRODUCTION_BACKEND
+#define FOREST_MQTT_BROKER_HOST "a3119662.ala.asia-southeast1.emqxsl.com"
+#else
 #define FOREST_MQTT_BROKER_HOST "10.38.112.147"
+#endif
 #endif
 
 #ifndef FOREST_MQTT_BROKER_PORT
@@ -52,7 +56,7 @@ struct BackendBuildConfig {
     // Development remains the default; production is selected explicitly at build time.
     static constexpr const char* wifiSsid = FOREST_WIFI_SSID;
     static constexpr const char* wifiPassword = FOREST_WIFI_PASSWORD;
-    static constexpr const char* developmentBaseUrl = "http://10.38.112.147:8000";
+    static constexpr const char* developmentBaseUrl = "http://172.20.10.3:8000";
     static constexpr const char* productionBaseUrl = "https://secure-forest-patrol-4cxw.vercel.app";
     static constexpr const char* baseUrl =
         FOREST_PRODUCTION_BACKEND ? productionBaseUrl : developmentBaseUrl;

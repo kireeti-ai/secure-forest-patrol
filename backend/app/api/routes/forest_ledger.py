@@ -11,6 +11,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.api.dependencies.database import get_db
+from app.core.security import require_roles
 from app.models.acoustic_event import AcousticEvent
 from app.models.forest_gateway import Gateway
 from app.models.patrol_event import PatrolEvent
@@ -36,7 +37,7 @@ def gateway_out(g: Gateway) -> GatewayResponse:
 @router.get("/ledger", response_model=list[LedgerResponse])
 def list_ledger(node_id: str | None = Query(default=None),
                 limit: int = Query(default=500, le=2000),
-                db: Session = Depends(get_db)) -> list[LedgerResponse]:
+                db: Session = Depends(get_db), _: object = Depends(require_roles("ADMIN", "OPERATOR"))) -> list[LedgerResponse]:
     """Per-node hash-chain view across both event kinds (chain order preserved)."""
     out: list[LedgerResponse] = []
     p_stmt = select(PatrolEvent).order_by(PatrolEvent.node_id, PatrolEvent.sequence).limit(limit)
@@ -63,12 +64,12 @@ def list_ledger(node_id: str | None = Query(default=None),
 
 
 @router.get("/gateways", response_model=list[GatewayResponse])
-def list_gateways(db: Session = Depends(get_db)) -> list[GatewayResponse]:
+def list_gateways(db: Session = Depends(get_db), _: object = Depends(require_roles("ADMIN", "OPERATOR"))) -> list[GatewayResponse]:
     return [gateway_out(g) for g in db.scalars(select(Gateway).order_by(Gateway.gateway_id))]
 
 
 @router.get("/gateways/{gateway_id}", response_model=GatewayResponse)
-def get_gateway(gateway_id: str, db: Session = Depends(get_db)) -> GatewayResponse:
+def get_gateway(gateway_id: str, db: Session = Depends(get_db), _: object = Depends(require_roles("ADMIN", "OPERATOR"))) -> GatewayResponse:
     row = db.scalar(select(Gateway).where(Gateway.gateway_id == gateway_id))
     if not row:
         raise HTTPException(status_code=404, detail="Gateway not found")
@@ -80,7 +81,7 @@ _VERIFICATION_BY_SYNC_STATUS = {"VERIFIED": "PASSED", "FAILED": "FAILED"}
 
 @router.get("/sync-history", response_model=list[SyncRecordResponse])
 def list_sync(limit: int = Query(default=200, le=1000),
-              db: Session = Depends(get_db)) -> list[SyncRecordResponse]:
+              db: Session = Depends(get_db), _: object = Depends(require_roles("ADMIN", "OPERATOR"))) -> list[SyncRecordResponse]:
     rows = db.scalars(select(SyncRecord).order_by(SyncRecord.created_at.desc()).limit(limit))
     return [SyncRecordResponse(
         id=str(r.id), sync_id=r.sync_id, event_id=r.event_id, node_id=r.node_id,

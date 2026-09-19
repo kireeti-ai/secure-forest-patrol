@@ -16,6 +16,12 @@ void GatewayService::handleReceivedPacket(const lora::RawRadioPacket& packet, lo
     Serial.printf("Length: %u\n", static_cast<unsigned>(packet.length));
     Serial.printf("RSSI: %d\n", packet.rssiDbm);
     Serial.printf("SNR: %.1f\n", static_cast<double>(packet.snrDb));
+    Serial.print("Payload HEX: ");
+    for (std::size_t index = 0U; index < packet.length; ++index) {
+        Serial.printf("%02X%s", packet.bytes[index],
+                      (index + 1U == packet.length) ? "" : " ");
+    }
+    Serial.println();
     Serial.println("--------------------------------");
 
     if (debugMode_) {
