@@ -149,6 +149,15 @@ bool BackendIngestionClient::publishEnvelope(const ForestEventEnvelope& envelope
         doc["event_created_at"] = rtcIso;
         doc["temperature_c"] = envelope.temperatureC;
     }
+    if (envelope.hasRfid) {
+        publishRfidHttp(envelope);
+        char uid[21]{};
+        for (std::size_t index = 0U; index < envelope.rfidUidLength; ++index) {
+            snprintf(uid + (index * 2U), sizeof(uid) - (index * 2U), "%02X", envelope.rfidUid[index]);
+        }
+        doc["sensor_type"] = "rfid";
+        doc["rfid_uid"] = uid;
+    }
 
     char buffer[256];
     const size_t len = serializeJson(doc, buffer, sizeof(buffer));
@@ -162,6 +171,45 @@ bool BackendIngestionClient::publishEnvelope(const ForestEventEnvelope& envelope
 void BackendIngestionClient::dispatchMessages(lora::ILoRaDriver& /*radioDriver*/) {
     // Reserved for a future downlink (backend/broker -> node) acknowledgement
     // path. Nothing to do today: the outbox is drained from tick() above.
+}
+
+bool BackendIngestionClient::publishRfidHttp(const ForestEventEnvelope& envelope) {
+    if (wifiState_ != LinkState::Connected) return false;
+
+    HTTPClient http;
+    char url[256];
+    snprintf(url, sizeof(url), "%s/api/ingest/gateway/rfid-scan", config_.baseUrl);
+    http.begin(url);
+    http.addHeader("Content-Type", "application/json");
+
+    JsonDocument doc;
+    doc["type"] = "RFID_SCAN";
+    char nodeIdStr[16];
+    snprintf(nodeIdStr, sizeof(nodeIdStr), "NODE_%02X", envelope.sourceId);
+    doc["node_id"] = nodeIdStr;
+
+    char uid[32]{};
+    for (std::size_t index = 0U; index < envelope.rfidUidLength; ++index) {
+        snprintf(uid + (index * 3U), sizeof(uid) - (index * 3U), "%02X%s", envelope.rfidUid[index], (index == envelope.rfidUidLength - 1) ? "" : ":");
+    }
+    doc["uid"] = uid;
+    doc["seq"] = envelope.sequenceNumber;
+    doc["rssi"] = envelope.rssiDbm;
+    doc["snr"] = envelope.snrDb;
+
+    char payload[512];
+    serializeJson(doc, payload, sizeof(payload));
+
+    int httpCode = http.POST(reinterpret_cast<uint8_t*>(payload), strlen(payload));
+    if (httpCode > 0) {
+        Serial.println("Backend upload: SUCCESS");
+        Serial.printf("HTTP %d\n", httpCode);
+    } else {
+        Serial.println("[ERROR] Backend upload failed");
+        Serial.printf("HTTP Error: %s\n", http.errorToString(httpCode).c_str());
+    }
+    http.end();
+    return httpCode >= 200 && httpCode < 300;
 }
 
 }  // namespace forest::backend

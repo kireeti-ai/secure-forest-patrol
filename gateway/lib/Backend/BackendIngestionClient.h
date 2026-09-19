@@ -6,6 +6,7 @@
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
 #include <PubSubClient.h>
+#include <HTTPClient.h>
 
 #include "LoRaTypes.h"
 #include "Packet.h"
@@ -30,10 +31,6 @@ struct BackendConfig {
     const char* mqttPassword;
 };
 
-// A forest event as the gateway actually has it today: LoRa source/sequence
-// plus whatever the 9-byte RTC+temperature diagnostic payload decoded to.
-// No rfid/fingerprint/signature/hash fields are invented here -- the
-// firmware doesn't produce that data yet (see docs/MQTT.md).
 struct ForestEventEnvelope {
     std::uint8_t sourceId{0};
     std::uint16_t sequenceNumber{0};
@@ -48,6 +45,9 @@ struct ForestEventEnvelope {
     std::uint8_t rtcMinute{0};
     std::uint8_t rtcSecond{0};
     float temperatureC{0.0f};
+    bool hasRfid{false};
+    std::uint8_t rfidUid[10]{};
+    std::uint8_t rfidUidLength{0};
 };
 
 enum class LinkState { Disconnected, Connecting, Connected };
@@ -85,6 +85,7 @@ private:
     void tickMqtt(std::uint32_t currentMs);
     void drainOutbox();
     bool publishEnvelope(const ForestEventEnvelope& envelope);
+    bool publishRfidHttp(const ForestEventEnvelope& envelope);
     void logLine(const char* line);
 
     BackendConfig config_;

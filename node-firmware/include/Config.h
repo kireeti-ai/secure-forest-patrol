@@ -13,6 +13,12 @@ namespace forest::config
 #ifndef FOREST_TEST_MODE
 #define FOREST_TEST_MODE 0
 #endif
+#ifndef FOREST_RFID_SS_PIN
+#define FOREST_RFID_SS_PIN 15
+#endif
+#ifndef FOREST_RFID_RST_PIN
+#define FOREST_RFID_RST_PIN 16
+#endif
 
     struct RadioConfig
     {
@@ -48,6 +54,8 @@ namespace forest::config
     {
         int i2cSdaPin;
         int i2cSclPin;
+        int rfidSsPin;
+        int rfidResetPin;
     };
 
     struct ReliabilityConfig
@@ -99,7 +107,7 @@ namespace forest::config
         {static_cast<std::uint8_t>(FOREST_NODE_ID)},
         {0xA5U, 4U, 48U, 255U},
         {10000U, 15000U},
-        {21, 20},
+        {21, 20, FOREST_RFID_SS_PIN, FOREST_RFID_RST_PIN},
         {2500U, 3U},
         kDefaultNetworkConfig,
     };

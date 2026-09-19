@@ -29,6 +29,7 @@ const OVERVIEW_WS_EVENTS = [
   "NODE_STATUS_CHANGED",
   "GATEWAY_STATUS_CHANGED",
   "SYNC_UPDATED",
+  "RFID_SCAN_RECEIVED",
 ] as const;
 
 function Metric({
@@ -68,6 +69,7 @@ export function Overview() {
   const [gateways, setGateways] = useState<GatewayStatus[]>([]);
   const [nodes, setNodes] = useState<FieldNode[]>([]);
   const [loading, setLoading] = useState(true);
+  const [rfidScans, setRfidScans] = useState<any[]>([]);
 
   const loadDataRef = useRef<() => void>(() => {});
 
@@ -106,7 +108,13 @@ export function Overview() {
 
   useForestWebSocket(
     [...OVERVIEW_WS_EVENTS],
-    () => loadDataRef.current(),
+    (msg) => {
+      if (msg.type === "RFID_SCAN_RECEIVED") {
+        setRfidScans((prev) => [msg, ...prev].slice(0, 50));
+      } else {
+        loadDataRef.current();
+      }
+    },
     () => loadDataRef.current()
   );
 
@@ -366,6 +374,85 @@ export function Overview() {
             </div>
           </Card>
         </div>
+      </div>
+
+      {/* RFID SYSTEM */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "1.5rem", marginTop: "1.5rem" }}>
+        <Card>
+          <SectionHeader title="Latest RFID Scan" />
+          <div style={{ padding: "1rem" }}>
+            {rfidScans.length === 0 ? (
+              <div className="overview-empty-state">
+                <p className="overview-empty-title">Waiting for RFID scan...</p>
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px", fontSize: "0.9rem" }}>
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <span style={{ color: "#64748b" }}>RFID UID</span>
+                  <strong>{rfidScans[0].uid}</strong>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <span style={{ color: "#64748b" }}>Node</span>
+                  <strong>{rfidScans[0].node_id}</strong>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <span style={{ color: "#64748b" }}>Status</span>
+                  <StatusBadge label="RECEIVED" tone="healthy" />
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <span style={{ color: "#64748b" }}>RSSI</span>
+                  <strong>{rfidScans[0].rssi} dBm</strong>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <span style={{ color: "#64748b" }}>SNR</span>
+                  <strong>{rfidScans[0].snr} dB</strong>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <span style={{ color: "#64748b" }}>Time</span>
+                  <strong>{new Date(rfidScans[0].timestamp).toLocaleTimeString()}</strong>
+                </div>
+              </div>
+            )}
+          </div>
+        </Card>
+
+        <Card>
+          <SectionHeader title="RFID Event Table" />
+          <div style={{ padding: "1rem" }}>
+            {rfidScans.length === 0 ? (
+              <div className="overview-empty-state">
+                <p className="overview-empty-title">No events</p>
+              </div>
+            ) : (
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
+                <thead>
+                  <tr style={{ borderBottom: "1px solid #e2e8f0", textAlign: "left", color: "#64748b" }}>
+                    <th style={{ padding: "8px" }}>Time</th>
+                    <th style={{ padding: "8px" }}>Node</th>
+                    <th style={{ padding: "8px" }}>RFID UID</th>
+                    <th style={{ padding: "8px" }}>RSSI</th>
+                    <th style={{ padding: "8px" }}>SNR</th>
+                    <th style={{ padding: "8px" }}>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rfidScans.map((scan, idx) => (
+                    <tr key={idx} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                      <td style={{ padding: "8px", fontWeight: 500 }}>
+                        {new Date(scan.timestamp).toLocaleTimeString()}
+                      </td>
+                      <td style={{ padding: "8px" }}>{scan.node_id}</td>
+                      <td style={{ padding: "8px" }}><strong>{scan.uid}</strong></td>
+                      <td style={{ padding: "8px" }}>{scan.rssi}</td>
+                      <td style={{ padding: "8px" }}>{scan.snr}</td>
+                      <td style={{ padding: "8px" }}><StatusBadge label="Received" tone="healthy" /></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </Card>
       </div>
     </div>
   );

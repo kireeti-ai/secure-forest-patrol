@@ -77,7 +77,35 @@ void GatewayService::handleReceivedPacket(const lora::RawRadioPacket& packet, lo
             envelope.snrDb = packet.snrDb;
             envelope.gatewayReceivedAtMs = packet.receivedAtMs;
 
-            if (parsed.payloadSize == 9) {
+            if (parsed.payloadSize >= 3 &&
+                       parsed.payload[0] == 0x52U &&
+                       parsed.payload[1] == 0x01U &&
+                       parsed.payload[2] <= 10U &&
+                       parsed.payloadSize == static_cast<std::size_t>(3U + parsed.payload[2])) {
+                envelope.hasRfid = true;
+                envelope.rfidUidLength = parsed.payload[2];
+                for (std::size_t index = 0U; index < envelope.rfidUidLength; ++index) {
+                    envelope.rfidUid[index] = parsed.payload[3U + index];
+                }
+
+                Serial.println("================================");
+                Serial.println("RFID PACKET RECEIVED");
+                Serial.println("================================");
+                Serial.println();
+                Serial.println("Type : RFID_SCAN");
+                Serial.printf("Node : NODE_%02X\n", parsed.sourceId);
+                Serial.print("UID  : ");
+                for (std::size_t index = 0U; index < envelope.rfidUidLength; ++index) {
+                    Serial.printf("%02X%s", envelope.rfidUid[index], (index == envelope.rfidUidLength - 1) ? "" : ":");
+                }
+                Serial.println();
+                Serial.printf("SEQ  : %u\n", parsed.sequenceNumber);
+                Serial.println();
+                Serial.printf("RSSI : %d dBm\n", packet.rssiDbm);
+                Serial.printf("SNR  : %.1f dB\n", static_cast<double>(packet.snrDb));
+                Serial.println();
+                Serial.println("Packet validation: SUCCESS");
+            } else if (parsed.payloadSize == 9) {
                 envelope.hasRtc = true;
                 envelope.rtcYear = 2000 + parsed.payload[0];
                 envelope.rtcMonth = parsed.payload[1];
@@ -94,7 +122,9 @@ void GatewayService::handleReceivedPacket(const lora::RawRadioPacket& packet, lo
                               envelope.rtcHour, envelope.rtcMinute, envelope.rtcSecond,
                               envelope.temperatureC);
             } else {
-                Serial.printf("[FOREST EVENT RX] source: 0x%02X | sequence: %u | NO RTC\n", parsed.sourceId, parsed.sequenceNumber);
+                Serial.printf("[SENSOR DATA RX] source: 0x%02X | sequence: %u | UNKNOWN PAYLOAD (%u bytes)\n",
+                              parsed.sourceId, parsed.sequenceNumber,
+                              static_cast<unsigned>(parsed.payloadSize));
             }
 
             backendClient_.enqueue(envelope);
