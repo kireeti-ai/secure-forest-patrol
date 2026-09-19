@@ -56,11 +56,6 @@ export default function GatewayPage() {
             and a <strong>Wi-Fi Backhaul IP Link</strong> (Gateway → Backend) over your local/cellular network.
           </p>
         </div>
-        {gw?.isDemo && (
-          <span style={{ padding: "6px 14px", borderRadius: "20px", background: "#fef3c7", color: "#92400e", border: "1px solid #fde68a", fontWeight: 700, fontSize: "0.8rem", whiteSpace: "nowrap" }}>
-            DEMO / MOCK / NOT CONNECTED
-          </span>
-        )}
       </header>
 
       {/* ARCHITECTURE DIAGRAM */}

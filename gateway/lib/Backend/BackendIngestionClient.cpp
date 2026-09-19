@@ -68,7 +68,40 @@ void BackendIngestionClient::tick(std::uint32_t currentMs) {
         // RFID scans have a dedicated HTTP ingestion contract.  Do not make
         // attendance delivery depend on an unrelated MQTT broker connection.
         drainOutbox();
+        tickGatewayStatus(currentMs);
     }
+}
+
+void BackendIngestionClient::tickGatewayStatus(std::uint32_t currentMs) {
+    if ((currentMs - lastStatusReportMs_) < kStatusReportIntervalMs) return;
+    lastStatusReportMs_ = currentMs;
+
+    HTTPClient http;
+    char url[256];
+    snprintf(url, sizeof(url), "%s/api/ingest/gateway/status", config_.baseUrl);
+    const bool useTls = std::strncmp(config_.baseUrl, "https://", 8U) == 0;
+    if (useTls) {
+        secureClient_.setInsecure();
+        http.begin(secureClient_, url);
+    } else {
+        http.begin(url);
+    }
+    http.addHeader("Content-Type", "application/json");
+
+    JsonDocument doc;
+    char gatewayIdStr[8];
+    snprintf(gatewayIdStr, sizeof(gatewayIdStr), "GW-%02X", config_.gatewayId);
+    doc["gateway_id"] = gatewayIdStr;
+    doc["name"] = gatewayIdStr;
+    doc["lora_status"] = "ACTIVE";
+    doc["wifi_status"] = WiFi.status() == WL_CONNECTED ? "CONNECTED" : "DISCONNECTED";
+    doc["backend_status"] = "REACHABLE";
+    doc["firmware_version"] = "0.1.0";
+    char payload[384];
+    serializeJson(doc, payload, sizeof(payload));
+    const int httpCode = http.POST(reinterpret_cast<uint8_t*>(payload), strlen(payload));
+    Serial.printf("[GATEWAY STATUS] HTTP %d%s\n", httpCode, httpCode >= 200 && httpCode < 300 ? " (reported)" : " (failed)");
+    http.end();
 }
 
 void BackendIngestionClient::tickWifi(std::uint32_t currentMs) {

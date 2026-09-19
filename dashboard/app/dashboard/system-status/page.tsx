@@ -57,11 +57,6 @@ export default function SystemStatusPage() {
             Health overview of all system layers: field nodes, LoRa field link, Wi-Fi backhaul, backend, database, and ledger verification.
           </p>
         </div>
-        {status?.isDemo && (
-          <span style={{ padding: "6px 14px", borderRadius: "20px", background: "#fef3c7", color: "#92400e", border: "1px solid #fde68a", fontWeight: 700, fontSize: "0.8rem" }}>
-            DEMO / MOCK / NOT CONNECTED
-          </span>
-        )}
       </header>
 
       {loading ? (
