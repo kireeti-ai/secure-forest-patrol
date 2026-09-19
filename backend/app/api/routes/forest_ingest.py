@@ -18,11 +18,12 @@ from app.schemas.forest_ingest import (
     ForestPatrolIngest,
     GatewayStatusReport,
     IngestResult,
+    RfidScanIngest,
 )
 from app.services.forest_acoustic import ingest_acoustic_event
 from app.services.forest_gateway_svc import report_gateway_status
 from app.services.forest_patrol import UnknownNodeError, ingest_patrol_event
-from app.services.ws_manager import broadcast_acoustic_outcome, broadcast_gateway_status, broadcast_patrol_outcome
+from app.services.ws_manager import broadcast_acoustic_outcome, broadcast_gateway_status, broadcast_patrol_outcome, broadcast_rfid_scan
 
 router = APIRouter(prefix="/api/ingest/gateway", tags=["gateway-ingestion"])
 
@@ -70,3 +71,9 @@ def gateway_status(payload: GatewayStatusReport,
     result = report_gateway_status(db, payload)
     broadcast_gateway_status(result["gateway_id"])
     return result
+
+@router.post("/rfid-scan", response_model=IngestResult)
+def ingest_rfid_scan(payload: RfidScanIngest):
+    """Accept an RFID scan from a Gateway."""
+    broadcast_rfid_scan(payload.dict())
+    return JSONResponse(status_code=202, content={"outcome": "ACCEPTED"})

@@ -10,7 +10,10 @@ bool loopCheckpointPrinted = false;
 
 void setup() {
     Serial.begin(115200);
-    delay(1500);
+    const std::uint32_t serialWaitStart = millis();
+    while (!Serial && (millis() - serialWaitStart) < 5000U) {
+        delay(10);
+    }
 
     Serial.println("================================");
     Serial.println("SECURE FOREST PATROL GATEWAY");

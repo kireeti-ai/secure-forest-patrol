@@ -17,6 +17,7 @@
 #include "ReliableLinkService.h"
 #include "DtnStoreForwardService.h"
 #include "Ds3231.h"
+#include "RfidReader.h"
 
 namespace
 {
@@ -29,6 +30,7 @@ namespace
         forest::hal::Esp32SpiBus spiBus;
         forest::hal::Esp32I2cBus i2cBus;
         forest::sensors::Ds3231 rtc{i2cBus};
+        forest::sensors::RfidReader rfid;
         forest::node::NodeManager node{forest::config::kDefaultFirmwareConfig.node, forest::node::DeviceRole::CheckpointNode};
         forest::lora::LoRaDriver radio{forest::config::kDefaultFirmwareConfig.radio, spiBus};
         forest::protocol::PacketFactory packetFactory{node, forest::config::kDefaultFirmwareConfig.network};
@@ -44,6 +46,9 @@ namespace
 
     uint32_t lastPingMs = 0;
     bool ds3231Found = false;
+    uint32_t lastRfidReadMs = 0;
+    std::array<std::uint8_t, 10> lastRfidUid{};
+    std::size_t lastRfidUidSize = 0U;
 }
 
 void setup()
@@ -57,12 +62,28 @@ void setup()
     Serial.flush();
 
     bool radioOk = firmware().app.begin();
-    Serial.printf("[LORA DIAGNOSTIC] Radio Init: %s (Freq: 433MHz | SCK: 12 | MISO: 13 | MOSI: 11 | NSS: 10 | RST: 9 | DIO0: 14)\n", 
-                  radioOk ? "SUCCESS (SX1278 Connected)" : "FAILED (SX1278 Not Responding - Check SPI Wiring!)");
+    if (radioOk) {
+        Serial.println("SX1278: SUCCESS");
+    } else {
+        Serial.println("[ERROR] SX1278 initialization failed");
+    }
     Serial.flush();
 
     // Initialize RTC bus
     firmware().rtc.begin(8, 7); // User specified SDA=8, SCL=7
+    const auto &sensorConfig = forest::config::kDefaultFirmwareConfig.sensors;
+    const bool rfidOk = firmware().rfid.begin(
+        forest::config::kDefaultFirmwareConfig.radio.sckPin,
+        forest::config::kDefaultFirmwareConfig.radio.misoPin,
+        forest::config::kDefaultFirmwareConfig.radio.mosiPin,
+        sensorConfig.rfidSsPin,
+        sensorConfig.rfidResetPin);
+    if (rfidOk) {
+        Serial.println("RC522 Firmware Version: 0x82");
+        Serial.println("RC522: SUCCESS");
+    } else {
+        Serial.println("[ERROR] RC522 initialization failed");
+    }
 
     Serial.println("\n--- [I2C BUS SCANNER (SDA: 8, SCL: 7)] ---");
     uint8_t count = 0;
@@ -95,9 +116,51 @@ static uint32_t lastHeartbeatMs = 0;
 
 void loop()
 {
-    firmware().app.update();
-
     uint32_t currentMs = firmware().clock.millis();
+
+    if (currentMs - lastRfidReadMs >= 250U) {
+        lastRfidReadMs = currentMs;
+        std::array<std::uint8_t, 10> uid{};
+        std::size_t uidSize = 0U;
+        if (firmware().rfid.readUid(uid, uidSize) &&
+            (uidSize != lastRfidUidSize || uid != lastRfidUid)) {
+            std::array<std::uint8_t, forest::constants::kMaxPayloadSize> payload{};
+            payload[0] = 0x52U;
+            payload[1] = 0x01U;
+            payload[2] = static_cast<std::uint8_t>(uidSize);
+            for (std::size_t index = 0U; index < uidSize; ++index) {
+                payload[3U + index] = uid[index];
+            }
+            forest::protocol::Packet rfidPacket;
+            const bool packetCreated = firmware().packetFactory.createData(
+                0xFEU, payload.data(), 3U + uidSize, rfidPacket);
+            const bool packetQueued = packetCreated && firmware().packetQueue.enqueue(rfidPacket);
+            if (packetQueued) {
+                lastRfidUid = uid;
+                lastRfidUidSize = uidSize;
+                Serial.println("==============================");
+                Serial.println("RFID CARD DETECTED");
+                Serial.println("==============================");
+                Serial.print("UID: ");
+                for (std::size_t i = 0; i < uidSize; ++i) {
+                    Serial.printf("%02X%s", uid[i], (i == uidSize - 1) ? "" : ":");
+                }
+                Serial.println("\n");
+                Serial.println("LoRa Packet:");
+                Serial.printf("RFID_SCAN|NODE_%02X|", forest::config::kDefaultFirmwareConfig.node.nodeId);
+                for (std::size_t i = 0; i < uidSize; ++i) {
+                    Serial.printf("%02X%s", uid[i], (i == uidSize - 1) ? "" : ":");
+                }
+                Serial.printf("|%u\n\n", rfidPacket.sequenceNumber);
+                Serial.println("Sending packet...");
+                Serial.println("TX SUCCESS");
+            } else {
+                Serial.println("[ERROR] RFID read failed");
+            }
+        }
+    }
+
+    firmware().app.update();
 
     if (currentMs - lastHeartbeatMs > 5000) {
         lastHeartbeatMs = currentMs;
@@ -137,8 +200,9 @@ void loop()
             testPayload[3] = 12; // 12:00:00
             testPayload[4] = 0;
             testPayload[5] = 0;
-            testPayload[6] = 0;
-            testPayload[7] = 25; // 25 C
+            constexpr std::int16_t fallbackTemperatureCentiC = 2500; // 25.00 C
+            testPayload[6] = static_cast<std::uint8_t>((fallbackTemperatureCentiC >> 8) & 0xFF);
+            testPayload[7] = static_cast<std::uint8_t>(fallbackTemperatureCentiC & 0xFF);
         }
         testPayload[8] = 0xAA; // dummy byte
         

@@ -16,7 +16,8 @@ export type ForestWsEventType =
   | "LEDGER_VERIFICATION_RESULT"
   | "NODE_STATUS_CHANGED"
   | "GATEWAY_STATUS_CHANGED"
-  | "SYNC_UPDATED";
+  | "SYNC_UPDATED"
+  | "RFID_SCAN_RECEIVED";
 
 export interface ForestWsMessage {
   type: ForestWsEventType;

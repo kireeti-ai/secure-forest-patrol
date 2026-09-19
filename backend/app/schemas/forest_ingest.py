@@ -75,3 +75,11 @@ class IngestResult(BaseModel):
     signature_status: str | None = None
     chain_status: str | None = None
     detail: str | None = None
+
+class RfidScanIngest(BaseModel):
+    type: str = Field(pattern="^RFID_SCAN$")
+    node_id: str
+    uid: str
+    seq: int
+    rssi: int
+    snr: float

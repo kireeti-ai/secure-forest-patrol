@@ -84,3 +84,6 @@ def broadcast_acoustic_outcome(body: dict, node_id: str, checkpoint_id: str | No
 
 def broadcast_gateway_status(gateway_id: str) -> None:
     manager.schedule_broadcast("GATEWAY_STATUS_CHANGED", {"gateway_id": gateway_id, "status": "REPORTED"})
+
+def broadcast_rfid_scan(payload: dict) -> None:
+    manager.schedule_broadcast("RFID_SCAN_RECEIVED", payload)
