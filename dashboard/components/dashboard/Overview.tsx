@@ -127,7 +127,6 @@ export function Overview() {
   const pendingSyncCount = patrols.filter((p) => p.syncStatus === "PENDING").length + checkpoints.reduce((acc, c) => acc + c.pendingRecords, 0);
 
   const gw = gateways[0];
-  const isDemoMode = checkpoints.some((c) => c.isDemo) || patrols.some((p) => p.isDemo);
   const isLoraConnected = !!gw && (gw.loraStatus === "ACTIVE" || gw.loraStatus === "CONNECTED") && nodes.some((n) => n.loraActivity === "ACTIVE" || n.health === "HEALTHY");
 
   return (
@@ -139,22 +138,6 @@ export function Overview() {
             Real-time status of patrol verification, acoustic threat monitoring, ledger integrity, and dual-link gateway backhaul.
           </p>
         </div>
-        {isDemoMode && (
-          <span
-            style={{
-              padding: "6px 14px",
-              borderRadius: "20px",
-              background: "#fef3c7",
-              color: "#92400e",
-              border: "1px solid #fde68a",
-              fontWeight: 700,
-              fontSize: "0.8rem",
-              letterSpacing: "0.05em",
-            }}
-          >
-            DEMO / MOCK / NOT CONNECTED
-          </span>
-        )}
       </header>
 
       {isLoraConnected && (

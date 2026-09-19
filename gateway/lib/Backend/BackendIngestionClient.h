@@ -83,6 +83,7 @@ public:
 private:
     void tickWifi(std::uint32_t currentMs);
     void tickMqtt(std::uint32_t currentMs);
+    void tickGatewayStatus(std::uint32_t currentMs);
     void drainOutbox();
     bool publishEnvelope(const ForestEventEnvelope& envelope);
     bool publishRfidHttp(const ForestEventEnvelope& envelope);
@@ -98,7 +99,9 @@ private:
     LinkState mqttState_{LinkState::Disconnected};
     std::uint32_t lastWifiAttemptMs_{0};
     std::uint32_t lastMqttAttemptMs_{0};
+    std::uint32_t lastStatusReportMs_{0};
     static constexpr std::uint32_t kReconnectIntervalMs = 5000U;
+    static constexpr std::uint32_t kStatusReportIntervalMs = 30000U;
 
     ForestEventEnvelope outbox_[kOutboxCapacity]{};
     std::size_t outboxHead_{0};

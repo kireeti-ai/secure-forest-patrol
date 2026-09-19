@@ -45,11 +45,6 @@ export default function AcousticEventDetailPage() {
             Acoustic Event — {event.eventId}
           </h1>
         </div>
-        {event.isDemo && (
-          <span style={{ padding: "6px 14px", borderRadius: "20px", background: "#fef3c7", color: "#92400e", border: "1px solid #fde68a", fontWeight: 700, fontSize: "0.8rem" }}>
-            DEMO / MOCK / NOT CONNECTED
-          </span>
-        )}
       </div>
 
       {/* CLASSIFICATION BANNER */}
