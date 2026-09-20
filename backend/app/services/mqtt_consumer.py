@@ -12,6 +12,8 @@ Topics:
     forest/events/patrol       -> ForestPatrolIngest  -> ingest_patrol_event
     forest/events/acoustic     -> ForestAcousticIngest -> ingest_acoustic_event
     forest/events/node-status  -> GatewayStatusReport  -> report_gateway_status
+    forest/events/rfid         -> RfidScanIngest      -> persist_rfid_scan
+    forest/events/gateway-status -> GatewayStatusReport -> report_gateway_status
     forest/events/sync         -> relayed live (SYNC_UPDATED) only; sync
                                    records themselves are still written as a
                                    side effect of patrol/acoustic ingestion,
@@ -32,11 +34,13 @@ from sqlalchemy.orm import Session
 
 from app.core.config import get_mqtt_config
 from app.core.database import SessionLocal, get_engine
-from app.schemas.forest_ingest import ForestAcousticIngest, ForestPatrolIngest, GatewayStatusReport
+from app.schemas.forest_ingest import (
+    ForestAcousticIngest, ForestPatrolIngest, GatewayStatusReport, RfidScanIngest)
 from app.services.forest_acoustic import ingest_acoustic_event
 from app.services.forest_gateway_svc import report_gateway_status
 from app.services.forest_patrol import UnknownNodeError, ingest_patrol_event
-from app.services.ws_manager import broadcast_acoustic_outcome, broadcast_gateway_status, broadcast_patrol_outcome, manager
+from app.services.rfid import ingest_rfid_scan as persist_rfid_scan
+from app.services.ws_manager import broadcast_acoustic_outcome, broadcast_gateway_status, broadcast_patrol_outcome, broadcast_rfid_scan, manager
 
 logger = logging.getLogger("forest.mqtt")
 
@@ -44,6 +48,8 @@ TOPIC_PATROL = "forest/events/patrol"
 TOPIC_ACOUSTIC = "forest/events/acoustic"
 TOPIC_NODE_STATUS = "forest/events/node-status"
 TOPIC_SYNC = "forest/events/sync"
+TOPIC_RFID = "forest/events/rfid"
+TOPIC_GATEWAY_STATUS = "forest/events/gateway-status"
 
 
 class MqttConsumer:
@@ -74,7 +80,8 @@ class MqttConsumer:
             logger.error("MQTT connect failed rc=%s", reason_code)
             return
         logger.info("MQTT connected to %s:%s", self._config.host, self._config.port)
-        for topic in (TOPIC_PATROL, TOPIC_ACOUSTIC, TOPIC_NODE_STATUS, TOPIC_SYNC):
+        for topic in (TOPIC_PATROL, TOPIC_ACOUSTIC, TOPIC_NODE_STATUS, TOPIC_SYNC,
+                      TOPIC_RFID, TOPIC_GATEWAY_STATUS):
             client.subscribe(topic, qos=1)
 
     def _on_message(self, client: mqtt.Client, userdata, msg: mqtt.MQTTMessage) -> None:
@@ -93,6 +100,10 @@ class MqttConsumer:
                 self._handle_node_status(data)
             elif msg.topic == TOPIC_SYNC:
                 self._handle_sync(data)
+            elif msg.topic == TOPIC_RFID:
+                self._handle_rfid(data)
+            elif msg.topic == TOPIC_GATEWAY_STATUS:
+                self._handle_gateway_status(data)
         except Exception:
             logger.exception("Error handling MQTT message on %s", msg.topic)
 
@@ -151,6 +162,32 @@ class MqttConsumer:
             logger.info("Diagnostic node-status payload from %s (node=%s seq=%s): "
                         "only gateway_id/last_seen_at persisted, rest discarded",
                         payload.gateway_id, data.get("node_id"), data.get("sequence"))
+        db = self._session_factory()
+        try:
+            result = report_gateway_status(db, payload)
+        finally:
+            db.close()
+        broadcast_gateway_status(result["gateway_id"])
+
+    def _handle_rfid(self, data: dict) -> None:
+        try:
+            payload = RfidScanIngest.model_validate(data)
+        except ValidationError:
+            logger.warning("Malformed RFID payload: %s", data)
+            return
+        db = self._session_factory()
+        try:
+            body, _duplicate = persist_rfid_scan(db, payload)
+        finally:
+            db.close()
+        broadcast_rfid_scan(body)
+
+    def _handle_gateway_status(self, data: dict) -> None:
+        try:
+            payload = GatewayStatusReport.model_validate(data)
+        except ValidationError:
+            logger.warning("Malformed gateway-status payload, dropped: %s", data)
+            return
         db = self._session_factory()
         try:
             result = report_gateway_status(db, payload)
