@@ -132,3 +132,11 @@ invalid-signature variant, a broken-hash-chain variant, an unknown-node
 event, and a malformed payload — check `/api/forest/patrols` or the
 dashboard to see the results, and `backend/tests/test_mqtt_consumer.py`
 for the equivalent in-process assertions.
+
+## Topics published by the real gateway today
+
+`forest/events/rfid`, `forest/events/gateway-status`, `forest/events/node-status` and
+`forest/events/acoustic` (unsigned node detections, see `docs/ACOUSTIC_NODE.md`). A backend deployed as
+serverless functions (Vercel) cannot hold a subscription, so each topic that must reach it needs an EMQX rule
+that POSTs the payload to the matching `/api/ingest/gateway/*` route
+(`forest/events/acoustic` -> `/api/ingest/gateway/acoustic-node-event`).

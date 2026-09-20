@@ -121,8 +121,8 @@ export default function AcousticEventDetailPage() {
         <h3 style={{ padding: "1rem 1rem 0.5rem", fontWeight: 700, color: "var(--color-navy)", borderBottom: "1px solid #e2e8f0" }}>Record Integrity</h3>
         <div style={{ padding: "1rem", display: "flex", gap: "2rem", flexWrap: "wrap" }}>
           <div>
-            <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "#64748b", display: "block", marginBottom: "4px" }}>RSA Signature</span>
-            <StatusBadge label={event.signatureStatus} tone={event.signatureStatus === "VALID" ? "healthy" : "danger"} />
+            <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "#64748b", display: "block", marginBottom: "4px" }}>Signature</span>
+            <StatusBadge label={event.signatureStatus === "PENDING" ? "UNSIGNED (pending review)" : event.signatureStatus} tone={event.signatureStatus === "VALID" ? "healthy" : event.signatureStatus === "PENDING" ? "warning" : "danger"} />
           </div>
           <div>
             <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "#64748b", display: "block", marginBottom: "4px" }}>Sync Status</span>

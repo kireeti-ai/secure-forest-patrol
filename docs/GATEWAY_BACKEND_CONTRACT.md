@@ -90,3 +90,17 @@ physical Gateway will publish to once node-firmware signing exists.
 Unchanged from the HTTP path: duplicate detection on `(node_id, sequence)`,
 ECC secp256r1 signature verification, and hash-chain linkage checks all
 happen in the shared backend services — see `docs/MQTT.md` §"Reliability".
+
+## Acoustic node events (unsigned path)
+
+The signed `ForestAcousticIngest` path above still requires node-side signing that does not exist. A separate,
+**unsigned** path carries detections from the acoustic node firmware (`docs/ACOUSTIC_NODE.md`):
+
+- LoRa payload (6 B, inside a DATA packet): `'A'(0x41), 0x01, class (1 chainsaw / 2 gunshot), confidence u8, trigger RMS u16 LE`.
+- Gateway publishes `forest/events/acoustic` with `node_id` (`NODE_%02X`), `sequence`, `classification`
+  (`Gunshot` | `Chainsaw`), `confidence` (0..1), `model_version`, `trigger_rms` and gateway meta.
+- Backend: `POST /api/ingest/gateway/acoustic-node-event` (`AcousticNodeReport`). The backend stamps the time,
+  stores `signature_status = chain_status = PENDING`, `review_status = PENDING_REVIEW`. The node must be a
+  registered, ACTIVE node. An MQTT payload without `record_hash` takes this path.
+- Retries: same (node, node sequence, class) within 120 s is a duplicate; the backend assigns its own per-node
+  `sequence`, so a rebooted node restarting at 0 is not mistaken for a duplicate.

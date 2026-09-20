@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -18,7 +18,7 @@ from app.models.enums import (
     SyncState,
 )
 from app.models.forest_node import ForestNode
-from app.schemas.forest_ingest import ForestAcousticIngest
+from app.schemas.forest_ingest import AcousticNodeReport, ForestAcousticIngest
 from app.services.forest_chain import acoustic_chain_status
 from app.services.forest_patrol import UnknownNodeError
 from app.services.forest_verify import acoustic_sig_status, gateway_id_of, record_sync, touch_gateway
@@ -89,3 +89,65 @@ def ingest_acoustic_event(db: Session, payload: ForestAcousticIngest) -> tuple[d
     db.refresh(row)
     return ({"outcome": outcome, "event_id": row.event_id, "duplicate": False,
              "signature_status": row.signature_status, "chain_status": row.chain_status}, http_status)
+
+
+UNSIGNED = "UNSIGNED"
+# A retry repeats node, node-sequence and class within moments; the same node sequence much later is a
+# rebooted node whose counter restarted at 0 and is a genuinely new event.
+DUPLICATE_WINDOW = timedelta(seconds=120)
+
+
+def ingest_unsigned_acoustic_event(db: Session, payload: AcousticNodeReport) -> tuple[dict, int]:
+    """Store an acoustic detection that carries no signature/hash chain.
+
+    Time is stamped here (the node has no RTC). ``signature_status`` and ``chain_status`` are PENDING and
+    the row enters human review like any other detection. The row's own ``sequence`` is backend-assigned
+    (per-node monotonic) so the existing unique (node_id, sequence) constraint - and the signed path that
+    relies on it - stays untouched; the node's sequence is kept in ``event_id`` for retry detection.
+    """
+    now = datetime.now(timezone.utc)
+    node = db.scalar(select(ForestNode).where(ForestNode.node_id == payload.node_id))
+    if node is None:
+        raise UnknownNodeError(f"Unknown node '{payload.node_id}'")
+    if (node.status or "ACTIVE") != "ACTIVE":
+        return ({"outcome": IngestOutcome.INVALID_REQUEST.value,
+                 "detail": f"Node '{payload.node_id}' is not active", "duplicate": False}, 422)
+
+    # Serialise per node: concurrent retries must not both pass the duplicate check, and the
+    # backend-assigned sequence must not collide. Released on commit/rollback; SQLite needs nothing.
+    if db.get_bind().dialect.name == "postgresql":
+        db.execute(select(func.pg_advisory_xact_lock(func.hashtext(f"acoustic:{payload.node_id}"))))
+
+    gid = gateway_id_of(payload.gateway)
+    gw_received = payload.gateway.received_at if payload.gateway and payload.gateway.received_at else now
+    prefix = f"{payload.node_id}-U{payload.sequence}-"
+    duplicate = db.scalar(select(AcousticEvent).where(
+        AcousticEvent.node_id == payload.node_id, AcousticEvent.event_id.startswith(prefix, autoescape=True),
+        AcousticEvent.classification == payload.classification,
+        AcousticEvent.backend_received_at >= now - DUPLICATE_WINDOW))
+    if duplicate is not None:
+        touch_gateway(db, gid, now=now)
+        record_sync(db, event_id=duplicate.event_id, node_id=payload.node_id, gateway_id=gid, now=now,
+                    status=SyncState.DUPLICATE.value, bump=True)
+        db.commit()
+        return ({"outcome": IngestOutcome.DUPLICATE.value, "event_id": duplicate.event_id, "duplicate": True,
+                 "signature_status": duplicate.signature_status, "chain_status": duplicate.chain_status}, 200)
+
+    sequence = (db.scalar(select(func.max(AcousticEvent.sequence)).where(AcousticEvent.node_id == payload.node_id)) or 0) + 1
+    event_id = f"{prefix}{sequence}"   # unique: the backend sequence is unique per node
+    row = AcousticEvent(
+        event_id=event_id, node_id=payload.node_id, checkpoint_id=node.checkpoint_id, zone_id=node.zone_id,
+        sequence=sequence, event_created_at=now, classification=payload.classification,
+        confidence=payload.confidence, model_version=payload.model_version,
+        previous_hash=UNSIGNED, record_hash=UNSIGNED, signature=UNSIGNED,
+        signature_status=SignatureStatus.PENDING.value, chain_status=ChainStatus.PENDING.value,
+        sync_status=EventSyncStatus.SYNCED.value, review_status=AcousticReviewStatus.PENDING_REVIEW.value,
+        gateway_received_at=gw_received, backend_received_at=now)
+    db.add(row)
+    node.last_seen_at = now
+    touch_gateway(db, gid, now=now)
+    record_sync(db, event_id=event_id, node_id=payload.node_id, gateway_id=gid, now=now, status=SyncState.VERIFIED.value)
+    db.commit()
+    db.refresh(row)
+    return ({"outcome": IngestOutcome.ACCEPTED.value, "event_id": row.event_id, "duplicate": False,
+             "signature_status": row.signature_status, "chain_status": row.chain_status}, 201)

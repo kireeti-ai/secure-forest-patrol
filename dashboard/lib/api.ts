@@ -68,7 +68,8 @@ export interface AcousticEvent {
   classification: "Gunshot" | "Chainsaw" | "Non-threat";
   confidence: number; // e.g. 0.94 (94%)
   reviewStatus: "DETECTED" | "PENDING_REVIEW" | "REVIEWED" | "DISMISSED" | "CONFIRMED";
-  signatureStatus: "VALID" | "INVALID";
+  // PENDING = unsigned event from a node that has no signing key (see docs/ACOUSTIC_NODE.md)
+  signatureStatus: "VALID" | "INVALID" | "PENDING";
   syncStatus: "SYNCED" | "PENDING" | "FAILED";
   clipAvailable: boolean;
   modelVersion?: string;

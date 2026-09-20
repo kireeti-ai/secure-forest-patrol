@@ -14,13 +14,14 @@ from sqlalchemy.orm import Session
 
 from app.api.dependencies.database import get_db
 from app.schemas.forest_ingest import (
+    AcousticNodeReport,
     ForestAcousticIngest,
     ForestPatrolIngest,
     GatewayStatusReport,
     IngestResult,
     RfidScanIngest,
 )
-from app.services.forest_acoustic import ingest_acoustic_event
+from app.services.forest_acoustic import ingest_acoustic_event, ingest_unsigned_acoustic_event
 from app.services.rfid import ingest_rfid_scan as persist_rfid_scan
 from app.services.forest_gateway_svc import report_gateway_status
 from app.services.forest_patrol import UnknownNodeError, ingest_patrol_event
@@ -62,6 +63,22 @@ def ingest_acoustic(payload: ForestAcousticIngest,
         return JSONResponse(status_code=404, content={"outcome": "UNKNOWN_NODE",
                                                       "duplicate": False, "detail": str(exc)})
     broadcast_acoustic_outcome(body, payload.node_id, payload.checkpoint_id)
+    return JSONResponse(status_code=http_status, content=body)
+
+
+@router.post("/acoustic-node-event", response_model=IngestResult)
+def ingest_acoustic_node_event(payload: AcousticNodeReport, db: Session = Depends(get_db)):
+    """Accept an UNSIGNED acoustic detection relayed from a field node (no RTC / signing key yet).
+
+    The backend stamps the time; the event is stored with signature/chain PENDING and enters the
+    normal human review workflow.
+    """
+    try:
+        body, http_status = ingest_unsigned_acoustic_event(db, payload)
+    except UnknownNodeError as exc:
+        return JSONResponse(status_code=404, content={"outcome": "UNKNOWN_NODE",
+                                                      "duplicate": False, "detail": str(exc)})
+    broadcast_acoustic_outcome(body, payload.node_id, None)
     return JSONResponse(status_code=http_status, content=body)
 
 

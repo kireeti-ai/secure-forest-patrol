@@ -37,3 +37,15 @@ Pending. Awaiting deployment of the FastAPI backend to replace the mock adapters
 - **Pre-existing gaps found, NOT fixed (out of scope for this phase)**: `tests/test_forest_patrol.py` imports `app.core.security.create_access_token`, which does not exist anywhere in the backend; `tests/test_forest_models.py::test_forest_tables_registered` expects `users`/`operator_checkpoint_access` tables that don't exist either. Both look like remnants of an unfinished auth feature, unrelated to the MQTT/WebSocket work — flagged for a separate pass.
 - **Addressed since**: the `jalri`/`jalari` C++ namespace across `gateway/` and `node-firmware/` has been renamed to `forest` (including `JALRI_*`/`JALARI_*` macros and the `BoatNode` device-role enum, now `CheckpointNode`); Wi-Fi credentials moved out of `BuildConfig.h` into gitignored `Secrets.h`; production MQTT TLS/auth wired for HiveMQ Cloud (`[env:production]`).
 - **NOT addressed** (still out of scope): node-firmware RFID/fingerprint/signing implementation.
+
+## Acoustic node (MAX4466 trigger + INMP441 + TinyML) - see `docs/ACOUSTIC_NODE.md`
+
+- Firmware pipeline (trigger, I2S capture + ring buffer, mel preprocessing, TFLite Micro classifier, LoRa
+  event): **IMPLEMENTED**, host/build **TESTED**. TFLite Micro loading, on-device preprocessing parity and
+  boot with RC522 + LoRa were **PHYSICALLY VERIFIED** on the node board; **no microphone has been connected**, so
+  the MAX4466 trigger, INMP441 capture and any real-audio classification are **NOT VERIFIED**.
+- The stock TFLite Micro FULLY_CONNECTED kernel ignores per-channel weight scales and gave wrong outputs for
+  this model; a per-channel kernel replaces it (host-verified, not yet re-run on the device).
+- Node-side signing, RTC timestamps and hash chain remain **NOT IMPLEMENTED**; acoustic events are unsigned
+  and backend-stamped (PENDING, human review).
+- End-to-end (node -> LoRa -> gateway -> MQTT -> backend -> dashboard) for acoustic events: **NOT VERIFIED**.
