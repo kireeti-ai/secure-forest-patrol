@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { fetchGateways } from "../../lib/api";
+import { Notifications } from "./Notifications";
 
 type TopbarProps = {
   sidebarOpen: boolean;
@@ -118,9 +119,10 @@ export function Topbar({ sidebarOpen, onMenuClick }: TopbarProps) {
           <span className="topbar-meta-label" style={{ color: "#64748b" }}>Last sync</span>
           <span className="topbar-meta-value" style={{ fontWeight: 600, color: "#0f172a" }}>{lastSync}</span>
         </div>
+        <Notifications />
         <div style={{ display: "flex", alignItems: "center", gap: "8px", marginLeft: "12px", borderLeft: "1px solid #cbd5e1", paddingLeft: "16px" }}>
           <a
-            href="https://github.com/RESQ-LoRa"
+            href="https://github.com/kireeti-ai/secure-forest-patrol"
             target="_blank"
             rel="noreferrer"
             className="docs-header-btn-github"
