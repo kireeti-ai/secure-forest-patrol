@@ -35,11 +35,17 @@
 // **UNCALIBRATED DEFAULTS**: they depend on the MAX4466 gain trimmer and the
 // site. Use FOREST_ACOUSTIC_TEST_MODE=1 to read the quiet RMS and set them to
 // roughly 3-4x quiet RMS (HIGH) and 2x (LOW). Requirement: HIGH > LOW.
+// EXPERIMENTAL ONLY - NOT CALIBRATED FOR FIELD USE.
+// 50/30 is a bench value for exercising the trigger -> capture -> ML chain
+// (clean quiet RMS ~14, clap RMS ~105-157 on the current MAX4466 wiring). The
+// MAX4466 still shows an intermittent ~110 RMS noise state and a very low DC
+// level (~135 counts), so this WILL false-trigger. Final thresholds must be
+// measured after the supply/DC-offset/intermittent-noise problem is fixed.
 #ifndef MAX4466_TRIGGER_HIGH
-#define MAX4466_TRIGGER_HIGH 120.0f
+#define MAX4466_TRIGGER_HIGH 50.0f
 #endif
 #ifndef MAX4466_TRIGGER_LOW
-#define MAX4466_TRIGGER_LOW 60.0f
+#define MAX4466_TRIGGER_LOW 30.0f
 #endif
 // Optional adaptive threshold (off by default; fixed thresholds first).
 // When on: trigger if rms > noise_floor * FACTOR + DELTA, where noise_floor is
@@ -55,6 +61,32 @@
 #endif
 #ifndef ACOUSTIC_NOISE_FLOOR_DELTA
 #define ACOUSTIC_NOISE_FLOOR_DELTA 20.0f
+#endif
+
+// Relative-dB trigger (default). Starting values, NOT calibrated for the field. Thresholds are dB above a floor
+// learned during a warm-up window, instead of absolute counts. Only enable it once the
+// MAX4466 supply/DC problem is fixed: on a faulty input it would learn the fault as "quiet".
+#ifndef ACOUSTIC_RELATIVE_TRIGGER
+#define ACOUSTIC_RELATIVE_TRIGGER 1
+#endif
+#ifndef ACOUSTIC_TRIGGER_HIGH_DB
+#define ACOUSTIC_TRIGGER_HIGH_DB 10.0f      // one block this far above the floor triggers (transient)
+#endif
+#ifndef ACOUSTIC_TRIGGER_LOW_DB
+#define ACOUSTIC_TRIGGER_LOW_DB 6.0f        // re-arm level, and the "elevated" level for sustained sound
+#endif
+#ifndef ACOUSTIC_SUSTAIN_BLOCKS
+#define ACOUSTIC_SUSTAIN_BLOCKS 4           // consecutive elevated blocks (~64 ms) that also trigger
+#endif
+#ifndef ACOUSTIC_NOISE_WARMUP_MS
+#define ACOUSTIC_NOISE_WARMUP_MS 4000      // keep the room quiet at boot: this sets the floor
+#endif
+
+// Sensor-health guard (EXPERIMENTAL bench value, not a field specification): a warm-up floor above
+// this many RMS counts means the MAX4466 input is noisy/faulty (bench: good ~14, bad ~100-150), so
+// the ML trigger stays disabled until reboot. 0 disables the guard.
+#ifndef ACOUSTIC_MAX_NOISE_FLOOR_RMS
+#define ACOUSTIC_MAX_NOISE_FLOOR_RMS 40.0f
 #endif
 
 // ---- Event cycle ------------------------------------------------------------

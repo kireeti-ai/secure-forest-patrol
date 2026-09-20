@@ -23,6 +23,24 @@ struct EnergyDetectorConfig {
     float noiseAlpha;      // EMA weight while quiet
     float noiseFactor;     // adaptive: high = max(cfg.high, floor*factor + delta)
     float noiseDelta;
+    // Relative-dB mode (EXPERIMENTAL, off by default). Thresholds are decibels above a measured
+    // noise floor instead of absolute ADC counts, so they do not depend on trimmer gain or board:
+    //   warm-up: median RMS of `warmupBlocks` blocks = initial floor (robust to a short burst); never triggers
+    //   trigger: delta >= highDb (one block: transient/gunshot)
+    //            or delta >= lowDb for `sustainBlocks` consecutive blocks (chainsaw)
+    //   release: delta <  lowDb
+    // The floor keeps adapting only while idle and delta < lowDb, so events cannot raise it.
+    bool relative = false;
+    float highDb = 10.0f;
+    float lowDb = 6.0f;
+    int sustainBlocks = 2;
+    int warmupBlocks = 250;      // 4 s of 16 ms blocks (capped at kMaxWarmupBlocks)
+    float floorAlpha = 0.005f;   // EMA weight after warm-up
+    float minFloor = 1.0f;       // guards log10 against a dead-flat input
+    // Sensor-health guard: if the warm-up floor exceeds this (RMS counts) the input is treated as
+    // faulty/noisy, the detector never triggers (so ML never runs) until reboot. 0 disables.
+    // A floor below minFloor (dead-flat / stuck-at-rail input) is a fault too.
+    float maxFloor = 0.0f;
 };
 
 class EnergyDetector {
@@ -38,13 +56,28 @@ public:
     float noiseFloor() const { return noiseFloor_; }
     float highThreshold() const;
     float lowThreshold() const;
+    // Relative mode diagnostics: dB above the noise floor for the last block, and whether the
+    // warm-up has finished (no trigger is possible before that).
+    float lastDeltaDb() const { return lastDeltaDb_; }
+    bool sensorFault() const { return fault_; }
+    bool warmedUp() const { return !cfg_.relative || warmBlocks_ >= cfg_.warmupBlocks; }
 
 private:
+    Edge updateRelative(float rms);
     EnergyDetectorConfig cfg_;
     bool active_ = false;
     bool floorInit_ = false;
     float noiseFloor_ = 0.0f;
+    static constexpr int kMaxWarmupBlocks = 512;
+    float warm_[kMaxWarmupBlocks];
+    int warmBlocks_ = 0;
+    int sustainCount_ = 0;
+    bool fault_ = false;
+    float lastDeltaDb_ = 0.0f;
 };
+
+// Peak/RMS of the AC component (crest factor): ~1.4 sine, ~3-4 noise, >6 impulsive. Diagnostic only.
+float crestFactor(float peakAboveMean, float rms);
 
 #ifdef ARDUINO
 struct BlockStats {

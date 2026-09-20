@@ -61,6 +61,48 @@ int main() {
         printf("adaptive: floor=%.1f high=%.1f low=%.1f\n", floorBefore, d.highThreshold(), d.lowThreshold());
     }
 
+    // --- Relative-dB mode: floor is learned, transient and sustained triggers, hysteresis, no self-raising
+    {
+        EnergyDetectorConfig c{50, 30, false, 0.01f, 3.0f, 20.0f};
+        c.relative = true; c.warmupBlocks = 50; c.sustainBlocks = 2;
+        EnergyDetector d(c);
+        bool early = false;
+        for (int i = 0; i < 50; ++i) early |= d.update(i == 10 ? 500.0f : 20.0f) != EnergyDetector::Edge::None;  // spike during warm-up
+        CHECK(!early && d.warmedUp(), "no trigger during warm-up");
+        CHECK(std::fabs(d.noiseFloor() - 20.0f) < 1e-3f, "warm-up floor is the median (ignores the boot spike)");
+        const float fl = d.noiseFloor();
+        CHECK(std::fabs(d.highThreshold() / fl - 3.1623f) < 0.01f, "HIGH = floor * 10^(10/20)");
+        CHECK(std::fabs(d.lowThreshold() / fl - 1.9953f) < 0.01f, "LOW = floor * 10^(6/20)");
+        for (int i = 0; i < 20; ++i) CHECK(d.update(fl * 1.2f) == EnergyDetector::Edge::None, "small rise ignored");
+        CHECK(d.update(fl * 3.5f) == EnergyDetector::Edge::Rising, "one +10 dB block triggers (transient)");
+        CHECK(d.update(fl * 2.5f) == EnergyDetector::Edge::None && d.active(), "between LOW and HIGH keeps state");
+        CHECK(d.update(fl * 1.1f) == EnergyDetector::Edge::Falling, "below LOW releases");
+        CHECK(d.update(fl * 2.2f) == EnergyDetector::Edge::None, "one +6.8 dB block alone does not trigger");
+        CHECK(d.update(fl * 2.2f) == EnergyDetector::Edge::Rising, "two consecutive +6 dB blocks trigger (sustained)");
+        d.update(fl * 1.0f);
+        CHECK(d.update(fl * 2.2f) == EnergyDetector::Edge::None, "sustain counter resets after a quiet block");
+        const float before = d.noiseFloor();
+        for (int i = 0; i < 200; ++i) d.update(fl * 6.0f);
+        CHECK(std::fabs(d.noiseFloor() - before) < 1e-3f, "floor does not learn from an event");
+        CHECK(std::fabs(crestFactor(30.0f, 10.0f) - 3.0f) < 1e-6f, "crest factor");
+    }
+
+    // --- Sensor-health guard: a noisy warm-up floor disables triggering entirely
+    {
+        EnergyDetectorConfig c{50, 30, false, 0.01f, 3.0f, 20.0f};
+        c.relative = true; c.warmupBlocks = 50; c.maxFloor = 40.0f;
+        EnergyDetector bad(c), good(c);
+        for (int i = 0; i < 50; ++i) { bad.update(120.0f); good.update(14.0f); }
+        CHECK(bad.sensorFault() && !good.sensorFault(), "floor 120 = fault, floor 14 = ok");
+        EnergyDetector flat(c);
+        for (int i = 0; i < 50; ++i) flat.update(0.0f);
+        CHECK(flat.sensorFault(), "flat/stuck input (floor 0) is a fault");
+        bool trig = false;
+        for (int i = 0; i < 100; ++i) trig |= bad.update(i % 2 ? 900.0f : 5.0f) != EnergyDetector::Edge::None;
+        CHECK(!trig, "faulty sensor never triggers");
+        CHECK(good.update(150.0f) == EnergyDetector::Edge::Rising, "healthy sensor: clap at 150 triggers (floor 14, HIGH ~44)");
+    }
+
     // --- Ring buffer: pre-trigger history, wraparound, overwritten/not-yet-written rejection
     {
         std::vector<int16_t> storage(1000);

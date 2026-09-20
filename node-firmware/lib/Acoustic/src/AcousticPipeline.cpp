@@ -1,4 +1,5 @@
 #include "AcousticPipeline.h"
+#include <algorithm>
 
 #include <Arduino.h>
 #include <new>
@@ -56,8 +57,20 @@ volatile uint32_t g_cooldownEndMs = 0;
 volatile uint16_t g_lastTriggerRms = 0;
 
 EnergyDetectorConfig detectorConfig() {
-    return {MAX4466_TRIGGER_HIGH, MAX4466_TRIGGER_LOW, ACOUSTIC_ADAPTIVE != 0,
-            ACOUSTIC_NOISE_FLOOR_ALPHA, ACOUSTIC_NOISE_FLOOR_FACTOR, ACOUSTIC_NOISE_FLOOR_DELTA};
+    EnergyDetectorConfig c;
+    c.high = MAX4466_TRIGGER_HIGH;
+    c.low = MAX4466_TRIGGER_LOW;
+    c.adaptive = ACOUSTIC_ADAPTIVE != 0;
+    c.noiseAlpha = ACOUSTIC_NOISE_FLOOR_ALPHA;
+    c.noiseFactor = ACOUSTIC_NOISE_FLOOR_FACTOR;
+    c.noiseDelta = ACOUSTIC_NOISE_FLOOR_DELTA;
+    c.relative = ACOUSTIC_RELATIVE_TRIGGER != 0;
+    c.highDb = ACOUSTIC_TRIGGER_HIGH_DB;
+    c.lowDb = ACOUSTIC_TRIGGER_LOW_DB;
+    c.sustainBlocks = ACOUSTIC_SUSTAIN_BLOCKS;
+    c.maxFloor = ACOUSTIC_MAX_NOISE_FLOOR_RMS;
+    c.warmupBlocks = ACOUSTIC_NOISE_WARMUP_MS * MAX4466_SAMPLE_RATE / 1000 / MAX4466_BLOCK_SIZE;
+    return c;
 }
 
 void setState(State s) {
@@ -85,15 +98,45 @@ void triggerTask(void*) {
     uint32_t lastDebugMs = 0;
     Serial.printf("[ACOUSTIC] Trigger monitor started (HIGH=%.0f LOW=%.0f, %d Hz, %d-sample blocks%s)\n",
                   MAX4466_TRIGGER_HIGH, MAX4466_TRIGGER_LOW, MAX4466_SAMPLE_RATE, MAX4466_BLOCK_SIZE,
-                  ACOUSTIC_ADAPTIVE ? ", adaptive" : ", fixed");
+                  ACOUSTIC_RELATIVE_TRIGGER ? ", relative-dB" : (ACOUSTIC_ADAPTIVE ? ", adaptive" : ", fixed"));
+    bool reported = false;
+    double dcSum = 0.0;
+    uint32_t dcBlocks = 0;
     for (;;) {
         if (!g_sampler.readBlock(st, 100)) continue;
         const uint32_t now = millis();
         const auto edge = detector.update(st.rms);
+        if (!reported) {
+            dcSum += st.mean;
+            ++dcBlocks;
+            if (detector.warmedUp()) {
+                reported = true;
+                Serial.printf("[ACOUSTIC] DC mean = %.0f ADC counts (logged only, not used)\n", dcSum / dcBlocks);
+                Serial.printf("[ACOUSTIC] Noise floor = %.1f RMS (median of %d blocks, %d ms)\n", detector.noiseFloor(),
+                              static_cast<int>(dcBlocks), ACOUSTIC_NOISE_WARMUP_MS);
+                if (detector.sensorFault()) {
+                    if (detector.noiseFloor() < 1.0f)
+                        Serial.println("[ACOUSTIC] SENSOR FAULT: input is flat/stuck (no signal variation at all)");
+                    else
+                        Serial.printf("[ACOUSTIC] SENSOR FAULT: background noise too high (%.1f > %.1f RMS)\n",
+                                      detector.noiseFloor(), static_cast<float>(ACOUSTIC_MAX_NOISE_FLOOR_RMS));
+                    const double dc = dcSum / dcBlocks;
+                    if (dc > 4000.0) Serial.println("[ACOUSTIC] DC is at the top of the ADC range: OUT looks tied/pulled to 3V3");
+                    else if (dc < 100.0) Serial.println("[ACOUSTIC] DC is near 0: OUT looks grounded or unpowered");
+                    Serial.println("[ACOUSTIC] ML trigger disabled (check MAX4466 wiring/power/gain, then reset)");
+                } else {
+                    Serial.println("[ACOUSTIC] Sensor status = OK");
+                    Serial.printf("[ACOUSTIC] HIGH = %.1f  LOW = %.1f\n", detector.highThreshold(), detector.lowThreshold());
+                }
+            }
+        }
 #if ACOUSTIC_DEBUG_LOG
         if (now - lastDebugMs >= 250) {
             lastDebugMs = now;
-            Serial.printf("[ACOUSTIC] RMS=%.1f floor=%.1f state=%s\n", st.rms, detector.noiseFloor(), stateName(g_state));
+            const float peak = std::max(static_cast<float>(st.max) - st.mean, st.mean - static_cast<float>(st.min));
+            Serial.printf("[ACOUSTIC] RMS=%.1f peak=%.0f crest=%.1f floor=%.1f dB=%+.1f%s state=%s\n", st.rms, peak,
+                          crestFactor(peak, st.rms), detector.noiseFloor(), detector.lastDeltaDb(),
+                          detector.warmedUp() ? "" : " (warming up)", stateName(g_state));
         }
 #else
         (void)lastDebugMs;
@@ -275,7 +318,7 @@ bool AcousticPipeline::begin() {
                   FOREST_MAX4466_PIN, FOREST_I2S_BCLK_PIN, FOREST_I2S_WS_PIN, FOREST_I2S_DATA_PIN);
 #if FOREST_ACOUSTIC_TEST_MODE == 1
     if (!initTrigger()) return false;
-    xTaskCreatePinnedToCore(testMode1Task, "ac-test1", 4096, nullptr, 2, nullptr, 0);
+    xTaskCreatePinnedToCore(testMode1Task, "ac-test1", 8192, nullptr, 2, nullptr, 0);
     return true;
 #elif FOREST_ACOUSTIC_TEST_MODE == 2
     if (!initAudioIn()) return false;
@@ -293,7 +336,7 @@ bool AcousticPipeline::begin() {
     g_events = xQueueCreate(4, sizeof(AcousticEvent));
     xTaskCreatePinnedToCore(inferenceTask, "ac-infer", 16384, nullptr, 1, &g_inferTask, 0);
     xTaskCreatePinnedToCore(captureTask, "ac-capture", 4096, nullptr, 3, nullptr, 0);
-    xTaskCreatePinnedToCore(triggerTask, "ac-trigger", 4096, nullptr, 2, nullptr, 0);
+    xTaskCreatePinnedToCore(triggerTask, "ac-trigger", 8192, nullptr, 2, nullptr, 0);
     Serial.printf("[ACOUSTIC] pipeline running: ring %u samples, window %d ms (pre %d + post %d), cooldown %d ms\n",
                   (unsigned)ACOUSTIC_RING_SAMPLES, ACOUSTIC_PRE_MS + ACOUSTIC_POST_MS, ACOUSTIC_PRE_MS, ACOUSTIC_POST_MS, ACOUSTIC_COOLDOWN_MS);
     return true;
