@@ -81,8 +81,8 @@ void BackendIngestionClient::tickGatewayStatus(std::uint32_t currentMs) {
     snprintf(url, sizeof(url), "%s/api/ingest/gateway/status", config_.baseUrl);
     const bool useTls = std::strncmp(config_.baseUrl, "https://", 8U) == 0;
     if (useTls) {
-        secureClient_.setInsecure();
-        http.begin(secureClient_, url);
+        httpSecureClient_.setInsecure();
+        http.begin(httpSecureClient_, url);
     } else {
         http.begin(url);
     }
@@ -243,8 +243,8 @@ bool BackendIngestionClient::publishRfidHttp(const ForestEventEnvelope& envelope
     snprintf(url, sizeof(url), "%s/api/ingest/gateway/rfid-scan", config_.baseUrl);
     const bool useTls = std::strncmp(config_.baseUrl, "https://", 8U) == 0;
     if (useTls) {
-        secureClient_.setInsecure();
-        http.begin(secureClient_, url);
+        httpSecureClient_.setInsecure();
+        http.begin(httpSecureClient_, url);
     } else {
         http.begin(url);
     }
