@@ -1,0 +1,7 @@
+{
+  "name": "ForestSensors",
+  "version": "1.0.0",
+  "description": "Own sensor drivers for the Forest node: RC522 (SPI), DS3231 (I2C), MAX4466 (ADC), INMP441 (I2S). No third-party sensor libraries.",
+  "frameworks": "arduino",
+  "platforms": "espressif32"
+}

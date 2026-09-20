@@ -9,6 +9,10 @@
 
 #include <cstdint>
 
+#ifdef ARDUINO
+#include "MAX4466.h"
+#endif
+
 namespace forest::acoustic {
 
 // RMS of the AC component of a block: subtract the block mean, then sqrt(mean(x^2)).
@@ -80,27 +84,10 @@ private:
 float crestFactor(float peakAboveMean, float rms);
 
 #ifdef ARDUINO
-struct BlockStats {
-    float rms = 0.0f;
-    float mean = 0.0f;   // DC level in ADC counts
-    int16_t min = 0;
-    int16_t max = 0;
-};
-
-// Continuous ADC1 sampling of the MAX4466 through the ESP32-S3 digital-controller DMA:
-// no per-sample CPU work, the task only wakes once per block.
-class Max4466Sampler {
-public:
-    bool begin(int gpio, int sampleRateHz, int blockSize);
-    // Waits up to timeoutMs for a full block; false on timeout/driver error.
-    bool readBlock(BlockStats& stats, uint32_t timeoutMs);
-    int blockSize() const { return blockSize_; }
-private:
-    int blockSize_ = 0;
-    int filled_ = 0;
-    int16_t* block_ = nullptr;   // allocated once in begin()
-    bool started_ = false;
-};
+// The ADC/DMA front end is the ForestSensors::MAX4466 driver (lib/ForestSensors); these aliases keep the
+// pipeline code unchanged.
+using BlockStats = ForestSensors::BlockStats;
+using Max4466Sampler = ForestSensors::MAX4466;
 #endif
 
 }  // namespace forest::acoustic

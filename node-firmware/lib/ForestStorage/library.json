@@ -1,0 +1,7 @@
+{
+  "name": "ForestStorage",
+  "version": "1.0.0",
+  "description": "Persistent local event store for the Forest node (append-only fixed-size CRC records on internal flash via LittleFS).",
+  "frameworks": "arduino",
+  "platforms": "espressif32"
+}
