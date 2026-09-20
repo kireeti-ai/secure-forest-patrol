@@ -1,12 +1,12 @@
-# SECURE FOREST PATROL — Project README
+# SECURE OFFLINE PATROL VERIFICATION — Project README
 
-> **RESQ / SECURE FOREST PATROL** — A tamper-evident, offline-first forest patrol verification system using LoRa mesh, biometric identity verification, TinyML acoustic threat detection, and a cryptographic hash chain ledger.
+> **Secure Offline Patrol Verification** — A tamper-evident, offline-first forest patrol verification system using LoRa mesh, biometric identity verification, TinyML acoustic threat detection, and a cryptographic hash chain ledger.
 
 ---
 
 ## Overview
 
-This project implements a complete secure forest patrol system for deployment in remote, connectivity-limited environments. It consists of:
+This project, Secure Offline Patrol Verification, implements a complete forest patrol system for deployment in remote, connectivity-limited environments. It consists of:
 
 1. **Field Nodes** (ESP32 + SX1278 LoRa) — Checkpoint and acoustic patrol nodes deployed in the forest.
 2. **LoRa Gateway** (ESP32-S3) — Receives field events over 433 MHz LoRa, verifies integrity, and forwards to backend over Wi-Fi.

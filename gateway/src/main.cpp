@@ -16,7 +16,7 @@ void setup() {
     }
 
     Serial.println("================================");
-    Serial.println("SECURE FOREST PATROL GATEWAY");
+    Serial.println("SECURE OFFLINE PATROL VERIFICATION GATEWAY");
     Serial.println("================================");
     Serial.flush();
 

@@ -1,4 +1,4 @@
-// Secure Forest Patrol mark: a three-tier conifer with a beacon signal arc (patrol + radio link).
+// Secure Offline Patrol Verification mark: a three-tier conifer with a beacon signal arc (patrol + radio link).
 // Stroke-only so it inherits `currentColor` and the stroke width set by the container.
 export function ForestLogo({ className = "" }: { className?: string }) {
   return (

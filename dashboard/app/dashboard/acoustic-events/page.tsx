@@ -7,6 +7,7 @@ import { Card } from "../../../components/ui/Card";
 import { SectionHeader } from "../../../components/ui/SectionHeader";
 import { StatusBadge } from "../../../components/ui/StatusBadge";
 import { useForestWebSocket } from "../../../lib/ws";
+import { AcousticAnalytics } from "../../../components/dashboard/AcousticAnalytics";
 
 const CLASSIFICATION_COLORS: Record<string, { bg: string; border: string; text: string }> = {
   Gunshot:     { bg: "var(--color-danger-bg)", border: "var(--color-border)", text: "var(--color-danger)" },
@@ -51,6 +52,8 @@ export default function AcousticEventsPage() {
         <h1>Acoustic events</h1>
         <p>Gunshot and chainsaw detections from field nodes, waiting for review.</p>
       </header>
+
+      {!loading && <AcousticAnalytics events={events} />}
 
       {/* FILTER TABS */}
       <div style={{ display: "flex", gap: "0.75rem", marginBottom: "1.5rem", flexWrap: "wrap" }}>
@@ -124,7 +127,7 @@ export default function AcousticEventsPage() {
                       </div>
                     </div>
                     <Link
-                      href={`/dashboard/acoustic-events/${evt.id}`}
+                      href={`/dashboard/acoustic-events/${evt.eventId}`}
                       style={{
                         padding: "8px 16px",
                         fontSize: "0.85rem",

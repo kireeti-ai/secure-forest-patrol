@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { fetchAcousticEventById, AcousticEvent } from "../../../../lib/api";
+import { fetchAcousticEventById, reviewAcousticEvent, AcousticEvent, ReviewDecision } from "../../../../lib/api";
 import { Card } from "../../../../components/ui/Card";
 import { StatusBadge } from "../../../../components/ui/StatusBadge";
 
@@ -11,6 +11,8 @@ export default function AcousticEventDetailPage() {
   const params = useParams();
   const [event, setEvent] = useState<AcousticEvent | null>(null);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState<ReviewDecision | null>(null);
+  const [notice, setNotice] = useState<{ ok: boolean; text: string } | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -21,6 +23,20 @@ export default function AcousticEventDetailPage() {
     }
     load();
   }, [params.id]);
+
+  async function decide(decision: ReviewDecision, done: string) {
+    if (!event) return;
+    setSaving(decision);
+    setNotice(null);
+    try {
+      setEvent(await reviewAcousticEvent(event.eventId, decision));
+      setNotice({ ok: true, text: done });
+    } catch (e) {
+      setNotice({ ok: false, text: e instanceof Error ? e.message : "Could not save the review" });
+    } finally {
+      setSaving(null);
+    }
+  }
 
   if (loading) return <div style={{ padding: "2rem" }}>Loading acoustic event...</div>;
   if (!event) return <div style={{ padding: "2rem" }}>Event not found.</div>;
@@ -90,29 +106,44 @@ export default function AcousticEventDetailPage() {
         </table>
       </Card>
 
-      {/* REVIEW WORKFLOW */}
+      {/* REVIEW */}
       <Card style={{ marginBottom: "1.5rem" }}>
-        <h3 style={{ padding: "1rem 1rem 0.5rem", fontWeight: 700, color: "var(--color-navy)", borderBottom: "1px solid var(--color-border)" }}>Review Workflow State</h3>
-        <div style={{ padding: "1rem", display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
-          {(["DETECTED", "PENDING_REVIEW", "REVIEWED", "CONFIRMED", "DISMISSED"] as const).map((state, i, arr) => (
-            <>
-              <div
-                key={state}
-                style={{
-                  padding: "8px 16px",
-                  borderRadius: "24px",
-                  fontWeight: 700,
-                  fontSize: "0.85rem",
-                  background: event.reviewStatus === state ? reviewColors[state] : "var(--color-surface-alt)",
-                  color: event.reviewStatus === state ? "#fff" : "var(--color-muted)",
-                  border: `2px solid ${event.reviewStatus === state ? reviewColors[state] : "var(--color-border)"}`,
-                }}
-              >
-                {state.replace("_", " ")}
-              </div>
-              {i < arr.length - 1 && <span style={{ color: "var(--color-border)", fontSize: "1rem" }}>→</span>}
-            </>
-          ))}
+        <h3 style={{ padding: "1rem 1rem 0.5rem", fontWeight: 700, color: "var(--color-navy)", borderBottom: "1px solid var(--color-border)" }}>Review this detection</h3>
+        <div className="review-body">
+          <p className="review-lead">
+            The node classified this sound on the device. Nobody has heard it, so decide from the confidence, the time and whether a patrol was at
+            the checkpoint. Your decision is recorded next to the detection; the original classification is never changed.
+          </p>
+          <div className="review-actions">
+            <button type="button" className="review-btn review-btn-danger" disabled={saving !== null || event.reviewStatus === "CONFIRMED"}
+              onClick={() => decide("CONFIRMED", `Confirmed as a real ${event.classification.toLowerCase()} event.`)}>
+              {saving === "CONFIRMED" ? "Saving..." : `Confirm real ${event.classification.toLowerCase()}`}
+            </button>
+            <button type="button" className="review-btn" disabled={saving !== null || event.reviewStatus === "DISMISSED"}
+              onClick={() => decide("DISMISSED", "Dismissed as a false alarm.")}>
+              {saving === "DISMISSED" ? "Saving..." : "False alarm (not a " + event.classification.toLowerCase() + ")"}
+            </button>
+            <button type="button" className="review-btn" disabled={saving !== null || event.reviewStatus === "REVIEWED"}
+              onClick={() => decide("REVIEWED", "Marked as reviewed, outcome unclear.")}>
+              {saving === "REVIEWED" ? "Saving..." : "Reviewed, unclear"}
+            </button>
+            {event.reviewStatus !== "PENDING_REVIEW" && (
+              <button type="button" className="review-btn review-btn-quiet" disabled={saving !== null}
+                onClick={() => decide("PENDING_REVIEW", "Moved back to the review queue.")}>
+                Reopen
+              </button>
+            )}
+          </div>
+          {notice && <p role="status" className={notice.ok ? "review-note review-note-ok" : "review-note review-note-bad"}>{notice.text}</p>}
+          <dl className="review-help">
+            <dt>Confirm</dt><dd>It really was that sound. It stays in the record as a confirmed threat.</dd>
+            <dt>False alarm</dt><dd>It was something else (wind, voices, an engine, rain). It stays in the history as dismissed, so false-alarm patterns stay visible.</dd>
+            <dt>Reviewed, unclear</dt><dd>You looked at it and cannot tell.</dd>
+          </dl>
+          <p className="review-limit">
+            <strong>No audio is available.</strong> The node does not send sound over LoRa. One second of audio is about 32 KB, a packet here carries at
+            most 48 bytes, and at roughly 5 kbps that is over 45 seconds of airtime for one second of sound. Only the class and confidence travel.
+          </p>
         </div>
       </Card>
 

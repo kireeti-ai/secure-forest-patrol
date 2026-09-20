@@ -73,6 +73,7 @@ export interface AcousticEvent {
   syncStatus: "SYNCED" | "PENDING" | "FAILED";
   clipAvailable: boolean;
   modelVersion?: string;
+  reviewedAt?: string | null;
 }
 
 export interface LedgerRecord {
@@ -191,7 +192,7 @@ function normalizeAcoustic(r: any): AcousticEvent {
     zone: r.zoneId, timestamp: r.eventCreatedAt, classification: r.classification,
     confidence: r.confidence, reviewStatus: r.reviewStatus,
     signatureStatus: r.signatureStatus, syncStatus: r.syncStatus,
-    clipAvailable: r.clipAvailable, modelVersion: r.modelVersion,
+    clipAvailable: r.clipAvailable, modelVersion: r.modelVersion, reviewedAt: r.reviewedAt ?? null,
   };
 }
 
@@ -326,6 +327,19 @@ export async function fetchAcousticEventById(id: string): Promise<AcousticEvent 
   } catch {
     return null;
   }
+}
+
+export type ReviewDecision = "CONFIRMED" | "DISMISSED" | "REVIEWED" | "PENDING_REVIEW";
+
+// Human review of a detection. The ML classification is never overwritten; only the review status changes.
+export async function reviewAcousticEvent(eventId: string, decision: ReviewDecision): Promise<AcousticEvent> {
+  const res = await fetch(`${API_BASE_URL}/api/forest/acoustic-events/${encodeURIComponent(eventId)}/review`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeaders() },
+    body: JSON.stringify({ review_status: decision, reviewed_by: "OPERATIONS" }),
+  });
+  if (!res.ok) throw new Error(`Review failed (${res.status})`);
+  return normalizeAcoustic(await res.json());
 }
 
 export async function fetchLedger(): Promise<LedgerRecord[]> {

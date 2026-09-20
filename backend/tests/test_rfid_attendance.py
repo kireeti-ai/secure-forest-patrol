@@ -19,15 +19,30 @@ def test_rfid_scan_authorizes_and_marks_entry_then_exit(client, db_session, seed
     assert duplicate.status_code == 200
     assert duplicate.json()["outcome"] == "DUPLICATE"
 
-    second = client.post("/api/ingest/gateway/rfid-scan", json={
+    # a second tap straight after entry is a double tap, not a check-out
+    double_tap = client.post("/api/ingest/gateway/rfid-scan", json={
         "type": "RFID_SCAN", "node_id": "NODE_01", "uid": "A3:B7:91:2F", "seq": 16, "rssi": -67, "snr": 8.5})
+    assert double_tap.status_code == 202
+    assert double_tap.json()["attendance_action"] is None
+    assert client.get("/api/officer-presence").json()[0]["state"] == "PRESENT"
+
+    from datetime import datetime, timedelta, timezone
+    from sqlalchemy import select
+    from app.models.rfid import Attendance
+    row = db_session.scalar(select(Attendance).where(Attendance.employee_id == "EMP001"))
+    row.entry_at = datetime.now(timezone.utc) - timedelta(minutes=30)
+    db_session.commit()
+
+    second = client.post("/api/ingest/gateway/rfid-scan", json={
+        "type": "RFID_SCAN", "node_id": "NODE_01", "uid": "A3:B7:91:2F", "seq": 17, "rssi": -67, "snr": 8.5})
     assert second.status_code == 202
     assert second.json()["attendance_action"] == "EXIT"
+    assert client.get("/api/officer-presence").json()[0]["state"] == "CHECKED_OUT"
 
 
 def test_unknown_rfid_is_recorded_without_attendance(client, db_session, seeded_data):
     response = client.post("/api/ingest/gateway/rfid-scan", json={
-        "type": "RFID_SCAN", "node_id": "NODE_01", "uid": "73:21:AC:09", "seq": 17, "rssi": -70, "snr": 7.0})
+        "type": "RFID_SCAN", "node_id": "NODE_01", "uid": "73:21:AC:09", "seq": 27, "rssi": -70, "snr": 7.0})
     assert response.status_code == 202
     assert response.json()["status"] == "UNKNOWN"
     assert response.json()["attendance_action"] is None
@@ -156,3 +171,18 @@ def test_gateway_goes_offline_when_it_stops_reporting(client, db_session, seeded
     assert (stale["wifiStatus"], stale["backendStatus"], stale["loraStatus"]) == ("DISCONNECTED", "UNREACHABLE", "NO_TRAFFIC")
     status = client.get("/api/forest/system-status").json()
     assert "GW-T" not in status["gateway"]["details"] and status["wifiBackhaul"]["details"].startswith("0/")
+
+
+def test_presence_state_basis():
+    from datetime import datetime, timezone
+    from app.services.attendance_state import attendance_day, presence_state
+
+    morning = datetime(2026, 9, 20, 2, 0, tzinfo=timezone.utc)     # 07:30 in Asia/Kolkata, before the 10:00 cut-off
+    afternoon = datetime(2026, 9, 20, 9, 0, tzinfo=timezone.utc)   # 14:30 local
+    assert presence_state(False, False, morning) == "YET_TO_ARRIVE"
+    assert presence_state(False, False, afternoon) == "ABSENT"
+    assert presence_state(True, False, morning) == "PRESENT"
+    assert presence_state(True, True, afternoon) == "CHECKED_OUT"
+    # the day rolls over at local midnight, not at UTC midnight
+    assert attendance_day(datetime(2026, 9, 20, 19, 0, tzinfo=timezone.utc)).isoformat() == "2026-09-21"
+    assert attendance_day(datetime(2026, 9, 20, 17, 0, tzinfo=timezone.utc)).isoformat() == "2026-09-20"

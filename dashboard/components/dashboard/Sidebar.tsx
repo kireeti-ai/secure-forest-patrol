@@ -88,13 +88,12 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         aria-label="Close navigation"
         onClick={onClose}
       />
-      <aside className={`sidebar${open ? " sidebar-open" : ""}`} aria-label="Forest Patrol Navigation">
+      <aside className={`sidebar${open ? " sidebar-open" : ""}`} aria-label="Secure Offline Patrol Verification navigation">
         <div className="sidebar-brand">
           <span className="brand-lockup">
             <ForestLogo className="brand-mark" />
-            <span className="brand-name">SFP</span>
+            <span className="brand-name">Secure Offline Patrol Verification</span>
           </span>
-          <span className="brand-subtitle">SECURE FOREST PATROL</span>
         </div>
 
         <div className="sidebar-groups">
