@@ -19,6 +19,7 @@ import {
 import { Card } from "../ui/Card";
 import { SectionHeader } from "../ui/SectionHeader";
 import { StatusBadge } from "../ui/StatusBadge";
+import { fetchRfidEvents, type RfidEvent } from "../../lib/rfidApi";
 import { useForestWebSocket } from "../../lib/ws";
 
 const OVERVIEW_WS_EVENTS = [
@@ -31,6 +32,10 @@ const OVERVIEW_WS_EVENTS = [
   "SYNC_UPDATED",
   "RFID_SCAN_RECEIVED",
 ] as const;
+
+function scanTone(status: string): "healthy" | "warning" | "danger" {
+  return status === "AUTHORIZED" ? "healthy" : status === "WRONG_CHECKPOINT" ? "warning" : "danger";
+}
 
 function Metric({
   label,
@@ -69,7 +74,7 @@ export function Overview() {
   const [gateways, setGateways] = useState<GatewayStatus[]>([]);
   const [nodes, setNodes] = useState<FieldNode[]>([]);
   const [loading, setLoading] = useState(true);
-  const [rfidScans, setRfidScans] = useState<any[]>([]);
+  const [rfidScans, setRfidScans] = useState<RfidEvent[]>([]);
 
   const loadDataRef = useRef<() => void>(() => {});
 
@@ -77,13 +82,14 @@ export function Overview() {
     let mounted = true;
 
     async function loadData() {
-      const [cpData, patData, acData, ledData, gwData, nodeData] = await Promise.all([
+      const [cpData, patData, acData, ledData, gwData, nodeData, rfidData] = await Promise.all([
         fetchCheckpoints(),
         fetchPatrols(),
         fetchAcousticEvents(),
         fetchLedger(),
         fetchGateways(),
         fetchNodes(),
+        fetchRfidEvents().catch(() => [] as RfidEvent[]),
       ]);
       if (!mounted) return;
       setCheckpoints(cpData);
@@ -92,6 +98,7 @@ export function Overview() {
       setLedger(ledData);
       setGateways(gwData);
       setNodes(nodeData);
+      setRfidScans(rfidData.slice(0, 10));
       setLoading(false);
     }
 
@@ -108,13 +115,7 @@ export function Overview() {
 
   useForestWebSocket(
     [...OVERVIEW_WS_EVENTS],
-    (msg) => {
-      if (msg.type === "RFID_SCAN_RECEIVED") {
-        setRfidScans((prev) => [msg, ...prev].slice(0, 50));
-      } else {
-        loadDataRef.current();
-      }
-    },
+    () => loadDataRef.current(),
     () => loadDataRef.current()
   );
 
@@ -127,7 +128,15 @@ export function Overview() {
   const pendingSyncCount = patrols.filter((p) => p.syncStatus === "PENDING").length + checkpoints.reduce((acc, c) => acc + c.pendingRecords, 0);
 
   const gw = gateways[0];
-  const isLoraConnected = !!gw && (gw.loraStatus === "ACTIVE" || gw.loraStatus === "CONNECTED") && nodes.some((n) => n.loraActivity === "ACTIVE" || n.health === "HEALTHY");
+  const RECENT_MS = 2 * 60 * 1000;
+  const gatewayFresh = !!gw?.lastSeen && Date.now() - new Date(gw.lastSeen).getTime() <= RECENT_MS;
+  const liveCheckpoint = checkpoints.find((c) => c.state === "ONLINE");
+  const isLoraConnected = gatewayFresh && !!liveCheckpoint;
+  // Link badges show only what the gateway last reported. No gateway data -> NO DATA;
+  // a gateway that has stopped reporting -> OFFLINE. Never a made-up healthy value.
+  const linkLabel = (reported?: string) => (!gw ? "NO DATA" : gatewayFresh ? reported ?? "UNKNOWN" : "OFFLINE");
+  const linkTone = (reported: string | undefined, healthy: string): "healthy" | "warning" | "danger" =>
+    !gw ? "warning" : gatewayFresh && reported === healthy ? "healthy" : "danger";
 
   return (
     <div className="overview-page">
@@ -144,9 +153,9 @@ export function Overview() {
         <Card style={{ marginTop: "1.25rem", padding: "1rem 1.25rem", background: "#ecfdf5", border: "1px solid #bbf7d0" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
             <div>
-              <strong style={{ color: "#166534", fontSize: "0.96rem" }}>Both the LoRa sensor and the LoRa gateway are connected and running.</strong>
+              <strong style={{ color: "#166534", fontSize: "0.96rem" }}>Field node and gateway are active.</strong>
               <p style={{ color: "#166534", fontSize: "0.82rem", margin: "4px 0 0" }}>
-                If you want any additional details, tell me which telemetry or node status you would like to inspect.
+                {`${gw?.gatewayId ?? "Gateway"} last reported ${new Date(gw!.lastSeen).toLocaleTimeString()} · ${liveCheckpoint!.nodeId} (${liveCheckpoint!.checkpointId}) last scan ${liveCheckpoint!.lastPatrolTime}`}
               </p>
             </div>
             <StatusBadge label="LORa ONLINE" tone="healthy" />
@@ -201,7 +210,7 @@ export function Overview() {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
           <div>
             <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--color-forest-dark)" }}>
-              Gateway Backhaul Architecture: {gw?.gatewayId || "GW-FOREST-01"}
+              Gateway Backhaul: {gw?.gatewayId ?? "no gateway reported"}
             </h3>
             <p style={{ fontSize: "0.85rem", color: "#64748b", marginTop: "2px" }}>
               LoRa field link receives offline events from nodes. Wi-Fi backhaul forwards verified records to cloud backend.
@@ -210,15 +219,15 @@ export function Overview() {
           <div style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
             <div style={{ textAlign: "center" }}>
               <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600, display: "block" }}>LoRa Field Link</span>
-              <StatusBadge label={gw?.loraStatus || "ACTIVE"} tone={gw?.loraStatus === "ACTIVE" ? "healthy" : "warning"} />
+              <StatusBadge label={linkLabel(gw?.loraStatus)} tone={linkTone(gw?.loraStatus, "ACTIVE")} />
             </div>
             <div style={{ textAlign: "center" }}>
               <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600, display: "block" }}>Wi-Fi Backhaul</span>
-              <StatusBadge label={gw?.wifiStatus || "CONNECTED"} tone={gw?.wifiStatus === "CONNECTED" ? "healthy" : "danger"} />
+              <StatusBadge label={linkLabel(gw?.wifiStatus)} tone={linkTone(gw?.wifiStatus, "CONNECTED")} />
             </div>
             <div style={{ textAlign: "center" }}>
               <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600, display: "block" }}>Backend API</span>
-              <StatusBadge label={gw?.backendStatus || "REACHABLE"} tone={gw?.backendStatus === "REACHABLE" ? "healthy" : "danger"} />
+              <StatusBadge label={linkLabel(gw?.backendStatus)} tone={linkTone(gw?.backendStatus, "REACHABLE")} />
             </div>
             <Link
               href="/dashboard/gateway"
@@ -380,7 +389,7 @@ export function Overview() {
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
                   <span style={{ color: "#64748b" }}>Status</span>
-                  <StatusBadge label="RECEIVED" tone="healthy" />
+                  <StatusBadge label={rfidScans[0].status} tone={scanTone(rfidScans[0].status)} />
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
                   <span style={{ color: "#64748b" }}>RSSI</span>
@@ -412,6 +421,8 @@ export function Overview() {
                   <tr style={{ borderBottom: "1px solid #e2e8f0", textAlign: "left", color: "#64748b" }}>
                     <th style={{ padding: "8px" }}>Time</th>
                     <th style={{ padding: "8px" }}>Node</th>
+                    <th style={{ padding: "8px" }}>Checkpoint</th>
+                    <th style={{ padding: "8px" }}>Employee</th>
                     <th style={{ padding: "8px" }}>RFID UID</th>
                     <th style={{ padding: "8px" }}>RSSI</th>
                     <th style={{ padding: "8px" }}>SNR</th>
@@ -419,16 +430,18 @@ export function Overview() {
                   </tr>
                 </thead>
                 <tbody>
-                  {rfidScans.map((scan, idx) => (
-                    <tr key={idx} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                  {rfidScans.map((scan) => (
+                    <tr key={scan.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
                       <td style={{ padding: "8px", fontWeight: 500 }}>
                         {new Date(scan.timestamp).toLocaleTimeString()}
                       </td>
                       <td style={{ padding: "8px" }}>{scan.node_id}</td>
+                      <td style={{ padding: "8px" }}>{scan.checkpoint_id ?? "—"}</td>
+                      <td style={{ padding: "8px" }}>{scan.employee_id ?? "Unknown"}</td>
                       <td style={{ padding: "8px" }}><strong>{scan.uid}</strong></td>
                       <td style={{ padding: "8px" }}>{scan.rssi}</td>
                       <td style={{ padding: "8px" }}>{scan.snr}</td>
-                      <td style={{ padding: "8px" }}><StatusBadge label="Received" tone="healthy" /></td>
+                      <td style={{ padding: "8px" }}><StatusBadge label={scan.status} tone={scanTone(scan.status)} /></td>
                     </tr>
                   ))}
                 </tbody>
