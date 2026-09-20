@@ -42,6 +42,16 @@ void printInitializationDiagnostics() {
 
 SPIClass loraSpi(FSPI);
 
+std::uint8_t readLoraRegister(std::uint8_t address) {
+    loraSpi.beginTransaction(SPISettings(200000U, MSBFIRST, SPI_MODE0));
+    digitalWrite(loraCs, LOW);
+    loraSpi.transfer(address & 0x7FU);
+    const std::uint8_t value = loraSpi.transfer(0x00U);
+    digitalWrite(loraCs, HIGH);
+    loraSpi.endTransaction();
+    return value;
+}
+
 }  // namespace
 
 bool Sx1278LoRaDriver::begin() {
@@ -59,31 +69,66 @@ bool Sx1278LoRaDriver::begin() {
     LoRa.setSPI(loraSpi);
     LoRa.setPins(loraCs, loraReset, loraDio0);
 
-    if (!LoRa.begin(frequencyHz)) {
+    if (!configureRadio_()) {
         Serial.println("[GATEWAY ERROR] LoRa.begin() FAILED");
         printInitializationDiagnostics();
         Serial.flush();
         return false;
     }
+    lastActivityMs_ = millis();
+    Serial.println("[LoRa] RX listening");
+    return true;
+}
 
+bool Sx1278LoRaDriver::configureRadio_() {
+    if (!LoRa.begin(frequencyHz)) return false;
     LoRa.setSpreadingFactor(spreadingFactor);
     LoRa.setSignalBandwidth(signalBandwidthHz);
     LoRa.setCodingRate4(codingRateDenominator);
     LoRa.setSyncWord(syncWord);
     LoRa.enableCrc();
-
     // Polling mode: no onReceive callback, no SPI-in-ISR hazard.
     // parsePacket() is called every tick from the main loop.
     LoRa.receive();
-
-    Serial.println("[LoRa] RX listening");
-
     return true;
 }
 
+void Sx1278LoRaDriver::watchdog_() {
+    const std::uint32_t now = millis();
+    if (now - lastWatchdogMs_ < 1000U) return;
+    lastWatchdogMs_ = now;
+
+    // RegOpMode (0x01): bit7 = LoRa mode, bits 2..0 = mode; 0x85 = LoRa + RX continuous.
+    const std::uint8_t opMode = readLoraRegister(0x01U);
+
+    if ((opMode & 0x87U) != 0x85U) {
+        ++watchdogRearms_;
+        Serial.printf("[LoRa WATCHDOG] receiver not in RX mode (RegOpMode=0x%02X): re-arming (#%lu)\n",
+                      static_cast<unsigned>(opMode), static_cast<unsigned long>(watchdogRearms_));
+        LoRa.receive();
+        return;
+    }
+    if (now - lastActivityMs_ >= reinitAfterSilenceMs) {
+        // A long silence is normal at night, so this only refreshes the radio; it costs a few milliseconds.
+        ++watchdogReinits_;
+        Serial.printf("[LoRa WATCHDOG] no packets for %lu s: re-initialising the SX1278 (#%lu)\n",
+                      static_cast<unsigned long>((now - lastActivityMs_) / 1000U), static_cast<unsigned long>(watchdogReinits_));
+        if (!configureRadio_()) Serial.println("[LoRa WATCHDOG] re-initialisation FAILED");
+        lastActivityMs_ = now;
+    }
+}
+
 bool Sx1278LoRaDriver::receive(RawRadioPacket& packet) {
+    watchdog_();
+    // Stay in true continuous RX. The library's parsePacket() would otherwise flip the chip into
+    // single-shot RX on every call (which times out into standby: the receiver is deaf between polls), so
+    // it is only called once the chip has flagged a finished reception (RegIrqFlags bit 6, RxDone).
+    if ((readLoraRegister(0x12U) & 0x40U) == 0U) {
+        return false;
+    }
     const int packetSize = LoRa.parsePacket();
-    if (packetSize <= 0) {
+    if (packetSize <= 0) {   // RxDone with a payload CRC error: nothing to read, resume listening
+        LoRa.receive();
         return false;
     }
 
@@ -106,6 +151,7 @@ bool Sx1278LoRaDriver::receive(RawRadioPacket& packet) {
     packet.receivedAtMs = millis();
 
     packetsReceivedCounter_++;
+    lastActivityMs_ = millis();
     LoRa.receive();
 
     return true;
