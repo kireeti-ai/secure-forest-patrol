@@ -9,6 +9,8 @@ from sqlalchemy.orm import Session
 
 from app.api.dependencies.database import get_db
 from app.core.security import hash_password, require_roles
+from app.models.checkpoint import Checkpoint
+from app.models.operator_checkpoint_access import OperatorCheckpointAccess
 from app.models.rfid import Attendance, RfidEvent
 from app.models.user import User
 
@@ -51,9 +53,18 @@ class RfidAssignment(BaseModel):
         return EmployeeCreate.normalize_rfid_uid(value)
 
 
+class CheckpointAssignment(BaseModel):
+    checkpoint_ids: list[str] = Field(max_length=100)
+
+
+def _checkpoints_of(user: User) -> list[str]:
+    return sorted(access.checkpoint_id for access in user.checkpoint_access)
+
+
 def _employee_out(user: User) -> dict:
     return {"id": str(user.id), "employee_id": user.employee_id, "name": user.full_name,
-            "email": user.email, "role": user.role, "rfid_uid": user.rfid_uid, "active": user.is_active}
+            "email": user.email, "role": user.role, "rfid_uid": user.rfid_uid, "active": user.is_active,
+            "checkpoints": _checkpoints_of(user)}
 
 
 @router.get("/employees")
@@ -96,6 +107,22 @@ def assign_rfid(employee_id: str, payload: RfidAssignment, db: Session = Depends
     return _employee_out(employee)
 
 
+@router.put("/employees/{employee_id}/checkpoints")
+def assign_checkpoints(employee_id: str, payload: CheckpointAssignment, db: Session = Depends(get_db),
+                       _: User = Depends(require_roles(*_OFFICER_ROLES))) -> dict:
+    """Replace the set of checkpoints an employee is assigned to."""
+    employee = _find_employee(employee_id, db)
+    wanted = list(dict.fromkeys(payload.checkpoint_ids))
+    known = set(db.scalars(select(Checkpoint.checkpoint_id).where(Checkpoint.checkpoint_id.in_(wanted))))
+    missing = [cid for cid in wanted if cid not in known]
+    if missing:
+        raise HTTPException(status_code=404, detail=f"Unknown checkpoint(s): {', '.join(missing)}")
+    employee.checkpoint_access = [OperatorCheckpointAccess(checkpoint_id=cid) for cid in wanted]
+    db.commit()
+    db.refresh(employee)
+    return _employee_out(employee)
+
+
 @router.delete("/employees/{employee_id}", status_code=status.HTTP_204_NO_CONTENT)
 def remove_employee(employee_id: str, db: Session = Depends(get_db), _: User = Depends(require_roles(*_OFFICER_ROLES))) -> Response:
     employee = _find_employee(employee_id, db)
@@ -131,7 +158,7 @@ def officer_presence(db: Session = Depends(get_db), _: User = Depends(require_ro
     for user, attendance in rows:
         result.append({
             "id": str(user.id), "employee_id": user.employee_id, "name": user.full_name,
-            "role": user.role, "rfid_uid": user.rfid_uid,
+            "role": user.role, "rfid_uid": user.rfid_uid, "checkpoints": _checkpoints_of(user),
             "present": bool(attendance and attendance.entry_at and not attendance.exit_at),
             "attendance_date": today.isoformat(),
             "entry_at": attendance.entry_at.isoformat() if attendance and attendance.entry_at else None,

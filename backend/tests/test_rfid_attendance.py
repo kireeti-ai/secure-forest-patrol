@@ -64,3 +64,22 @@ def test_mqtt_rfid_and_gateway_status_topics(client, db_session, seeded_data):
     from app.models.rfid import RfidEvent
     assert db_session.scalar(select(RfidEvent).where(RfidEvent.sequence == 40)).status == "UNKNOWN"
     assert db_session.scalar(select(Gateway).where(Gateway.gateway_id == "GW-FE")).wifi_status == "CONNECTED"
+
+
+def test_assign_employee_to_checkpoints(client, db_session, seeded_data):
+    employee = User(email="cp@forest.local", full_name="CP Officer", employee_id="OFF900",
+                    password_hash=hash_password("CheckpointPass123!"), role="OFFICER")
+    db_session.add(employee)
+    db_session.commit()
+    for cid in ("CP-01", "CP-02"):
+        client.post("/api/forest/checkpoints", json={"checkpoint_id": cid, "name": cid})
+
+    ok = client.put("/api/employees/OFF900/checkpoints", json={"checkpoint_ids": ["CP-02", "CP-01", "CP-01"]})
+    assert ok.status_code == 200
+    assert ok.json()["checkpoints"] == ["CP-01", "CP-02"]
+
+    bad = client.put("/api/employees/OFF900/checkpoints", json={"checkpoint_ids": ["CP-99"]})
+    assert bad.status_code == 404
+
+    presence = client.get("/api/officer-presence").json()
+    assert next(row for row in presence if row["employee_id"] == "OFF900")["checkpoints"] == ["CP-01", "CP-02"]
