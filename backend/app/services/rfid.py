@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.models.checkpoint import Checkpoint
@@ -16,6 +16,15 @@ DUPLICATE_WINDOW = timedelta(seconds=120)
 
 def ingest_rfid_scan(db: Session, payload: RfidScanIngest) -> tuple[dict, bool]:
     """Persist exactly one gateway scan and toggle the employee's daily attendance."""
+    # Two deliveries of one scan can arrive milliseconds apart (webhook retries,
+    # duplicate rules). Without a unique constraint the check below would let both
+    # through, so serialise per (node, sequence, card): the second request waits for
+    # the first to commit and then sees it as a duplicate. The lock is released on
+    # commit/rollback. SQLite (tests) is single-writer and needs nothing.
+    if db.get_bind().dialect.name == "postgresql":
+        db.execute(select(func.pg_advisory_xact_lock(
+            func.hashtext(f"rfid:{payload.node_id}:{payload.seq}:{payload.uid}"))))
+
     # A retry of the same scan (LoRa/MQTT/webhook redelivery) repeats node, sequence and
     # card within moments. The same sequence much later is a rebooted node starting
     # over at 0, and is a genuine new scan.
