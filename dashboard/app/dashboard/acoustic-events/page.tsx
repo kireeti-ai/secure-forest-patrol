@@ -120,7 +120,7 @@ export default function AcousticEventsPage() {
                         {evt.modelVersion && <span><strong>Model:</strong> {evt.modelVersion}</span>}
                       </div>
                       <div style={{ marginTop: "4px", fontSize: "0.8rem", color: "#64748b", display: "flex", gap: "1rem" }}>
-                        <span>Signature: <StatusBadge label={evt.signatureStatus} tone={evt.signatureStatus === "VALID" ? "healthy" : "danger"} /></span>
+                        <span>Signature: <StatusBadge label={evt.signatureStatus === "PENDING" ? "UNSIGNED (pending review)" : evt.signatureStatus} tone={evt.signatureStatus === "VALID" ? "healthy" : evt.signatureStatus === "PENDING" ? "warning" : "danger"} /></span>
                         <span>Sync: <StatusBadge label={evt.syncStatus} tone={evt.syncStatus === "SYNCED" ? "healthy" : "warning"} /></span>
                         <span>Audio Clip: {evt.clipAvailable ? <span style={{ color: "#16a34a" }}>Available</span> : <span style={{ color: "#94a3b8" }}>Not stored</span>}</span>
                       </div>

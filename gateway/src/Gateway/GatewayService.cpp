@@ -111,6 +111,25 @@ void GatewayService::handleReceivedPacket(const lora::RawRadioPacket& packet, lo
                 Serial.printf("SNR  : %.1f dB\n", static_cast<double>(packet.snrDb));
                 Serial.println();
                 Serial.println("Packet validation: SUCCESS");
+            } else if (parsed.payloadSize == 6 &&
+                       parsed.payload[0] == 0x41U &&
+                       parsed.payload[1] == 0x01U &&
+                       (parsed.payload[2] == 1U || parsed.payload[2] == 2U)) {
+                // Acoustic event: [ 'A', v1, class 1=chainsaw 2=gunshot, confidence u8, trigger RMS u16 LE ]
+                envelope.hasAcoustic = true;
+                envelope.acousticClass = parsed.payload[2];
+                envelope.acousticConfidenceU8 = parsed.payload[3];
+                envelope.acousticTriggerRms = static_cast<std::uint16_t>(parsed.payload[4] | (parsed.payload[5] << 8));
+                Serial.println("================================");
+                Serial.println("ACOUSTIC EVENT RECEIVED");
+                Serial.println("================================");
+                Serial.printf("Node  : NODE_%02X\n", parsed.sourceId);
+                Serial.printf("Class : %s\n", envelope.acousticClass == 2U ? "Gunshot" : "Chainsaw");
+                Serial.printf("Conf  : %u/255 (%.0f%%)\n", envelope.acousticConfidenceU8,
+                              static_cast<double>(envelope.acousticConfidenceU8) * 100.0 / 255.0);
+                Serial.printf("RMS   : %u\n", envelope.acousticTriggerRms);
+                Serial.printf("SEQ   : %u\n", parsed.sequenceNumber);
+                Serial.printf("RSSI  : %d dBm  SNR: %.1f dB\n", packet.rssiDbm, static_cast<double>(packet.snrDb));
             } else if (parsed.payloadSize == 9) {
                 envelope.hasRtc = true;
                 envelope.rtcYear = 2000 + parsed.payload[0];

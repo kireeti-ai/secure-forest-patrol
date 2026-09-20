@@ -8,6 +8,7 @@ namespace forest::backend {
 namespace {
 constexpr const char* kTopicNodeStatus = "forest/events/node-status";
 constexpr const char* kTopicRfid = "forest/events/rfid";
+constexpr const char* kTopicAcoustic = "forest/events/acoustic";
 constexpr const char* kTopicGatewayStatus = "forest/events/gateway-status";
 constexpr int kProtocolVersion = 4;  // matches forest::protocol wire format
 
@@ -236,6 +237,9 @@ bool BackendIngestionClient::publishEnvelope(const ForestEventEnvelope& envelope
     if (envelope.hasRfid) {
         return publishRfid(envelope);
     }
+    if (envelope.hasAcoustic) {
+        return publishAcoustic(envelope);
+    }
 
     JsonDocument doc;
     char gatewayIdStr[8];
@@ -292,6 +296,33 @@ bool BackendIngestionClient::publishRfid(const ForestEventEnvelope& envelope) {
     const size_t len = serializeJson(doc, payload, sizeof(payload));
     const bool ok = mqttClient_.publish(kTopicRfid, reinterpret_cast<const uint8_t*>(payload), len, false);
     Serial.printf("[MQTT PUBLISH] topic=%s node=%s uid=%s seq=%u -> %s\n", kTopicRfid, nodeIdStr, uid,
+                  static_cast<unsigned>(envelope.sequenceNumber), ok ? "PUBLISHED" : "FAILED");
+    return ok;
+}
+
+bool BackendIngestionClient::publishAcoustic(const ForestEventEnvelope& envelope) {
+    JsonDocument doc;
+    char gatewayIdStr[8];
+    snprintf(gatewayIdStr, sizeof(gatewayIdStr), "GW-%02X", config_.gatewayId);
+    char nodeIdStr[16];
+    snprintf(nodeIdStr, sizeof(nodeIdStr), "NODE_%02X", envelope.sourceId);
+    doc["node_id"] = nodeIdStr;
+    doc["sequence"] = envelope.sequenceNumber;
+    // Class index order of the trained model: 0=background 1=chainsaw 2=gunshot. Background is never sent.
+    doc["classification"] = envelope.acousticClass == 2 ? "Gunshot" : "Chainsaw";
+    doc["confidence"] = static_cast<float>(envelope.acousticConfidenceU8) / 255.0f;
+    doc["model_version"] = "forest-acoustic-v1";
+    doc["trigger_rms"] = envelope.acousticTriggerRms;
+    JsonObject gw = doc["gateway"].to<JsonObject>();
+    gw["gateway_id"] = gatewayIdStr;
+    gw["rssi"] = envelope.rssiDbm;
+    gw["snr"] = envelope.snrDb;
+
+    char payload[384];
+    const size_t len = serializeJson(doc, payload, sizeof(payload));
+    const bool ok = mqttClient_.publish(kTopicAcoustic, reinterpret_cast<const uint8_t*>(payload), len, false);
+    Serial.printf("[MQTT PUBLISH] topic=%s node=%s class=%s conf=%u/255 seq=%u -> %s\n", kTopicAcoustic, nodeIdStr,
+                  envelope.acousticClass == 2 ? "Gunshot" : "Chainsaw", envelope.acousticConfidenceU8,
                   static_cast<unsigned>(envelope.sequenceNumber), ok ? "PUBLISHED" : "FAILED");
     return ok;
 }

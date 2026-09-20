@@ -47,6 +47,12 @@ struct ForestEventEnvelope {
     std::uint8_t rtcMinute{0};
     std::uint8_t rtcSecond{0};
     float temperatureC{0.0f};
+    // Acoustic detection from a node (MAX4466 trigger + TinyML). Payload 'A' v1:
+    // [0x41, 0x01, class(1=chainsaw,2=gunshot), confidence u8 (p*255), trigger RMS u16 LE].
+    bool hasAcoustic{false};
+    std::uint8_t acousticClass{0};
+    std::uint8_t acousticConfidenceU8{0};
+    std::uint16_t acousticTriggerRms{0};
     bool hasRfid{false};
     std::uint8_t rfidUid[10]{};
     std::uint8_t rfidUidLength{0};
@@ -92,6 +98,7 @@ private:
     void drainOutbox();
     bool publishEnvelope(const ForestEventEnvelope& envelope);
     bool publishRfid(const ForestEventEnvelope& envelope);
+    bool publishAcoustic(const ForestEventEnvelope& envelope);
     void logLine(const char* line);
     static void networkTask(void* self);
 

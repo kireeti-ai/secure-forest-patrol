@@ -57,6 +57,22 @@ class ForestAcousticIngest(BaseModel):
     gateway: GatewayMeta | None = None
 
 
+class AcousticNodeReport(BaseModel):
+    """Compact acoustic detection from a field node (MAX4466 trigger + TinyML), relayed by the gateway.
+
+    The node has no RTC, signing key or hash chain, so this event is UNSIGNED: the backend stamps the
+    time and stores signature/chain status as PENDING for human review (see docs/ACOUSTIC_NODE.md).
+    ``sequence`` is the node's own per-boot counter: it is used only to recognise retries.
+    """
+    node_id: str = Field(min_length=1, max_length=64)
+    sequence: int = Field(ge=0, le=4294967295)
+    classification: str = Field(pattern="^(Gunshot|Chainsaw)$")
+    confidence: float = Field(ge=0.0, le=1.0)
+    model_version: str | None = Field(default=None, max_length=64)
+    trigger_rms: int | None = Field(default=None, ge=0, le=65535)
+    gateway: GatewayMeta | None = None
+
+
 class GatewayStatusReport(BaseModel):
     gateway_id: str = Field(min_length=1, max_length=64)
     name: str | None = Field(default=None, max_length=200)

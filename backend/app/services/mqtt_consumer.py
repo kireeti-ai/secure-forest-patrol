@@ -35,8 +35,8 @@ from sqlalchemy.orm import Session
 from app.core.config import get_mqtt_config
 from app.core.database import SessionLocal, get_engine
 from app.schemas.forest_ingest import (
-    ForestAcousticIngest, ForestPatrolIngest, GatewayStatusReport, RfidScanIngest)
-from app.services.forest_acoustic import ingest_acoustic_event
+    AcousticNodeReport, ForestAcousticIngest, ForestPatrolIngest, GatewayStatusReport, RfidScanIngest)
+from app.services.forest_acoustic import ingest_acoustic_event, ingest_unsigned_acoustic_event
 from app.services.forest_gateway_svc import report_gateway_status
 from app.services.forest_patrol import UnknownNodeError, ingest_patrol_event
 from app.services.rfid import ingest_rfid_scan as persist_rfid_scan
@@ -126,20 +126,24 @@ class MqttConsumer:
         broadcast_patrol_outcome(body, payload.node_id, payload.checkpoint_id)
 
     def _handle_acoustic(self, data: dict) -> None:
+        # Signed events carry record_hash/signature; a node acoustic detection relayed by the gateway
+        # does not (see AcousticNodeReport) and takes the unsigned path.
+        unsigned = "record_hash" not in data
         try:
-            payload = ForestAcousticIngest.model_validate(data)
+            payload = (AcousticNodeReport if unsigned else ForestAcousticIngest).model_validate(data)
         except ValidationError:
             logger.warning("Malformed acoustic payload: %s", data)
             return
         db = self._session_factory()
         try:
             try:
-                body, _status = ingest_acoustic_event(db, payload)
+                body, _status = (ingest_unsigned_acoustic_event if unsigned else ingest_acoustic_event)(db, payload)
             except UnknownNodeError:
+                logger.warning("Acoustic event from unregistered node %s dropped", payload.node_id)
                 return
         finally:
             db.close()
-        broadcast_acoustic_outcome(body, payload.node_id, payload.checkpoint_id)
+        broadcast_acoustic_outcome(body, payload.node_id, None if unsigned else payload.checkpoint_id)
 
     def _handle_node_status(self, data: dict) -> None:
         try:

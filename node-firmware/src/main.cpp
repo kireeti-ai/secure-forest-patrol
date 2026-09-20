@@ -9,6 +9,10 @@
 #include "PacketFactory.h"
 #include "NodeManager.h"
 
+#if FOREST_ACOUSTIC
+#include "AcousticPipeline.h"
+#endif
+
 // RC522 wiring. These can be overridden with PlatformIO build flags when a
 // different node board is used.
 #ifndef FOREST_RFID_SCK_PIN
@@ -92,6 +96,43 @@ void selectLoRaSpi() {
   LoRa.setSPI(SPI);
 }
 
+#if FOREST_ACOUSTIC
+// ---- Acoustic events (MAX4466-triggered TinyML, see docs/ACOUSTIC_NODE.md) ---------------------
+// Compact payload (6 bytes): 'A', version, class index (1=chainsaw, 2=gunshot),
+// confidence as u8 (p*255), trigger RMS u16 little-endian. No raw audio is ever sent.
+// Runs from loop() only: loop() owns the SPI bus (RC522 <-> LoRa re-pinning).
+static void sendAcousticEvent(const forest::acoustic::AcousticEvent& ev) {
+  std::array<std::uint8_t, forest::constants::kMaxPayloadSize> payload{};
+  payload[0] = 0x41U;  // 'A'
+  payload[1] = 0x01U;  // version
+  payload[2] = ev.classIndex;
+  payload[3] = static_cast<std::uint8_t>(ev.confidence >= 1.0f ? 255.0f : ev.confidence * 255.0f + 0.5f);
+  payload[4] = static_cast<std::uint8_t>(ev.triggerRms & 0xFFU);
+  payload[5] = static_cast<std::uint8_t>((ev.triggerRms >> 8U) & 0xFFU);
+
+  forest::protocol::Packet packet;
+  std::array<std::uint8_t, 58> buffer{};
+  std::size_t encodedSize = 0;
+  if (!packetFactory.createData(0xFEU, payload.data(), 6, packet) ||
+      !forest::protocol::Serializer::serialize(packet, buffer, encodedSize)) {
+    Serial.println("[ACOUSTIC TX] packet creation/serialization FAILED");
+    return;
+  }
+  Serial.printf("[ACOUSTIC TX] class=%u conf=%u/255 rms=%u sequence=%u bytes=%u\n", ev.classIndex, payload[3],
+                ev.triggerRms, packet.sequenceNumber, static_cast<unsigned>(encodedSize));
+  setStatusLed(kLedLevel, kLedLevel);  // amber flash: acoustic event
+  selectLoRaSpi();
+  LoRa.idle();
+  LoRa.beginPacket();
+  LoRa.write(buffer.data(), encodedSize);
+  Serial.println(LoRa.endPacket() == 1 ? "[ACOUSTIC TX] LoRa endPacket=SUCCESS" : "[ACOUSTIC TX] LoRa endPacket=FAILED");
+  LoRa.receive();
+  selectRfidSpi();
+  delay(200);
+  setStatusLed(0, 0);
+}
+#endif
+
 void setup() {
   Serial.begin(115200);
   delay(1000);
@@ -136,10 +177,21 @@ void setup() {
     Serial.println("[LORA DIAG] Check SX1278 3.3V, GND, antenna, and pins 12/13/11/10/9/14");
   }
 
+#if FOREST_ACOUSTIC
+  // Acoustic tasks run on core 0; a failure here must never stop the RFID node.
+  forest::acoustic::AcousticPipeline::begin();
+#endif
+
   Serial.println("\nPlace RFID card on reader...");
 }
 
 void loop() {
+#if FOREST_ACOUSTIC
+  {
+    forest::acoustic::AcousticEvent acousticEvent;
+    while (forest::acoustic::AcousticPipeline::pollEvent(acousticEvent)) sendAcousticEvent(acousticEvent);
+  }
+#endif
   selectRfidSpi();
 
   // Wait for new card
