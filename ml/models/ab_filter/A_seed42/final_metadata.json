@@ -1,0 +1,205 @@
+{
+  "variant": "final",
+  "architecture": "{\"module\": \"keras.src.models.functional\", \"class_name\": \"Functional\", \"config\": {\"name\": \"forest_acoustic_final\", \"trainable\": true, \"layers\": [{\"module\": \"keras.layers\", \"class_name\": \"InputLayer\", \"config\": {\"batch_shape\": [null, 40, 101, 1], \"dtype\": \"float32\", \"sparse\": false, \"ragged\": false, \"name\": \"input_layer\"}, \"registered_name\": null, \"name\": \"input_layer\", \"inbound_nodes\": []}, {\"module\": \"keras.layers\", \"class_name\": \"Conv2D\", \"config\": {\"name\": \"conv2d\", \"trainable\": true, \"dtype\": {\"module\": \"keras\", \"class_name\": \"DTypePolicy\", \"config\": {\"name\": \"float32\"}, \"registered_name\": null}, \"filters\": 8, \"kernel_size\": [3, 3], \"strides\": [2, 2], \"padding\": \"same\", \"data_format\": \"channels_last\", \"dilation_rate\": [1, 1], \"groups\": 1, \"activation\": \"linear\", \"use_bias\": true, \"kernel_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"GlorotUniform\", \"config\": {\"seed\": null}, \"registered_name\": null}, \"bias_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"Zeros\", \"config\": {}, \"registered_name\": null}, \"kernel_regularizer\": null, \"bias_regularizer\": null, \"activity_regularizer\": null, \"kernel_constraint\": null, \"bias_constraint\": null}, \"registered_name\": null, \"build_config\": {\"input_shape\": [null, 40, 101, 1]}, \"name\": \"conv2d\", \"inbound_nodes\": [{\"args\": [{\"class_name\": \"__keras_tensor__\", \"config\": {\"shape\": [null, 40, 101, 1], \"dtype\": \"float32\", \"keras_history\": [\"input_layer\", 0, 0]}}], \"kwargs\": {}}]}, {\"module\": \"keras.layers\", \"class_name\": \"BatchNormalization\", \"config\": {\"name\": \"batch_normalization\", \"trainable\": true, \"dtype\": {\"module\": \"keras\", \"class_name\": \"DTypePolicy\", \"config\": {\"name\": \"float32\"}, \"registered_name\": null}, \"axis\": -1, \"momentum\": 0.99, \"epsilon\": 0.001, \"center\": true, \"scale\": true, \"beta_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"Zeros\", \"config\": {}, \"registered_name\": null}, \"gamma_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"Ones\", \"config\": {}, \"registered_name\": null}, \"moving_mean_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"Zeros\", \"config\": {}, \"registered_name\": null}, \"moving_variance_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"Ones\", \"config\": {}, \"registered_name\": null}, \"beta_regularizer\": null, \"gamma_regularizer\": null, \"beta_constraint\": null, \"gamma_constraint\": null, \"synchronized\": false}, \"registered_name\": null, \"build_config\": {\"input_shape\": [null, 20, 51, 8]}, \"name\": \"batch_normalization\", \"inbound_nodes\": [{\"args\": [{\"class_name\": \"__keras_tensor__\", \"config\": {\"shape\": [null, 20, 51, 8], \"dtype\": \"float32\", \"keras_history\": [\"conv2d\", 0, 0]}}], \"kwargs\": {\"mask\": null}}]}, {\"module\": \"keras.layers\", \"class_name\": \"ReLU\", \"config\": {\"name\": \"re_lu\", \"trainable\": true, \"dtype\": {\"module\": \"keras\", \"class_name\": \"DTypePolicy\", \"config\": {\"name\": \"float32\"}, \"registered_name\": null}, \"max_value\": null, \"negative_slope\": 0.0, \"threshold\": 0.0}, \"registered_name\": null, \"name\": \"re_lu\", \"inbound_nodes\": [{\"args\": [{\"class_name\": \"__keras_tensor__\", \"config\": {\"shape\": [null, 20, 51, 8], \"dtype\": \"float32\", \"keras_history\": [\"batch_normalization\", 0, 0]}}], \"kwargs\": {}}]}, {\"module\": \"keras.layers\", \"class_name\": \"DepthwiseConv2D\", \"config\": {\"name\": \"depthwise_conv2d\", \"trainable\": true, \"dtype\": {\"module\": \"keras\", \"class_name\": \"DTypePolicy\", \"config\": {\"name\": \"float32\"}, \"registered_name\": null}, \"depth_multiplier\": 1, \"kernel_size\": [3, 3], \"strides\": [1, 1], \"padding\": \"same\", \"data_format\": \"channels_last\", \"dilation_rate\": [1, 1], \"activation\": \"linear\", \"use_bias\": true, \"depthwise_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"GlorotUniform\", \"config\": {\"seed\": null}, \"registered_name\": null}, \"bias_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"Zeros\", \"config\": {}, \"registered_name\": null}, \"depthwise_regularizer\": null, \"bias_regularizer\": null, \"activity_regularizer\": null, \"depthwise_constraint\": null, \"bias_constraint\": null}, \"registered_name\": null, \"build_config\": {\"input_shape\": [null, 20, 51, 8]}, \"name\": \"depthwise_conv2d\", \"inbound_nodes\": [{\"args\": [{\"class_name\": \"__keras_tensor__\", \"config\": {\"shape\": [null, 20, 51, 8], \"dtype\": \"float32\", \"keras_history\": [\"re_lu\", 0, 0]}}], \"kwargs\": {}}]}, {\"module\": \"keras.layers\", \"class_name\": \"BatchNormalization\", \"config\": {\"name\": \"batch_normalization_1\", \"trainable\": true, \"dtype\": {\"module\": \"keras\", \"class_name\": \"DTypePolicy\", \"config\": {\"name\": \"float32\"}, \"registered_name\": null}, \"axis\": -1, \"momentum\": 0.99, \"epsilon\": 0.001, \"center\": true, \"scale\": true, \"beta_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"Zeros\", \"config\": {}, \"registered_name\": null}, \"gamma_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"Ones\", \"config\": {}, \"registered_name\": null}, \"moving_mean_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"Zeros\", \"config\": {}, \"registered_name\": null}, \"moving_variance_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"Ones\", \"config\": {}, \"registered_name\": null}, \"beta_regularizer\": null, \"gamma_regularizer\": null, \"beta_constraint\": null, \"gamma_constraint\": null, \"synchronized\": false}, \"registered_name\": null, \"build_config\": {\"input_shape\": [null, 20, 51, 8]}, \"name\": \"batch_normalization_1\", \"inbound_nodes\": [{\"args\": [{\"class_name\": \"__keras_tensor__\", \"config\": {\"shape\": [null, 20, 51, 8], \"dtype\": \"float32\", \"keras_history\": [\"depthwise_conv2d\", 0, 0]}}], \"kwargs\": {\"mask\": null}}]}, {\"module\": \"keras.layers\", \"class_name\": \"ReLU\", \"config\": {\"name\": \"re_lu_1\", \"trainable\": true, \"dtype\": {\"module\": \"keras\", \"class_name\": \"DTypePolicy\", \"config\": {\"name\": \"float32\"}, \"registered_name\": null}, \"max_value\": null, \"negative_slope\": 0.0, \"threshold\": 0.0}, \"registered_name\": null, \"name\": \"re_lu_1\", \"inbound_nodes\": [{\"args\": [{\"class_name\": \"__keras_tensor__\", \"config\": {\"shape\": [null, 20, 51, 8], \"dtype\": \"float32\", \"keras_history\": [\"batch_normalization_1\", 0, 0]}}], \"kwargs\": {}}]}, {\"module\": \"keras.layers\", \"class_name\": \"Conv2D\", \"config\": {\"name\": \"conv2d_1\", \"trainable\": true, \"dtype\": {\"module\": \"keras\", \"class_name\": \"DTypePolicy\", \"config\": {\"name\": \"float32\"}, \"registered_name\": null}, \"filters\": 16, \"kernel_size\": [1, 1], \"strides\": [1, 1], \"padding\": \"same\", \"data_format\": \"channels_last\", \"dilation_rate\": [1, 1], \"groups\": 1, \"activation\": \"linear\", \"use_bias\": true, \"kernel_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"GlorotUniform\", \"config\": {\"seed\": null}, \"registered_name\": null}, \"bias_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"Zeros\", \"config\": {}, \"registered_name\": null}, \"kernel_regularizer\": null, \"bias_regularizer\": null, \"activity_regularizer\": null, \"kernel_constraint\": null, \"bias_constraint\": null}, \"registered_name\": null, \"build_config\": {\"input_shape\": [null, 20, 51, 8]}, \"name\": \"conv2d_1\", \"inbound_nodes\": [{\"args\": [{\"class_name\": \"__keras_tensor__\", \"config\": {\"shape\": [null, 20, 51, 8], \"dtype\": \"float32\", \"keras_history\": [\"re_lu_1\", 0, 0]}}], \"kwargs\": {}}]}, {\"module\": \"keras.layers\", \"class_name\": \"BatchNormalization\", \"config\": {\"name\": \"batch_normalization_2\", \"trainable\": true, \"dtype\": {\"module\": \"keras\", \"class_name\": \"DTypePolicy\", \"config\": {\"name\": \"float32\"}, \"registered_name\": null}, \"axis\": -1, \"momentum\": 0.99, \"epsilon\": 0.001, \"center\": true, \"scale\": true, \"beta_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"Zeros\", \"config\": {}, \"registered_name\": null}, \"gamma_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"Ones\", \"config\": {}, \"registered_name\": null}, \"moving_mean_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"Zeros\", \"config\": {}, \"registered_name\": null}, \"moving_variance_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"Ones\", \"config\": {}, \"registered_name\": null}, \"beta_regularizer\": null, \"gamma_regularizer\": null, \"beta_constraint\": null, \"gamma_constraint\": null, \"synchronized\": false}, \"registered_name\": null, \"build_config\": {\"input_shape\": [null, 20, 51, 16]}, \"name\": \"batch_normalization_2\", \"inbound_nodes\": [{\"args\": [{\"class_name\": \"__keras_tensor__\", \"config\": {\"shape\": [null, 20, 51, 16], \"dtype\": \"float32\", \"keras_history\": [\"conv2d_1\", 0, 0]}}], \"kwargs\": {\"mask\": null}}]}, {\"module\": \"keras.layers\", \"class_name\": \"ReLU\", \"config\": {\"name\": \"re_lu_2\", \"trainable\": true, \"dtype\": {\"module\": \"keras\", \"class_name\": \"DTypePolicy\", \"config\": {\"name\": \"float32\"}, \"registered_name\": null}, \"max_value\": null, \"negative_slope\": 0.0, \"threshold\": 0.0}, \"registered_name\": null, \"name\": \"re_lu_2\", \"inbound_nodes\": [{\"args\": [{\"class_name\": \"__keras_tensor__\", \"config\": {\"shape\": [null, 20, 51, 16], \"dtype\": \"float32\", \"keras_history\": [\"batch_normalization_2\", 0, 0]}}], \"kwargs\": {}}]}, {\"module\": \"keras.layers\", \"class_name\": \"MaxPooling2D\", \"config\": {\"name\": \"max_pooling2d\", \"trainable\": true, \"dtype\": {\"module\": \"keras\", \"class_name\": \"DTypePolicy\", \"config\": {\"name\": \"float32\"}, \"registered_name\": null}, \"pool_size\": [2, 2], \"padding\": \"valid\", \"strides\": [2, 2], \"data_format\": \"channels_last\"}, \"registered_name\": null, \"name\": \"max_pooling2d\", \"inbound_nodes\": [{\"args\": [{\"class_name\": \"__keras_tensor__\", \"config\": {\"shape\": [null, 20, 51, 16], \"dtype\": \"float32\", \"keras_history\": [\"re_lu_2\", 0, 0]}}], \"kwargs\": {}}]}, {\"module\": \"keras.layers\", \"class_name\": \"DepthwiseConv2D\", \"config\": {\"name\": \"depthwise_conv2d_1\", \"trainable\": true, \"dtype\": {\"module\": \"keras\", \"class_name\": \"DTypePolicy\", \"config\": {\"name\": \"float32\"}, \"registered_name\": null}, \"depth_multiplier\": 1, \"kernel_size\": [3, 3], \"strides\": [1, 1], \"padding\": \"same\", \"data_format\": \"channels_last\", \"dilation_rate\": [1, 1], \"activation\": \"linear\", \"use_bias\": true, \"depthwise_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"GlorotUniform\", \"config\": {\"seed\": null}, \"registered_name\": null}, \"bias_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"Zeros\", \"config\": {}, \"registered_name\": null}, \"depthwise_regularizer\": null, \"bias_regularizer\": null, \"activity_regularizer\": null, \"depthwise_constraint\": null, \"bias_constraint\": null}, \"registered_name\": null, \"build_config\": {\"input_shape\": [null, 10, 25, 16]}, \"name\": \"depthwise_conv2d_1\", \"inbound_nodes\": [{\"args\": [{\"class_name\": \"__keras_tensor__\", \"config\": {\"shape\": [null, 10, 25, 16], \"dtype\": \"float32\", \"keras_history\": [\"max_pooling2d\", 0, 0]}}], \"kwargs\": {}}]}, {\"module\": \"keras.layers\", \"class_name\": \"BatchNormalization\", \"config\": {\"name\": \"batch_normalization_3\", \"trainable\": true, \"dtype\": {\"module\": \"keras\", \"class_name\": \"DTypePolicy\", \"config\": {\"name\": \"float32\"}, \"registered_name\": null}, \"axis\": -1, \"momentum\": 0.99, \"epsilon\": 0.001, \"center\": true, \"scale\": true, \"beta_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"Zeros\", \"config\": {}, \"registered_name\": null}, \"gamma_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"Ones\", \"config\": {}, \"registered_name\": null}, \"moving_mean_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"Zeros\", \"config\": {}, \"registered_name\": null}, \"moving_variance_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"Ones\", \"config\": {}, \"registered_name\": null}, \"beta_regularizer\": null, \"gamma_regularizer\": null, \"beta_constraint\": null, \"gamma_constraint\": null, \"synchronized\": false}, \"registered_name\": null, \"build_config\": {\"input_shape\": [null, 10, 25, 16]}, \"name\": \"batch_normalization_3\", \"inbound_nodes\": [{\"args\": [{\"class_name\": \"__keras_tensor__\", \"config\": {\"shape\": [null, 10, 25, 16], \"dtype\": \"float32\", \"keras_history\": [\"depthwise_conv2d_1\", 0, 0]}}], \"kwargs\": {\"mask\": null}}]}, {\"module\": \"keras.layers\", \"class_name\": \"ReLU\", \"config\": {\"name\": \"re_lu_3\", \"trainable\": true, \"dtype\": {\"module\": \"keras\", \"class_name\": \"DTypePolicy\", \"config\": {\"name\": \"float32\"}, \"registered_name\": null}, \"max_value\": null, \"negative_slope\": 0.0, \"threshold\": 0.0}, \"registered_name\": null, \"name\": \"re_lu_3\", \"inbound_nodes\": [{\"args\": [{\"class_name\": \"__keras_tensor__\", \"config\": {\"shape\": [null, 10, 25, 16], \"dtype\": \"float32\", \"keras_history\": [\"batch_normalization_3\", 0, 0]}}], \"kwargs\": {}}]}, {\"module\": \"keras.layers\", \"class_name\": \"Conv2D\", \"config\": {\"name\": \"conv2d_2\", \"trainable\": true, \"dtype\": {\"module\": \"keras\", \"class_name\": \"DTypePolicy\", \"config\": {\"name\": \"float32\"}, \"registered_name\": null}, \"filters\": 16, \"kernel_size\": [1, 1], \"strides\": [1, 1], \"padding\": \"same\", \"data_format\": \"channels_last\", \"dilation_rate\": [1, 1], \"groups\": 1, \"activation\": \"linear\", \"use_bias\": true, \"kernel_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"GlorotUniform\", \"config\": {\"seed\": null}, \"registered_name\": null}, \"bias_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"Zeros\", \"config\": {}, \"registered_name\": null}, \"kernel_regularizer\": null, \"bias_regularizer\": null, \"activity_regularizer\": null, \"kernel_constraint\": null, \"bias_constraint\": null}, \"registered_name\": null, \"build_config\": {\"input_shape\": [null, 10, 25, 16]}, \"name\": \"conv2d_2\", \"inbound_nodes\": [{\"args\": [{\"class_name\": \"__keras_tensor__\", \"config\": {\"shape\": [null, 10, 25, 16], \"dtype\": \"float32\", \"keras_history\": [\"re_lu_3\", 0, 0]}}], \"kwargs\": {}}]}, {\"module\": \"keras.layers\", \"class_name\": \"BatchNormalization\", \"config\": {\"name\": \"batch_normalization_4\", \"trainable\": true, \"dtype\": {\"module\": \"keras\", \"class_name\": \"DTypePolicy\", \"config\": {\"name\": \"float32\"}, \"registered_name\": null}, \"axis\": -1, \"momentum\": 0.99, \"epsilon\": 0.001, \"center\": true, \"scale\": true, \"beta_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"Zeros\", \"config\": {}, \"registered_name\": null}, \"gamma_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"Ones\", \"config\": {}, \"registered_name\": null}, \"moving_mean_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"Zeros\", \"config\": {}, \"registered_name\": null}, \"moving_variance_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"Ones\", \"config\": {}, \"registered_name\": null}, \"beta_regularizer\": null, \"gamma_regularizer\": null, \"beta_constraint\": null, \"gamma_constraint\": null, \"synchronized\": false}, \"registered_name\": null, \"build_config\": {\"input_shape\": [null, 10, 25, 16]}, \"name\": \"batch_normalization_4\", \"inbound_nodes\": [{\"args\": [{\"class_name\": \"__keras_tensor__\", \"config\": {\"shape\": [null, 10, 25, 16], \"dtype\": \"float32\", \"keras_history\": [\"conv2d_2\", 0, 0]}}], \"kwargs\": {\"mask\": null}}]}, {\"module\": \"keras.layers\", \"class_name\": \"ReLU\", \"config\": {\"name\": \"re_lu_4\", \"trainable\": true, \"dtype\": {\"module\": \"keras\", \"class_name\": \"DTypePolicy\", \"config\": {\"name\": \"float32\"}, \"registered_name\": null}, \"max_value\": null, \"negative_slope\": 0.0, \"threshold\": 0.0}, \"registered_name\": null, \"name\": \"re_lu_4\", \"inbound_nodes\": [{\"args\": [{\"class_name\": \"__keras_tensor__\", \"config\": {\"shape\": [null, 10, 25, 16], \"dtype\": \"float32\", \"keras_history\": [\"batch_normalization_4\", 0, 0]}}], \"kwargs\": {}}]}, {\"module\": \"keras.layers\", \"class_name\": \"GlobalAveragePooling2D\", \"config\": {\"name\": \"global_average_pooling2d\", \"trainable\": true, \"dtype\": {\"module\": \"keras\", \"class_name\": \"DTypePolicy\", \"config\": {\"name\": \"float32\"}, \"registered_name\": null}, \"data_format\": \"channels_last\", \"keepdims\": false}, \"registered_name\": null, \"name\": \"global_average_pooling2d\", \"inbound_nodes\": [{\"args\": [{\"class_name\": \"__keras_tensor__\", \"config\": {\"shape\": [null, 10, 25, 16], \"dtype\": \"float32\", \"keras_history\": [\"re_lu_4\", 0, 0]}}], \"kwargs\": {}}]}, {\"module\": \"keras.layers\", \"class_name\": \"Dense\", \"config\": {\"name\": \"dense\", \"trainable\": true, \"dtype\": {\"module\": \"keras\", \"class_name\": \"DTypePolicy\", \"config\": {\"name\": \"float32\"}, \"registered_name\": null}, \"units\": 16, \"activation\": \"relu\", \"use_bias\": true, \"kernel_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"GlorotUniform\", \"config\": {\"seed\": null}, \"registered_name\": null}, \"bias_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"Zeros\", \"config\": {}, \"registered_name\": null}, \"kernel_regularizer\": null, \"bias_regularizer\": null, \"kernel_constraint\": null, \"bias_constraint\": null}, \"registered_name\": null, \"build_config\": {\"input_shape\": [null, 16]}, \"name\": \"dense\", \"inbound_nodes\": [{\"args\": [{\"class_name\": \"__keras_tensor__\", \"config\": {\"shape\": [null, 16], \"dtype\": \"float32\", \"keras_history\": [\"global_average_pooling2d\", 0, 0]}}], \"kwargs\": {}}]}, {\"module\": \"keras.layers\", \"class_name\": \"Dense\", \"config\": {\"name\": \"dense_1\", \"trainable\": true, \"dtype\": {\"module\": \"keras\", \"class_name\": \"DTypePolicy\", \"config\": {\"name\": \"float32\"}, \"registered_name\": null}, \"units\": 3, \"activation\": \"softmax\", \"use_bias\": true, \"kernel_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"GlorotUniform\", \"config\": {\"seed\": null}, \"registered_name\": null}, \"bias_initializer\": {\"module\": \"keras.initializers\", \"class_name\": \"Zeros\", \"config\": {}, \"registered_name\": null}, \"kernel_regularizer\": null, \"bias_regularizer\": null, \"kernel_constraint\": null, \"bias_constraint\": null}, \"registered_name\": null, \"build_config\": {\"input_shape\": [null, 16]}, \"name\": \"dense_1\", \"inbound_nodes\": [{\"args\": [{\"class_name\": \"__keras_tensor__\", \"config\": {\"shape\": [null, 16], \"dtype\": \"float32\", \"keras_history\": [\"dense\", 0, 0]}}], \"kwargs\": {}}]}], \"input_layers\": [\"input_layer\", 0, 0], \"output_layers\": [\"dense_1\", 0, 0]}, \"registered_name\": \"Functional\", \"build_config\": {\"input_shape\": null}, \"compile_config\": {\"optimizer\": {\"module\": \"keras.optimizers\", \"class_name\": \"Adam\", \"config\": {\"name\": \"adam\", \"learning_rate\": 0.0010000000474974513, \"weight_decay\": null, \"clipnorm\": null, \"global_clipnorm\": null, \"clipvalue\": null, \"use_ema\": false, \"ema_momentum\": 0.99, \"ema_overwrite_frequency\": null, \"loss_scale_factor\": null, \"gradient_accumulation_steps\": null, \"beta_1\": 0.9, \"beta_2\": 0.999, \"epsilon\": 1e-07, \"amsgrad\": false}, \"registered_name\": null}, \"loss\": \"sparse_categorical_crossentropy\", \"loss_weights\": null, \"metrics\": [\"accuracy\"], \"weighted_metrics\": null, \"run_eagerly\": false, \"steps_per_execution\": 1, \"jit_compile\": false}}",
+  "input_shape": [
+    40,
+    101,
+    1
+  ],
+  "classes": [
+    "background",
+    "chainsaw",
+    "gunshot"
+  ],
+  "n_params": 1315,
+  "weights_size_bytes": 5260,
+  "seed": 42,
+  "optimizer": "Adam",
+  "lr": 0.001,
+  "batch_size": 32,
+  "epochs_requested": 15,
+  "epochs_ran": 15,
+  "train_time_s": 42.69845104217529,
+  "feature_mean": -36.31850051879883,
+  "feature_std": 21.19044303894043,
+  "class_weight": {
+    "0": 0.4665,
+    "1": 1.3373148590539894,
+    "2": 9.207236842105264
+  },
+  "history": {
+    "accuracy": [
+      0.5754436254501343,
+      0.6713111996650696,
+      0.7096582055091858,
+      0.7284744381904602,
+      0.7466952204704285,
+      0.7669405937194824,
+      0.7678933143615723,
+      0.7831368446350098,
+      0.7893295288085938,
+      0.7836132049560547,
+      0.7986185550689697,
+      0.8058830499649048,
+      0.7992140054702759,
+      0.8069548606872559,
+      0.8133857250213623
+    ],
+    "loss": [
+      0.8305730223655701,
+      0.5982769727706909,
+      0.5067291259765625,
+      0.4828689396381378,
+      0.44707757234573364,
+      0.42685678601264954,
+      0.41858717799186707,
+      0.40099799633026123,
+      0.382140189409256,
+      0.37912410497665405,
+      0.37388139963150024,
+      0.36431267857551575,
+      0.3662335276603699,
+      0.3572528660297394,
+      0.3435981869697571
+    ],
+    "val_accuracy": [
+      0.7161729335784912,
+      0.7277822494506836,
+      0.7189751863479614,
+      0.7473978996276855,
+      0.6124899983406067,
+      0.20576460659503937,
+      0.4391513168811798,
+      0.7606084942817688,
+      0.7213770747184753,
+      0.6056845188140869,
+      0.816653311252594,
+      0.7445956468582153,
+      0.7938350439071655,
+      0.44275420904159546,
+      0.7674139142036438
+    ],
+    "val_loss": [
+      0.7676742076873779,
+      0.6332449913024902,
+      0.7013476490974426,
+      0.5752353668212891,
+      0.8977024555206299,
+      1.8864694833755493,
+      0.9339390397071838,
+      0.5496777296066284,
+      0.7813133001327515,
+      0.9385058879852295,
+      0.47033020853996277,
+      0.6429107189178467,
+      0.5121925473213196,
+      1.0294779539108276,
+      0.6821367144584656
+    ]
+  },
+  "validation_metrics": {
+    "accuracy": 0.8166533226581265,
+    "balanced_accuracy": 0.7631424758091425,
+    "macro_f1": 0.629173750834095,
+    "macro_precision": 0.5995533299330768,
+    "macro_recall": 0.7631424758091425,
+    "per_class_f1": {
+      "background": 0.8850102669404517,
+      "chainsaw": 0.6296296296296297,
+      "gunshot": 0.3728813559322034
+    },
+    "per_class_recall": {
+      "background": 0.862,
+      "chainsaw": 0.6126126126126126,
+      "gunshot": 0.8148148148148148
+    },
+    "confusion_matrix": [
+      [
+        1724,
+        147,
+        129
+      ],
+      [
+        163,
+        272,
+        9
+      ],
+      [
+        9,
+        1,
+        44
+      ]
+    ],
+    "classification_report": "              precision    recall  f1-score   support\n\n  background       0.91      0.86      0.89      2000\n    chainsaw       0.65      0.61      0.63       444\n     gunshot       0.24      0.81      0.37        54\n\n    accuracy                           0.82      2498\n   macro avg       0.60      0.76      0.63      2498\nweighted avg       0.85      0.82      0.83      2498\n"
+  },
+  "test_metrics": {
+    "accuracy": 0.588013213780085,
+    "balanced_accuracy": 0.7695810114368732,
+    "macro_f1": 0.45485535190675747,
+    "macro_precision": 0.4773901782649208,
+    "macro_recall": 0.7695810114368732,
+    "per_class_f1": {
+      "background": 0.6911337209302325,
+      "chainsaw": 0.5145728643216081,
+      "gunshot": 0.15885947046843177
+    },
+    "per_class_recall": {
+      "background": 0.5339696799550814,
+      "chainsaw": 0.8677966101694915,
+      "gunshot": 0.9069767441860465
+    },
+    "confusion_matrix": [
+      [
+        951,
+        444,
+        386
+      ],
+      [
+        16,
+        256,
+        23
+      ],
+      [
+        4,
+        0,
+        39
+      ]
+    ],
+    "classification_report": "              precision    recall  f1-score   support\n\n  background       0.98      0.53      0.69      1781\n    chainsaw       0.37      0.87      0.51       295\n     gunshot       0.09      0.91      0.16        43\n\n    accuracy                           0.59      2119\n   macro avg       0.48      0.77      0.45      2119\nweighted avg       0.88      0.59      0.66      2119\n"
+  },
+  "external_test_metrics": {
+    "accuracy": 0.33379424778761063,
+    "balanced_accuracy": 0.692918227877931,
+    "macro_f1": 0.3126916595786051,
+    "macro_precision": 0.42096222211773987,
+    "macro_recall": 0.692918227877931,
+    "per_class_f1": {
+      "background": 0.3543010752688172,
+      "chainsaw": 0.31621537503890446,
+      "gunshot": 0.26755852842809363
+    },
+    "per_class_recall": {
+      "background": 0.21966666666666668,
+      "chainsaw": 0.8834782608695653,
+      "gunshot": 0.975609756097561
+    },
+    "confusion_matrix": [
+      [
+        659,
+        2130,
+        211
+      ],
+      [
+        60,
+        508,
+        7
+      ],
+      [
+        1,
+        0,
+        40
+      ]
+    ],
+    "classification_report": "              precision    recall  f1-score   support\n\n  background       0.92      0.22      0.35      3000\n    chainsaw       0.19      0.88      0.32       575\n     gunshot       0.16      0.98      0.27        41\n\n    accuracy                           0.33      3616\n   macro avg       0.42      0.69      0.31      3616\nweighted avg       0.79      0.33      0.35      3616\n"
+  }
+}

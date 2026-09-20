@@ -1,0 +1,56 @@
+{
+  "fp32_keras_test_accuracy": 0.7069372345445966,
+  "fp32_keras_test_macro_f1": 0.5610986929119571,
+  "int8_tflite_test_accuracy": 0.7192071731949032,
+  "int8_tflite_test_macro_f1": 0.5732538972228354,
+  "keras_fp32_vs_int8_tflite_prediction_agreement": 0.9820670127418594,
+  "fp32_vs_fp32tflite_max_abs_diff_first50": 3.8743019104003906e-07,
+  "fp32_vs_fp32tflite_argmax_match_first50": 1.0,
+  "int8_confusion_matrix": [
+    [
+      1240,
+      451,
+      90
+    ],
+    [
+      39,
+      247,
+      9
+    ],
+    [
+      6,
+      0,
+      37
+    ]
+  ],
+  "int8_classification_report": "              precision    recall  f1-score   support\n\n  background       0.96      0.70      0.81      1781\n    chainsaw       0.35      0.84      0.50       295\n     gunshot       0.27      0.86      0.41        43\n\n    accuracy                           0.72      2119\n   macro avg       0.53      0.80      0.57      2119\nweighted avg       0.87      0.72      0.76      2119\n",
+  "fp32_keras_weights_bytes": 5260,
+  "fp32_tflite_bytes": 13272,
+  "int8_tflite_bytes": 13072,
+  "ops_used": [
+    "CONV_2D",
+    "DEPTHWISE_CONV_2D",
+    "FULLY_CONNECTED",
+    "MAX_POOL_2D",
+    "MEAN",
+    "SOFTMAX"
+  ],
+  "unsupported_tflm_ops": [],
+  "tensor_count": 30,
+  "input_shape": [
+    1,
+    40,
+    101,
+    1
+  ],
+  "input_dtype": "<class 'numpy.int8'>",
+  "output_shape": [
+    1,
+    3
+  ],
+  "output_dtype": "<class 'numpy.int8'>",
+  "input_quantization_scale_zero_point": [
+    0.014805045910179615,
+    11
+  ]
+}

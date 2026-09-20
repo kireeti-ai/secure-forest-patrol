@@ -1,0 +1,76 @@
+# ML Dataset Gitignore
+# Exclude large audio files and generated data from version control
+
+# Raw datasets (large audio files)
+datasets/raw/
+datasets/interim/
+
+# Processed audio data
+datasets/processed/audio/
+
+# Generated features (can be large)
+datasets/processed/features/
+
+# Large cache files
+*.cache
+*.pkl
+*.npy
+*.npz
+
+# Model checkpoints (not used in this phase)
+*.pth
+*.h5
+*.ckpt
+*.pt
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# Large binary files
+*.wav
+*.mp3
+*.flac
+*.ogg
+*.m4a
+*.aac
+
+# Data files that might be large
+*.parquet
+*.feather
+
+# Keep small metadata and config files
+!datasets/manifests/*.csv
+!datasets/manifests/*.json
+!datasets/manifests/*.yaml
+!configs/*.yaml
+!configs/*.json
+!metadata/*.md
+!metadata/*.csv
+!reports/*.md

@@ -1,0 +1,1082 @@
+{
+  "A_seed42": {
+    "val": {
+      "accuracy": 0.8166533226581265,
+      "balanced_accuracy": 0.7631424758091425,
+      "macro_f1": 0.629173750834095,
+      "macro_precision": 0.5995533299330768,
+      "macro_recall": 0.7631424758091425,
+      "per_class_f1": {
+        "background": 0.8850102669404517,
+        "chainsaw": 0.6296296296296297,
+        "gunshot": 0.3728813559322034
+      },
+      "per_class_recall": {
+        "background": 0.862,
+        "chainsaw": 0.6126126126126126,
+        "gunshot": 0.8148148148148148
+      },
+      "confusion_matrix": [
+        [
+          1724,
+          147,
+          129
+        ],
+        [
+          163,
+          272,
+          9
+        ],
+        [
+          9,
+          1,
+          44
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n  background       0.91      0.86      0.89      2000\n    chainsaw       0.65      0.61      0.63       444\n     gunshot       0.24      0.81      0.37        54\n\n    accuracy                           0.82      2498\n   macro avg       0.60      0.76      0.63      2498\nweighted avg       0.85      0.82      0.83      2498\n"
+    },
+    "test": {
+      "accuracy": 0.588013213780085,
+      "balanced_accuracy": 0.7695810114368732,
+      "macro_f1": 0.45485535190675747,
+      "macro_precision": 0.4773901782649208,
+      "macro_recall": 0.7695810114368732,
+      "per_class_f1": {
+        "background": 0.6911337209302325,
+        "chainsaw": 0.5145728643216081,
+        "gunshot": 0.15885947046843177
+      },
+      "per_class_recall": {
+        "background": 0.5339696799550814,
+        "chainsaw": 0.8677966101694915,
+        "gunshot": 0.9069767441860465
+      },
+      "confusion_matrix": [
+        [
+          951,
+          444,
+          386
+        ],
+        [
+          16,
+          256,
+          23
+        ],
+        [
+          4,
+          0,
+          39
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n  background       0.98      0.53      0.69      1781\n    chainsaw       0.37      0.87      0.51       295\n     gunshot       0.09      0.91      0.16        43\n\n    accuracy                           0.59      2119\n   macro avg       0.48      0.77      0.45      2119\nweighted avg       0.88      0.59      0.66      2119\n"
+    },
+    "external": {
+      "accuracy": 0.33379424778761063,
+      "balanced_accuracy": 0.692918227877931,
+      "macro_f1": 0.3126916595786051,
+      "macro_precision": 0.42096222211773987,
+      "macro_recall": 0.692918227877931,
+      "per_class_f1": {
+        "background": 0.3543010752688172,
+        "chainsaw": 0.31621537503890446,
+        "gunshot": 0.26755852842809363
+      },
+      "per_class_recall": {
+        "background": 0.21966666666666668,
+        "chainsaw": 0.8834782608695653,
+        "gunshot": 0.975609756097561
+      },
+      "confusion_matrix": [
+        [
+          659,
+          2130,
+          211
+        ],
+        [
+          60,
+          508,
+          7
+        ],
+        [
+          1,
+          0,
+          40
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n  background       0.92      0.22      0.35      3000\n    chainsaw       0.19      0.88      0.32       575\n     gunshot       0.16      0.98      0.27        41\n\n    accuracy                           0.33      3616\n   macro avg       0.42      0.69      0.31      3616\nweighted avg       0.79      0.33      0.35      3616\n"
+    },
+    "int8_test_acc": 0.6149126946672959,
+    "int8_test_macro_f1": 0.47026337996364037,
+    "int8_bytes": 13072,
+    "unsupported_ops": [],
+    "robustness": {
+      "clean": {
+        "accuracy": 0.6177442189712128,
+        "macro_f1": 0.47325421274600715,
+        "confusion_matrix": [
+          [
+            1015,
+            419,
+            347
+          ],
+          [
+            19,
+            255,
+            21
+          ],
+          [
+            4,
+            0,
+            39
+          ]
+        ],
+        "background_false_alarm_rate": 0.4300954519932622
+      },
+      "moderate": {
+        "accuracy": 0.6186880604058518,
+        "macro_f1": 0.29096386557046633,
+        "confusion_matrix": [
+          [
+            1280,
+            0,
+            501
+          ],
+          [
+            266,
+            1,
+            28
+          ],
+          [
+            13,
+            0,
+            30
+          ]
+        ],
+        "background_false_alarm_rate": 0.2813026389668725
+      },
+      "strong": {
+        "accuracy": 0.8404907975460123,
+        "macro_f1": 0.30444444444444446,
+        "confusion_matrix": [
+          [
+            1781,
+            0,
+            0
+          ],
+          [
+            295,
+            0,
+            0
+          ],
+          [
+            43,
+            0,
+            0
+          ]
+        ],
+        "background_false_alarm_rate": 0.0
+      }
+    },
+    "epochs_ran": 15
+  },
+  "A_seed1": {
+    "val": {
+      "accuracy": 0.8150520416333067,
+      "balanced_accuracy": 0.7569656322989656,
+      "macro_f1": 0.6165485578148678,
+      "macro_precision": 0.613755231539329,
+      "macro_recall": 0.7569656322989656,
+      "per_class_f1": {
+        "background": 0.8848392811946343,
+        "chainsaw": 0.6253229974160207,
+        "gunshot": 0.33948339483394835
+      },
+      "per_class_recall": {
+        "background": 0.874,
+        "chainsaw": 0.545045045045045,
+        "gunshot": 0.8518518518518519
+      },
+      "confusion_matrix": [
+        [
+          1748,
+          88,
+          164
+        ],
+        [
+          195,
+          242,
+          7
+        ],
+        [
+          8,
+          0,
+          46
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n  background       0.90      0.87      0.88      2000\n    chainsaw       0.73      0.55      0.63       444\n     gunshot       0.21      0.85      0.34        54\n\n    accuracy                           0.82      2498\n   macro avg       0.61      0.76      0.62      2498\nweighted avg       0.85      0.82      0.83      2498\n"
+    },
+    "test": {
+      "accuracy": 0.5875412930627655,
+      "balanced_accuracy": 0.7788667087022234,
+      "macro_f1": 0.4675528271577957,
+      "macro_precision": 0.49478278293431943,
+      "macro_recall": 0.7788667087022234,
+      "per_class_f1": {
+        "background": 0.691304347826087,
+        "chainsaw": 0.5773672055427251,
+        "gunshot": 0.13398692810457516
+      },
+      "per_class_recall": {
+        "background": 0.5356541268950028,
+        "chainsaw": 0.847457627118644,
+        "gunshot": 0.9534883720930233
+      },
+      "confusion_matrix": [
+        [
+          954,
+          321,
+          506
+        ],
+        [
+          23,
+          250,
+          22
+        ],
+        [
+          2,
+          0,
+          41
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n  background       0.97      0.54      0.69      1781\n    chainsaw       0.44      0.85      0.58       295\n     gunshot       0.07      0.95      0.13        43\n\n    accuracy                           0.59      2119\n   macro avg       0.49      0.78      0.47      2119\nweighted avg       0.88      0.59      0.66      2119\n"
+    },
+    "external": {
+      "accuracy": 0.39601769911504425,
+      "balanced_accuracy": 0.7320289855072465,
+      "macro_f1": 0.36173748977347975,
+      "macro_precision": 0.4525910607747721,
+      "macro_recall": 0.7320289855072465,
+      "per_class_f1": {
+        "background": 0.44684129429892144,
+        "chainsaw": 0.34018935683969964,
+        "gunshot": 0.29818181818181816
+      },
+      "per_class_recall": {
+        "background": 0.29,
+        "chainsaw": 0.9060869565217391,
+        "gunshot": 1.0
+      },
+      "confusion_matrix": [
+        [
+          870,
+          1967,
+          163
+        ],
+        [
+          24,
+          521,
+          30
+        ],
+        [
+          0,
+          0,
+          41
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n  background       0.97      0.29      0.45      3000\n    chainsaw       0.21      0.91      0.34       575\n     gunshot       0.18      1.00      0.30        41\n\n    accuracy                           0.40      3616\n   macro avg       0.45      0.73      0.36      3616\nweighted avg       0.84      0.40      0.43      3616\n"
+    },
+    "int8_test_acc": 0.5771590372817367,
+    "int8_test_macro_f1": 0.4626981056108003,
+    "int8_bytes": 13072,
+    "unsupported_ops": [],
+    "robustness": {
+      "clean": {
+        "accuracy": 0.5781028787163757,
+        "macro_f1": 0.4636017996289663,
+        "confusion_matrix": [
+          [
+            932,
+            322,
+            527
+          ],
+          [
+            21,
+            252,
+            22
+          ],
+          [
+            2,
+            0,
+            41
+          ]
+        ],
+        "background_false_alarm_rate": 0.47669848399775405
+      },
+      "moderate": {
+        "accuracy": 0.5969797074091553,
+        "macro_f1": 0.28684265449752866,
+        "confusion_matrix": [
+          [
+            1233,
+            0,
+            548
+          ],
+          [
+            245,
+            3,
+            47
+          ],
+          [
+            14,
+            0,
+            29
+          ]
+        ],
+        "background_false_alarm_rate": 0.3076923076923077
+      },
+      "strong": {
+        "accuracy": 0.8017932987258141,
+        "macro_f1": 0.2973658878095738,
+        "confusion_matrix": [
+          [
+            1699,
+            0,
+            82
+          ],
+          [
+            286,
+            0,
+            9
+          ],
+          [
+            43,
+            0,
+            0
+          ]
+        ],
+        "background_false_alarm_rate": 0.04604154969118473
+      }
+    },
+    "epochs_ran": 15
+  },
+  "A_seed2": {
+    "val": {
+      "accuracy": 0.7870296236989591,
+      "balanced_accuracy": 0.6609482816149483,
+      "macro_f1": 0.54282815820342,
+      "macro_precision": 0.5840588410024317,
+      "macro_recall": 0.6609482816149483,
+      "per_class_f1": {
+        "background": 0.8731563421828908,
+        "chainsaw": 0.4549618320610687,
+        "gunshot": 0.30036630036630035
+      },
+      "per_class_recall": {
+        "background": 0.888,
+        "chainsaw": 0.3355855855855856,
+        "gunshot": 0.7592592592592593
+      },
+      "confusion_matrix": [
+        [
+          1776,
+          62,
+          162
+        ],
+        [
+          279,
+          149,
+          16
+        ],
+        [
+          13,
+          0,
+          41
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n  background       0.86      0.89      0.87      2000\n    chainsaw       0.71      0.34      0.45       444\n     gunshot       0.19      0.76      0.30        54\n\n    accuracy                           0.79      2498\n   macro avg       0.58      0.66      0.54      2498\nweighted avg       0.82      0.79      0.79      2498\n"
+    },
+    "test": {
+      "accuracy": 0.6021708352996696,
+      "balanced_accuracy": 0.7479001660692203,
+      "macro_f1": 0.46937498891874413,
+      "macro_precision": 0.4929306674376706,
+      "macro_recall": 0.7479001660692203,
+      "per_class_f1": {
+        "background": 0.7153335661893119,
+        "chainsaw": 0.5611702127659575,
+        "gunshot": 0.13162118780096307
+      },
+      "per_class_recall": {
+        "background": 0.574957888826502,
+        "chainsaw": 0.7152542372881356,
+        "gunshot": 0.9534883720930233
+      },
+      "confusion_matrix": [
+        [
+          1024,
+          246,
+          511
+        ],
+        [
+          56,
+          211,
+          28
+        ],
+        [
+          2,
+          0,
+          41
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n  background       0.95      0.57      0.72      1781\n    chainsaw       0.46      0.72      0.56       295\n     gunshot       0.07      0.95      0.13        43\n\n    accuracy                           0.60      2119\n   macro avg       0.49      0.75      0.47      2119\nweighted avg       0.86      0.60      0.68      2119\n"
+    },
+    "external": {
+      "accuracy": 0.4756637168141593,
+      "balanced_accuracy": 0.7734009661835749,
+      "macro_f1": 0.40164006756850124,
+      "macro_precision": 0.45816221738689006,
+      "macro_recall": 0.7734009661835749,
+      "per_class_f1": {
+        "background": 0.5458033573141486,
+        "chainsaw": 0.39288307915758897,
+        "gunshot": 0.2662337662337662
+      },
+      "per_class_recall": {
+        "background": 0.37933333333333336,
+        "chainsaw": 0.9408695652173913,
+        "gunshot": 1.0
+      },
+      "confusion_matrix": [
+        [
+          1138,
+          1638,
+          224
+        ],
+        [
+          32,
+          541,
+          2
+        ],
+        [
+          0,
+          0,
+          41
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n  background       0.97      0.38      0.55      3000\n    chainsaw       0.25      0.94      0.39       575\n     gunshot       0.15      1.00      0.27        41\n\n    accuracy                           0.48      3616\n   macro avg       0.46      0.77      0.40      3616\nweighted avg       0.85      0.48      0.52      3616\n"
+    },
+    "int8_test_acc": 0.5974516281264748,
+    "int8_test_macro_f1": 0.4680493017973036,
+    "int8_bytes": 13072,
+    "unsupported_ops": [],
+    "robustness": {
+      "clean": {
+        "accuracy": 0.5979235488437943,
+        "macro_f1": 0.46826971535650835,
+        "confusion_matrix": [
+          [
+            1010,
+            255,
+            516
+          ],
+          [
+            51,
+            216,
+            28
+          ],
+          [
+            2,
+            0,
+            41
+          ]
+        ],
+        "background_false_alarm_rate": 0.43290286355979785
+      },
+      "moderate": {
+        "accuracy": 0.45257196790939125,
+        "macro_f1": 0.339330782693613,
+        "confusion_matrix": [
+          [
+            667,
+            888,
+            226
+          ],
+          [
+            9,
+            277,
+            9
+          ],
+          [
+            11,
+            17,
+            15
+          ]
+        ],
+        "background_false_alarm_rate": 0.6254912970241437
+      },
+      "strong": {
+        "accuracy": 0.6229353468617272,
+        "macro_f1": 0.36693555300609265,
+        "confusion_matrix": [
+          [
+            1102,
+            674,
+            5
+          ],
+          [
+            77,
+            218,
+            0
+          ],
+          [
+            36,
+            7,
+            0
+          ]
+        ],
+        "background_false_alarm_rate": 0.38124649073554184
+      }
+    },
+    "epochs_ran": 15
+  },
+  "B_seed42": {
+    "val": {
+      "accuracy": 0.7554043234587671,
+      "balanced_accuracy": 0.7194477811144478,
+      "macro_f1": 0.549863881699542,
+      "macro_precision": 0.5388846876035059,
+      "macro_recall": 0.7194477811144478,
+      "per_class_f1": {
+        "background": 0.8456549935149157,
+        "chainsaw": 0.5147058823529411,
+        "gunshot": 0.28923076923076924
+      },
+      "per_class_recall": {
+        "background": 0.815,
+        "chainsaw": 0.47297297297297297,
+        "gunshot": 0.8703703703703703
+      },
+      "confusion_matrix": [
+        [
+          1630,
+          162,
+          208
+        ],
+        [
+          218,
+          210,
+          16
+        ],
+        [
+          7,
+          0,
+          47
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n  background       0.88      0.81      0.85      2000\n    chainsaw       0.56      0.47      0.51       444\n     gunshot       0.17      0.87      0.29        54\n\n    accuracy                           0.76      2498\n   macro avg       0.54      0.72      0.55      2498\nweighted avg       0.81      0.76      0.77      2498\n"
+    },
+    "test": {
+      "accuracy": 0.4228409627182633,
+      "balanced_accuracy": 0.7229979422643326,
+      "macro_f1": 0.3602110251685921,
+      "macro_precision": 0.45371010934103534,
+      "macro_recall": 0.7229979422643326,
+      "per_class_f1": {
+        "background": 0.502713987473904,
+        "chainsaw": 0.4684014869888476,
+        "gunshot": 0.10951760104302477
+      },
+      "per_class_recall": {
+        "background": 0.33801235261089274,
+        "chainsaw": 0.8542372881355932,
+        "gunshot": 0.9767441860465116
+      },
+      "confusion_matrix": [
+        [
+          602,
+          529,
+          650
+        ],
+        [
+          11,
+          252,
+          32
+        ],
+        [
+          1,
+          0,
+          42
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n  background       0.98      0.34      0.50      1781\n    chainsaw       0.32      0.85      0.47       295\n     gunshot       0.06      0.98      0.11        43\n\n    accuracy                           0.42      2119\n   macro avg       0.45      0.72      0.36      2119\nweighted avg       0.87      0.42      0.49      2119\n"
+    },
+    "external": {
+      "accuracy": 0.26714601769911506,
+      "balanced_accuracy": 0.512024154589372,
+      "macro_f1": 0.2899138793273332,
+      "macro_precision": 0.3209157627026746,
+      "macro_recall": 0.512024154589372,
+      "per_class_f1": {
+        "background": 0.3654214559386973,
+        "chainsaw": 0.11384399156711174,
+        "gunshot": 0.3904761904761905
+      },
+      "per_class_recall": {
+        "background": 0.25433333333333336,
+        "chainsaw": 0.2817391304347826,
+        "gunshot": 1.0
+      },
+      "confusion_matrix": [
+        [
+          763,
+          2109,
+          128
+        ],
+        [
+          413,
+          162,
+          0
+        ],
+        [
+          0,
+          0,
+          41
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n  background       0.65      0.25      0.37      3000\n    chainsaw       0.07      0.28      0.11       575\n     gunshot       0.24      1.00      0.39        41\n\n    accuracy                           0.27      3616\n   macro avg       0.32      0.51      0.29      3616\nweighted avg       0.55      0.27      0.33      3616\n"
+    },
+    "int8_test_acc": 0.4289759320434167,
+    "int8_test_macro_f1": 0.36370483377295537,
+    "int8_bytes": 13072,
+    "unsupported_ops": [],
+    "robustness": {
+      "clean": {
+        "accuracy": 0.42708824917413873,
+        "macro_f1": 0.36239397512640786,
+        "confusion_matrix": [
+          [
+            612,
+            527,
+            642
+          ],
+          [
+            13,
+            251,
+            31
+          ],
+          [
+            1,
+            0,
+            42
+          ]
+        ],
+        "background_false_alarm_rate": 0.6563728242560359
+      },
+      "moderate": {
+        "accuracy": 0.4162340726757905,
+        "macro_f1": 0.28360856345033925,
+        "confusion_matrix": [
+          [
+            773,
+            481,
+            527
+          ],
+          [
+            71,
+            80,
+            144
+          ],
+          [
+            10,
+            4,
+            29
+          ]
+        ],
+        "background_false_alarm_rate": 0.5659741718135879
+      },
+      "strong": {
+        "accuracy": 0.04624823029731005,
+        "macro_f1": 0.03357639352037111,
+        "confusion_matrix": [
+          [
+            55,
+            0,
+            1726
+          ],
+          [
+            0,
+            0,
+            295
+          ],
+          [
+            0,
+            0,
+            43
+          ]
+        ],
+        "background_false_alarm_rate": 0.9691184727681078
+      }
+    },
+    "epochs_ran": 7
+  },
+  "B_seed1": {
+    "val": {
+      "accuracy": 0.7574059247397918,
+      "balanced_accuracy": 0.6730692359025693,
+      "macro_f1": 0.5794841257474395,
+      "macro_precision": 0.5390703735022124,
+      "macro_recall": 0.6730692359025693,
+      "per_class_f1": {
+        "background": 0.8459734167318217,
+        "chainsaw": 0.47202441505595116,
+        "gunshot": 0.42045454545454547
+      },
+      "per_class_recall": {
+        "background": 0.8115,
+        "chainsaw": 0.5225225225225225,
+        "gunshot": 0.6851851851851852
+      },
+      "confusion_matrix": [
+        [
+          1623,
+          296,
+          81
+        ],
+        [
+          208,
+          232,
+          4
+        ],
+        [
+          6,
+          11,
+          37
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n  background       0.88      0.81      0.85      2000\n    chainsaw       0.43      0.52      0.47       444\n     gunshot       0.30      0.69      0.42        54\n\n    accuracy                           0.76      2498\n   macro avg       0.54      0.67      0.58      2498\nweighted avg       0.79      0.76      0.77      2498\n"
+    },
+    "test": {
+      "accuracy": 0.4280320906087777,
+      "balanced_accuracy": 0.6616651141249135,
+      "macro_f1": 0.35460388624381495,
+      "macro_precision": 0.4313460514198282,
+      "macro_recall": 0.6616651141249135,
+      "per_class_f1": {
+        "background": 0.5041322314049587,
+        "chainsaw": 0.3505291005291005,
+        "gunshot": 0.20915032679738563
+      },
+      "per_class_recall": {
+        "background": 0.3425042111173498,
+        "chainsaw": 0.8983050847457628,
+        "gunshot": 0.7441860465116279
+      },
+      "confusion_matrix": [
+        [
+          610,
+          949,
+          222
+        ],
+        [
+          21,
+          265,
+          9
+        ],
+        [
+          8,
+          3,
+          32
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n  background       0.95      0.34      0.50      1781\n    chainsaw       0.22      0.90      0.35       295\n     gunshot       0.12      0.74      0.21        43\n\n    accuracy                           0.43      2119\n   macro avg       0.43      0.66      0.35      2119\nweighted avg       0.84      0.43      0.48      2119\n"
+    },
+    "external": {
+      "accuracy": 0.25276548672566373,
+      "balanced_accuracy": 0.4857798986685518,
+      "macro_f1": 0.43408546095471484,
+      "macro_precision": 0.5166124627660186,
+      "macro_recall": 0.4857798986685518,
+      "per_class_f1": {
+        "background": 0.3279342138051333,
+        "chainsaw": 0.14098883572567783,
+        "gunshot": 0.8333333333333334
+      },
+      "per_class_recall": {
+        "background": 0.21933333333333332,
+        "chainsaw": 0.3843478260869565,
+        "gunshot": 0.8536585365853658
+      },
+      "confusion_matrix": [
+        [
+          658,
+          2334,
+          8
+        ],
+        [
+          354,
+          221,
+          0
+        ],
+        [
+          1,
+          5,
+          35
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n  background       0.65      0.22      0.33      3000\n    chainsaw       0.09      0.38      0.14       575\n     gunshot       0.81      0.85      0.83        41\n\n    accuracy                           0.25      3616\n   macro avg       0.52      0.49      0.43      3616\nweighted avg       0.56      0.25      0.30      3616\n"
+    },
+    "int8_test_acc": 0.44171779141104295,
+    "int8_test_macro_f1": 0.3668638129308713,
+    "int8_bytes": 13072,
+    "unsupported_ops": [],
+    "robustness": {
+      "clean": {
+        "accuracy": 0.44124587069372345,
+        "macro_f1": 0.36639353907763555,
+        "confusion_matrix": [
+          [
+            639,
+            943,
+            199
+          ],
+          [
+            23,
+            264,
+            8
+          ],
+          [
+            7,
+            4,
+            32
+          ]
+        ],
+        "background_false_alarm_rate": 0.6412128017967434
+      },
+      "moderate": {
+        "accuracy": 0.14299197734780558,
+        "macro_f1": 0.0847876134437638,
+        "confusion_matrix": [
+          [
+            8,
+            1772,
+            1
+          ],
+          [
+            0,
+            295,
+            0
+          ],
+          [
+            1,
+            42,
+            0
+          ]
+        ],
+        "background_false_alarm_rate": 0.9955081414935429
+      },
+      "strong": {
+        "accuracy": 0.13921661160924964,
+        "macro_f1": 0.08146920740127037,
+        "confusion_matrix": [
+          [
+            0,
+            1781,
+            0
+          ],
+          [
+            0,
+            295,
+            0
+          ],
+          [
+            0,
+            43,
+            0
+          ]
+        ],
+        "background_false_alarm_rate": 1.0
+      }
+    },
+    "epochs_ran": 6
+  },
+  "B_seed2": {
+    "val": {
+      "accuracy": 0.8706965572457966,
+      "balanced_accuracy": 0.8260323656990325,
+      "macro_f1": 0.7065666928339661,
+      "macro_precision": 0.6578222365834597,
+      "macro_recall": 0.8260323656990325,
+      "per_class_f1": {
+        "background": 0.916991933385376,
+        "chainsaw": 0.7733887733887734,
+        "gunshot": 0.4293193717277487
+      },
+      "per_class_recall": {
+        "background": 0.881,
+        "chainsaw": 0.8378378378378378,
+        "gunshot": 0.7592592592592593
+      },
+      "confusion_matrix": [
+        [
+          1762,
+          146,
+          92
+        ],
+        [
+          68,
+          372,
+          4
+        ],
+        [
+          13,
+          0,
+          41
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n  background       0.96      0.88      0.92      2000\n    chainsaw       0.72      0.84      0.77       444\n     gunshot       0.30      0.76      0.43        54\n\n    accuracy                           0.87      2498\n   macro avg       0.66      0.83      0.71      2498\nweighted avg       0.90      0.87      0.88      2498\n"
+    },
+    "test": {
+      "accuracy": 0.6314299197734781,
+      "balanced_accuracy": 0.795329877683022,
+      "macro_f1": 0.4819667452952711,
+      "macro_precision": 0.4847655572011718,
+      "macro_recall": 0.795329877683022,
+      "per_class_f1": {
+        "background": 0.7341506129597198,
+        "chainsaw": 0.5107692307692308,
+        "gunshot": 0.20098039215686275
+      },
+      "per_class_recall": {
+        "background": 0.5884334643458731,
+        "chainsaw": 0.8440677966101695,
+        "gunshot": 0.9534883720930233
+      },
+      "confusion_matrix": [
+        [
+          1048,
+          430,
+          303
+        ],
+        [
+          25,
+          249,
+          21
+        ],
+        [
+          1,
+          1,
+          41
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n  background       0.98      0.59      0.73      1781\n    chainsaw       0.37      0.84      0.51       295\n     gunshot       0.11      0.95      0.20        43\n\n    accuracy                           0.63      2119\n   macro avg       0.48      0.80      0.48      2119\nweighted avg       0.87      0.63      0.69      2119\n"
+    },
+    "external": {
+      "accuracy": 0.5196349557522124,
+      "balanced_accuracy": 0.6691263108283256,
+      "macro_f1": 0.4879237498833276,
+      "macro_precision": 0.47519059907096306,
+      "macro_recall": 0.6691263108283256,
+      "per_class_f1": {
+        "background": 0.6371422602882808,
+        "chainsaw": 0.2734375,
+        "gunshot": 0.5531914893617021
+      },
+      "per_class_recall": {
+        "background": 0.5083333333333333,
+        "chainsaw": 0.5478260869565217,
+        "gunshot": 0.9512195121951219
+      },
+      "confusion_matrix": [
+        [
+          1525,
+          1414,
+          61
+        ],
+        [
+          260,
+          315,
+          0
+        ],
+        [
+          2,
+          0,
+          39
+        ]
+      ],
+      "classification_report": "              precision    recall  f1-score   support\n\n  background       0.85      0.51      0.64      3000\n    chainsaw       0.18      0.55      0.27       575\n     gunshot       0.39      0.95      0.55        41\n\n    accuracy                           0.52      3616\n   macro avg       0.48      0.67      0.49      3616\nweighted avg       0.74      0.52      0.58      3616\n"
+    },
+    "int8_test_acc": 0.6512505899008967,
+    "int8_test_macro_f1": 0.4948182718313379,
+    "int8_bytes": 13072,
+    "unsupported_ops": [],
+    "robustness": {
+      "clean": {
+        "accuracy": 0.6503067484662577,
+        "macro_f1": 0.49445322080137144,
+        "confusion_matrix": [
+          [
+            1089,
+            398,
+            294
+          ],
+          [
+            24,
+            248,
+            23
+          ],
+          [
+            1,
+            1,
+            41
+          ]
+        ],
+        "background_false_alarm_rate": 0.38854576080853453
+      },
+      "moderate": {
+        "accuracy": 0.6177442189712128,
+        "macro_f1": 0.3637946450697636,
+        "confusion_matrix": [
+          [
+            1090,
+            691,
+            0
+          ],
+          [
+            76,
+            219,
+            0
+          ],
+          [
+            19,
+            24,
+            0
+          ]
+        ],
+        "background_false_alarm_rate": 0.3879842784952274
+      },
+      "strong": {
+        "accuracy": 0.145351580934403,
+        "macro_f1": 0.08705248759070207,
+        "confusion_matrix": [
+          [
+            15,
+            1766,
+            0
+          ],
+          [
+            2,
+            293,
+            0
+          ],
+          [
+            0,
+            43,
+            0
+          ]
+        ],
+        "background_false_alarm_rate": 0.991577765300393
+      }
+    },
+    "epochs_ran": 15
+  }
+}

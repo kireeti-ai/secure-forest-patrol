@@ -7,5 +7,4 @@ alembic
 cryptography
 httpx
 paho-mqtt
-PyJWT
 pytest

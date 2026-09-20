@@ -2,7 +2,6 @@
 
 from sqlalchemy import select
 
-from app.core.security import create_access_token
 from app.models.acoustic_event import AcousticEvent
 from app.models.forest_node import ForestNode
 from tests.forest_vectors import acoustic_payload, public_pem
@@ -40,10 +39,8 @@ def test_acoustic_review_workflow(client, db_session, seeded_data):
     body, _, _ = acoustic_payload()
     created = client.post("/api/ingest/gateway/acoustic-event", json=body)
     event_id = created.json()["event_id"]
-    token = create_access_token({"sub": str(seeded_data["admin"].id), "role": "ADMIN"})
     for target in ["REVIEWED", "CONFIRMED"]:
         r = client.post(f"/api/forest/acoustic-events/{event_id}/review",
-                        headers={"Authorization": f"Bearer {token}"},
                         json={"review_status": target})
         assert r.status_code == 200, r.text
         assert r.json()["reviewStatus"] == target

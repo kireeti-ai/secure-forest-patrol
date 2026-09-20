@@ -8,7 +8,7 @@ from sqlalchemy import and_, select
 from sqlalchemy.orm import Session
 
 from app.api.dependencies.database import get_db
-from app.core.security import get_current_user, hash_password, require_roles
+from app.core.security import hash_password, require_roles
 from app.models.rfid import Attendance, RfidEvent
 from app.models.user import User
 
@@ -138,13 +138,3 @@ def officer_presence(db: Session = Depends(get_db), _: User = Depends(require_ro
             "exit_at": attendance.exit_at.isoformat() if attendance and attendance.exit_at else None,
         })
     return result
-
-
-@router.get("/my-attendance")
-def my_attendance(db: Session = Depends(get_db), user: User = Depends(get_current_user)) -> dict:
-    if user.role not in {"EMPLOYEE", "OFFICER", "ADMIN"} or not user.employee_id:
-        raise HTTPException(status_code=403, detail="No employee attendance profile")
-    rows = list(db.scalars(select(Attendance).where(Attendance.employee_id == user.employee_id).order_by(Attendance.attendance_date.desc())))
-    return {"employee": _employee_out(user), "records": [{"date": row.attendance_date.isoformat(),
-            "entry_at": row.entry_at.isoformat(), "exit_at": row.exit_at.isoformat() if row.exit_at else None,
-            "status": "PRESENT"} for row in rows]}

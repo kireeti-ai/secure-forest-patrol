@@ -1,0 +1,88 @@
+# Data Augmentation Configuration
+# SECURE FOREST PATROL - ML Dataset Foundation
+
+# Augmentation settings
+augmentation_enabled: true
+augmentation_split: "train"  # Only apply to training data
+
+# Augmentation probability
+augmentation_probability: 0.5  # Probability of applying any augmentation
+
+# Background noise addition
+background_noise:
+  enabled: true
+  probability: 0.3
+  snr_range: [10, 30]  # Signal-to-noise ratio in dB
+  noise_sources:
+    - "sensing_forest"  # Use Sensing the Forest dataset as noise source
+    - "esc50_environmental"  # Use ESC-50 environmental sounds
+  max_noise_samples: 3  # Number of noise samples to mix
+
+# Gain variation
+gain_variation:
+  enabled: true
+  probability: 0.4
+  min_gain_db: -6
+  max_gain_db: 6
+
+# Time shifting
+time_shift:
+  enabled: true
+  probability: 0.3
+  max_shift_ms: 100  # Maximum shift in milliseconds
+  shift_direction: "random"  # Options: "random", "left", "right"
+
+# Time masking (SpecAugment)
+time_mask:
+  enabled: true
+  probability: 0.3
+  max_mask_ratio: 0.2  # Maximum ratio of time to mask
+  num_masks: 2  # Number of time masks to apply
+
+# Frequency masking (SpecAugment)
+freq_mask:
+  enabled: true
+  probability: 0.3
+  max_mask_ratio: 0.2  # Maximum ratio of frequency bands to mask
+  num_masks: 2  # Number of frequency masks to apply
+
+# Pitch shifting
+pitch_shift:
+  enabled: false  # Disabled for acoustic event classification (may change class semantics)
+  probability: 0.2
+  n_steps: 2  # Number of semitones to shift
+
+# Speed perturbation
+speed_perturbation:
+  enabled: false  # Disabled for acoustic event classification (may change class semantics)
+  probability: 0.2
+  min_rate: 0.9
+  max_rate: 1.1
+
+# Reverb simulation
+reverb:
+  enabled: false  # Disabled for now (may be added for domain adaptation)
+  probability: 0.2
+  impulse_response_sources: []
+
+# Augmentation constraints
+constraints:
+  max_augmentations_per_sample: 3  # Maximum number of augmentations to apply to a single sample
+  preserve_class_semantics: true  # Ensure augmentations don't change the class
+  avoid_extreme_transformations: true  # Avoid unrealistic transformations
+
+# Validation
+validate_augmented_samples: true
+check_audio_quality: true
+max_clipping_ratio: 0.05  # Reject if >5% of samples are clipped after augmentation
+
+# Reproducibility
+augmentation_seed: 123  # Random seed for reproducible augmentation
+
+# Notes
+notes:
+  - "Augmentation should only be applied to training data"
+  - "Pitch shifting and speed perturbation are disabled as they may change acoustic event characteristics"
+  - "Background noise addition uses real forest recordings for realistic augmentation"
+  - "Time and frequency masking follow SpecAugment principles"
+  - "All augmentations are designed to preserve class semantics while improving robustness"
