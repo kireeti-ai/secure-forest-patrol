@@ -3,6 +3,9 @@ from datetime import datetime, timezone
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.models.checkpoint import Checkpoint
+from app.models.forest_node import ForestNode
+from app.models.operator_checkpoint_access import OperatorCheckpointAccess
 from app.models.rfid import Attendance, RfidEvent
 from app.models.user import User
 from app.schemas.forest_ingest import RfidScanIngest
@@ -16,12 +19,30 @@ def ingest_rfid_scan(db: Session, payload: RfidScanIngest) -> tuple[dict, bool]:
 
     now = datetime.now(timezone.utc)
     employee = db.scalar(select(User).where(User.rfid_uid == payload.uid, User.is_active.is_(True)))
+
+    # The scanning node tells us which checkpoint the officer is standing at.
+    node = db.scalar(select(ForestNode).where(ForestNode.node_id == payload.node_id))
+    if node is not None:
+        node.last_seen_at = now
+    checkpoint = db.scalar(select(Checkpoint).where(Checkpoint.node_id == payload.node_id))
+
+    status = "UNKNOWN"
+    if employee:
+        status = "AUTHORIZED"
+        # An officer with assigned checkpoints must scan at one of them. Officers
+        # with no assignment, or scans from a node not mapped to a checkpoint, are
+        # not restricted.
+        assigned = set(db.scalars(select(OperatorCheckpointAccess.checkpoint_id)
+                                  .where(OperatorCheckpointAccess.user_id == employee.id)))
+        if checkpoint is not None and assigned and checkpoint.checkpoint_id not in assigned:
+            status = "WRONG_CHECKPOINT"
+
     event = RfidEvent(rfid_uid=payload.uid, employee_id=employee.employee_id if employee else None,
-                      node_id=payload.node_id, sequence=payload.seq, status="AUTHORIZED" if employee else "UNKNOWN",
+                      node_id=payload.node_id, sequence=payload.seq, status=status,
                       rssi=payload.rssi, snr=payload.snr, timestamp=now)
     db.add(event)
     attendance_action = None
-    if employee and employee.employee_id:
+    if status == "AUTHORIZED" and employee.employee_id:
         row = db.scalar(select(Attendance).where(Attendance.employee_id == employee.employee_id,
                                                  Attendance.attendance_date == now.date()))
         if row is None:
