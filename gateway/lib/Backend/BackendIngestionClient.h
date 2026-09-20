@@ -6,6 +6,9 @@
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
 #include <PubSubClient.h>
+#include <freertos/FreeRTOS.h>
+#include <freertos/semphr.h>
+#include <freertos/task.h>
 
 #include "LoRaTypes.h"
 #include "Packet.h"
@@ -66,6 +69,9 @@ public:
 
     explicit BackendIngestionClient(const BackendConfig& config);
 
+    // Starts Wi-Fi and a dedicated network task (core 0) that runs tick(). All
+    // Wi-Fi/DNS/MQTT work stays off the main loop, so an unreachable broker can
+    // never stall LoRa reception there.
     void begin();
     void tick(std::uint32_t currentMs);
     void dispatchMessages(lora::ILoRaDriver& radioDriver);
@@ -87,6 +93,7 @@ private:
     bool publishEnvelope(const ForestEventEnvelope& envelope);
     bool publishRfid(const ForestEventEnvelope& envelope);
     void logLine(const char* line);
+    static void networkTask(void* self);
 
     BackendConfig config_;
     WiFiClient plainClient_;
@@ -100,11 +107,16 @@ private:
     std::uint32_t lastMqttAttemptMs_{0};
     std::uint32_t lastStatusReportMs_{0};
     static constexpr std::uint32_t kReconnectIntervalMs = 5000U;
+    static constexpr std::uint32_t kMaxMqttBackoffMs = 30000U;
+    std::uint32_t mqttBackoffMs_{kReconnectIntervalMs};
     static constexpr std::uint32_t kStatusReportIntervalMs = 30000U;
 
     ForestEventEnvelope outbox_[kOutboxCapacity]{};
     std::size_t outboxHead_{0};
     std::size_t outboxCount_{0};
+    std::uint32_t outboxHeadSerial_{0};  // bumps whenever the head advances (pop or drop-oldest)
+    SemaphoreHandle_t outboxMutex_{nullptr};  // outbox is shared: main loop enqueues, network task drains
+    TaskHandle_t networkTask_{nullptr};
 };
 
 }  // namespace forest::backend

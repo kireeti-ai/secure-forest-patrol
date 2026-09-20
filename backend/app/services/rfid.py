@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -11,9 +11,18 @@ from app.models.user import User
 from app.schemas.forest_ingest import RfidScanIngest
 
 
+DUPLICATE_WINDOW = timedelta(seconds=120)
+
+
 def ingest_rfid_scan(db: Session, payload: RfidScanIngest) -> tuple[dict, bool]:
     """Persist exactly one gateway scan and toggle the employee's daily attendance."""
-    duplicate = db.scalar(select(RfidEvent).where(RfidEvent.node_id == payload.node_id, RfidEvent.sequence == payload.seq))
+    # A retry of the same scan (LoRa/MQTT/webhook redelivery) repeats node, sequence and
+    # card within moments. The same sequence much later is a rebooted node starting
+    # over at 0, and is a genuine new scan.
+    recent = datetime.now(timezone.utc) - DUPLICATE_WINDOW
+    duplicate = db.scalar(select(RfidEvent).where(
+        RfidEvent.node_id == payload.node_id, RfidEvent.sequence == payload.seq,
+        RfidEvent.rfid_uid == payload.uid, RfidEvent.timestamp >= recent))
     if duplicate:
         return _event_out(duplicate, duplicate=True), True
 

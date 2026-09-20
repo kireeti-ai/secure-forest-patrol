@@ -206,9 +206,9 @@ function normalizeLedger(r: any): LedgerRecord {
 function normalizeGateway(r: any): GatewayStatus {
   return {
     id: r.id, gatewayId: r.gatewayId,
-    // ONLINE/OFFLINE derived from backendStatus -- the raw `status` column
-    // is a separate, unrelated lifecycle field (always "ACTIVE" today).
-    status: r.backendStatus === "REACHABLE" ? "ONLINE" : "OFFLINE",
+    // `online` is computed by the backend from how recently the gateway reported;
+    // the raw `status` column is an unrelated lifecycle field (always "ACTIVE").
+    status: r.online ? "ONLINE" : "OFFLINE",
     loraStatus: r.loraStatus ?? "NO_TRAFFIC", wifiStatus: r.wifiStatus ?? "DISCONNECTED",
     backendStatus: r.backendStatus ?? "UNREACHABLE", lastSeen: r.lastSeenAt,
     recordsReceived: r.recordsReceived, recordsForwarded: r.recordsForwarded,

@@ -16,16 +16,22 @@ from app.models.acoustic_event import AcousticEvent
 from app.models.forest_gateway import Gateway
 from app.models.patrol_event import PatrolEvent
 from app.models.sync_record import SyncRecord
+from app.services.forest_gateway_svc import gateway_online
 from app.schemas.forest import GatewayResponse, LedgerResponse, SyncRecordResponse
 
 router = APIRouter(prefix="/api/forest", tags=["forest"])
 
 
 def gateway_out(g: Gateway) -> GatewayResponse:
+    online = gateway_online(g)
+    # Link states are the gateway's last report and only meaningful while it is
+    # still reporting; once it goes quiet they read as down, not as stale "OK".
     return GatewayResponse(
-        id=str(g.id), gateway_id=g.gateway_id, name=g.name, status=g.status,
-        lora_status=g.lora_status, wifi_status=g.wifi_status,
-        backend_status=g.backend_status, firmware_version=g.firmware_version,
+        id=str(g.id), gateway_id=g.gateway_id, name=g.name, status=g.status, online=online,
+        lora_status=g.lora_status if online else "NO_TRAFFIC",
+        wifi_status=g.wifi_status if online else "DISCONNECTED",
+        backend_status=g.backend_status if online else "UNREACHABLE",
+        firmware_version=g.firmware_version,
         records_received=g.records_received or 0,
         records_forwarded=g.records_forwarded or 0,
         records_pending=g.records_pending or 0,

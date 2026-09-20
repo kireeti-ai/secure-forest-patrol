@@ -1,7 +1,7 @@
 import uuid
 from datetime import date, datetime, timezone
 
-from sqlalchemy import Date, DateTime, Float, ForeignKey, Integer, String, UniqueConstraint
+from sqlalchemy import Date, DateTime, Float, ForeignKey, Index, Integer, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.models.base import Base
@@ -10,7 +10,10 @@ from app.models.guid import GUID
 
 class RfidEvent(Base):
     __tablename__ = "rfid_events"
-    __table_args__ = (UniqueConstraint("node_id", "sequence", name="uq_rfid_events_node_sequence"),)
+    # Not unique: a node's sequence counter restarts at 0 on every reboot, so
+    # (node_id, sequence) legitimately repeats. Retries are recognised in
+    # services/rfid.py by (node, sequence, uid) within a short time window.
+    __table_args__ = (Index("ix_rfid_events_node_sequence", "node_id", "sequence"),)
 
     id: Mapped[uuid.UUID] = mapped_column(GUID(), primary_key=True, default=uuid.uuid4)
     rfid_uid: Mapped[str] = mapped_column(String(32), nullable=False, index=True)

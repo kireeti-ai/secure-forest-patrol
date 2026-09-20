@@ -26,6 +26,7 @@ from app.models.forest_gateway import Gateway
 from app.models.forest_node import ForestNode
 from app.models.patrol_event import PatrolEvent
 from app.models.sync_record import SyncRecord
+from app.services.forest_gateway_svc import gateway_online
 
 router = APIRouter(prefix="/api/forest", tags=["forest"])
 
@@ -70,10 +71,10 @@ def forest_system_status(db: Session = Depends(get_db), _: object = Depends(requ
     sync_duplicate = count(select(func.count()).select_from(SyncRecord).where(
         SyncRecord.sync_status == SyncState.DUPLICATE.value))
 
-    gateways_reachable = count(select(func.count()).select_from(Gateway).where(
-        Gateway.backend_status == "REACHABLE"))
-    gateways_wifi_connected = count(select(func.count()).select_from(Gateway).where(
-        Gateway.wifi_status == "CONNECTED"))
+    # Reachable / Wi-Fi connected only count gateways that are still reporting.
+    live_gateways = [g for g in db.scalars(select(Gateway)) if gateway_online(g)]
+    gateways_reachable = sum(1 for g in live_gateways if g.backend_status == "REACHABLE")
+    gateways_wifi_connected = sum(1 for g in live_gateways if g.wifi_status == "CONNECTED")
 
     def _tier(ok_count: int, total_count: int) -> str:
         if total_count == 0:

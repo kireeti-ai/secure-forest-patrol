@@ -237,6 +237,7 @@ class GatewayResponse(ForestModel):
     # (same real counter). duplicate_packets/verification_failures/wifi_ip
     # are NOT YET IMPLEMENTED (gateway status reports don't carry them --
     # see docs/GATEWAY_BACKEND_CONTRACT.md) -- null, not fabricated.
+    online: bool = False
     pending_sync_queue: int | None = None
     duplicate_packets: int | None = None
     verification_failures: int | None = None
