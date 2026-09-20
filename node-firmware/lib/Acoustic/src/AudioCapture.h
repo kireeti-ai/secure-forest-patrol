@@ -9,6 +9,10 @@
 #include <cstddef>
 #include <cstdint>
 
+#ifdef ARDUINO
+#include "INMP441.h"
+#endif
+
 namespace forest::acoustic {
 
 // Single-writer / single-reader ring of PCM16 samples addressed by a free-running
@@ -42,17 +46,16 @@ struct PcmStats {
 PcmStats computePcmStats(const int16_t* samples, size_t count);
 
 #ifdef ARDUINO
+// Feeds the SampleRing from the ForestSensors::INMP441 I2S driver (lib/ForestSensors).
 class Inmp441Capture {
 public:
-    // bclk/ws/data pins, 16 kHz, 32-bit slot, left channel (L/R tied to GND).
     bool begin(int bclkPin, int wsPin, int dataPin, int sampleRate, int shift, SampleRing* ring);
     // Reads whatever the DMA has (blocks up to timeoutMs) and appends to the ring.
     // Returns samples appended, or -1 on driver error.
     int pump(uint32_t timeoutMs);
 private:
     SampleRing* ring_ = nullptr;
-    int shift_ = 16;
-    bool started_ = false;
+    ForestSensors::INMP441 mic_;
 };
 #endif
 
