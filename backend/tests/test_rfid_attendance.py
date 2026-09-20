@@ -42,3 +42,25 @@ def test_rfid_assignment_is_normalized(client, db_session, seeded_data):
     assigned = client.put("/api/employees/EMP002/rfid", json={"rfid_uid": "aa-bb-cc-dd"})
     assert assigned.status_code == 200
     assert assigned.json()["rfid_uid"] == "AA:BB:CC:DD"
+
+
+def test_mqtt_rfid_and_gateway_status_topics(client, db_session, seeded_data):
+    import json
+    from types import SimpleNamespace
+
+    from app.services.mqtt_consumer import TOPIC_GATEWAY_STATUS, TOPIC_RFID, MqttConsumer
+
+    consumer = MqttConsumer(session_factory=lambda: db_session)
+    db_session.close = lambda: None  # the consumer closes its session; keep the test one open
+
+    def send(topic, body):
+        consumer._on_message(None, None, SimpleNamespace(topic=topic, payload=json.dumps(body).encode()))
+
+    send(TOPIC_RFID, {"type": "RFID_SCAN", "node_id": "NODE_01", "uid": "30:BD:57:58", "seq": 40, "rssi": -60, "snr": 9.0})
+    send(TOPIC_GATEWAY_STATUS, {"gateway_id": "GW-FE", "wifi_status": "CONNECTED", "backend_status": "REACHABLE"})
+
+    from sqlalchemy import select
+    from app.models.forest_gateway import Gateway
+    from app.models.rfid import RfidEvent
+    assert db_session.scalar(select(RfidEvent).where(RfidEvent.sequence == 40)).status == "UNKNOWN"
+    assert db_session.scalar(select(Gateway).where(Gateway.gateway_id == "GW-FE")).wifi_status == "CONNECTED"

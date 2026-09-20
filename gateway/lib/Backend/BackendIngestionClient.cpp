@@ -7,6 +7,8 @@ namespace forest::backend {
 
 namespace {
 constexpr const char* kTopicNodeStatus = "forest/events/node-status";
+constexpr const char* kTopicRfid = "forest/events/rfid";
+constexpr const char* kTopicGatewayStatus = "forest/events/gateway-status";
 constexpr int kProtocolVersion = 4;  // matches forest::protocol wire format
 
 const char* wifiStatusName(wl_status_t status) {
@@ -39,6 +41,9 @@ BackendIngestionClient::BackendIngestionClient(const BackendConfig& config)
         mqttClient_.setClient(plainClient_);
     }
     mqttClient_.setServer(config_.mqttBrokerHost, config_.mqttBrokerPort);
+    // PubSubClient's default 256-byte packet limit is too small for the
+    // gateway-status JSON plus its topic; oversized publishes fail silently.
+    mqttClient_.setBufferSize(512);
 }
 
 void BackendIngestionClient::begin() {
@@ -61,12 +66,10 @@ void BackendIngestionClient::logLine(const char* line) {
 void BackendIngestionClient::tick(std::uint32_t currentMs) {
     tickWifi(currentMs);
     tickMqtt(currentMs);
-    if (wifiState_ == LinkState::Connected) {
-        if (mqttState_ == LinkState::Connected) {
-            mqttClient_.loop();
-        }
-        // RFID scans have a dedicated HTTP ingestion contract.  Do not make
-        // attendance delivery depend on an unrelated MQTT broker connection.
+    if (wifiState_ == LinkState::Connected && mqttState_ == LinkState::Connected) {
+        mqttClient_.loop();
+        // Every gateway -> backend message (RFID scans, node telemetry and
+        // the gateway heartbeat) goes over MQTT; see docs/MQTT.md.
         drainOutbox();
         tickGatewayStatus(currentMs);
     }
@@ -76,18 +79,6 @@ void BackendIngestionClient::tickGatewayStatus(std::uint32_t currentMs) {
     if ((currentMs - lastStatusReportMs_) < kStatusReportIntervalMs) return;
     lastStatusReportMs_ = currentMs;
 
-    HTTPClient http;
-    char url[256];
-    snprintf(url, sizeof(url), "%s/api/ingest/gateway/status", config_.baseUrl);
-    const bool useTls = std::strncmp(config_.baseUrl, "https://", 8U) == 0;
-    if (useTls) {
-        httpSecureClient_.setInsecure();
-        http.begin(httpSecureClient_, url);
-    } else {
-        http.begin(url);
-    }
-    http.addHeader("Content-Type", "application/json");
-
     JsonDocument doc;
     char gatewayIdStr[8];
     snprintf(gatewayIdStr, sizeof(gatewayIdStr), "GW-%02X", config_.gatewayId);
@@ -95,13 +86,13 @@ void BackendIngestionClient::tickGatewayStatus(std::uint32_t currentMs) {
     doc["name"] = gatewayIdStr;
     doc["lora_status"] = "ACTIVE";
     doc["wifi_status"] = WiFi.status() == WL_CONNECTED ? "CONNECTED" : "DISCONNECTED";
+    // Reaching this line means the MQTT link to the broker is up.
     doc["backend_status"] = "REACHABLE";
     doc["firmware_version"] = "0.1.0";
     char payload[384];
-    serializeJson(doc, payload, sizeof(payload));
-    const int httpCode = http.POST(reinterpret_cast<uint8_t*>(payload), strlen(payload));
-    Serial.printf("[GATEWAY STATUS] HTTP %d%s\n", httpCode, httpCode >= 200 && httpCode < 300 ? " (reported)" : " (failed)");
-    http.end();
+    const size_t len = serializeJson(doc, payload, sizeof(payload));
+    const bool ok = mqttClient_.publish(kTopicGatewayStatus, reinterpret_cast<const uint8_t*>(payload), len, false);
+    Serial.printf("[GATEWAY STATUS] MQTT %s\n", ok ? "published" : "FAILED");
 }
 
 void BackendIngestionClient::tickWifi(std::uint32_t currentMs) {
@@ -194,12 +185,11 @@ void BackendIngestionClient::drainOutbox() {
 }
 
 bool BackendIngestionClient::publishEnvelope(const ForestEventEnvelope& envelope) {
-    if (envelope.hasRfid) {
-        return publishRfidHttp(envelope);
-    }
-    // Non-RFID telemetry follows the existing MQTT transport and remains in
-    // the outbox until the broker reconnects.
+    // Everything stays in the outbox until the broker connection is up.
     if (mqttState_ != LinkState::Connected) return false;
+    if (envelope.hasRfid) {
+        return publishRfid(envelope);
+    }
 
     JsonDocument doc;
     char gatewayIdStr[8];
@@ -235,21 +225,7 @@ void BackendIngestionClient::dispatchMessages(lora::ILoRaDriver& /*radioDriver*/
     // path. Nothing to do today: the outbox is drained from tick() above.
 }
 
-bool BackendIngestionClient::publishRfidHttp(const ForestEventEnvelope& envelope) {
-    if (wifiState_ != LinkState::Connected) return false;
-
-    HTTPClient http;
-    char url[256];
-    snprintf(url, sizeof(url), "%s/api/ingest/gateway/rfid-scan", config_.baseUrl);
-    const bool useTls = std::strncmp(config_.baseUrl, "https://", 8U) == 0;
-    if (useTls) {
-        httpSecureClient_.setInsecure();
-        http.begin(httpSecureClient_, url);
-    } else {
-        http.begin(url);
-    }
-    http.addHeader("Content-Type", "application/json");
-
+bool BackendIngestionClient::publishRfid(const ForestEventEnvelope& envelope) {
     JsonDocument doc;
     doc["type"] = "RFID_SCAN";
     char nodeIdStr[16];
@@ -258,26 +234,20 @@ bool BackendIngestionClient::publishRfidHttp(const ForestEventEnvelope& envelope
 
     char uid[32]{};
     for (std::size_t index = 0U; index < envelope.rfidUidLength; ++index) {
-        snprintf(uid + (index * 3U), sizeof(uid) - (index * 3U), "%02X%s", envelope.rfidUid[index], (index == envelope.rfidUidLength - 1) ? "" : ":");
+        snprintf(uid + (index * 3U), sizeof(uid) - (index * 3U), "%02X%s", envelope.rfidUid[index],
+                 (index == envelope.rfidUidLength - 1) ? "" : ":");
     }
     doc["uid"] = uid;
     doc["seq"] = envelope.sequenceNumber;
     doc["rssi"] = envelope.rssiDbm;
     doc["snr"] = envelope.snrDb;
 
-    char payload[512];
-    serializeJson(doc, payload, sizeof(payload));
-
-    int httpCode = http.POST(reinterpret_cast<uint8_t*>(payload), strlen(payload));
-    if (httpCode > 0) {
-        Serial.println("Backend upload: SUCCESS");
-        Serial.printf("HTTP %d\n", httpCode);
-    } else {
-        Serial.println("[ERROR] Backend upload failed");
-        Serial.printf("HTTP Error: %s\n", http.errorToString(httpCode).c_str());
-    }
-    http.end();
-    return httpCode >= 200 && httpCode < 300;
+    char payload[256];
+    const size_t len = serializeJson(doc, payload, sizeof(payload));
+    const bool ok = mqttClient_.publish(kTopicRfid, reinterpret_cast<const uint8_t*>(payload), len, false);
+    Serial.printf("[MQTT PUBLISH] topic=%s node=%s uid=%s seq=%u -> %s\n", kTopicRfid, nodeIdStr, uid,
+                  static_cast<unsigned>(envelope.sequenceNumber), ok ? "PUBLISHED" : "FAILED");
+    return ok;
 }
 
 }  // namespace forest::backend

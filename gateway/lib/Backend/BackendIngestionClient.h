@@ -6,7 +6,6 @@
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
 #include <PubSubClient.h>
-#include <HTTPClient.h>
 
 #include "LoRaTypes.h"
 #include "Packet.h"
@@ -86,14 +85,12 @@ private:
     void tickGatewayStatus(std::uint32_t currentMs);
     void drainOutbox();
     bool publishEnvelope(const ForestEventEnvelope& envelope);
-    bool publishRfidHttp(const ForestEventEnvelope& envelope);
+    bool publishRfid(const ForestEventEnvelope& envelope);
     void logLine(const char* line);
 
     BackendConfig config_;
     WiFiClient plainClient_;
-    WiFiClientSecure secureClient_;      // MQTT only
-    WiFiClientSecure httpSecureClient_;  // HTTP only: HTTPClient::end() closes its client,
-                                         // which would otherwise drop the MQTT connection
+    WiFiClientSecure secureClient_;
     PubSubClient mqttClient_;
     logging::ILogger* logger_{nullptr};
 
