@@ -35,7 +35,7 @@ def ingest_rfid_scan(db: Session, payload: RfidScanIngest) -> tuple[dict, bool]:
         assigned = set(db.scalars(select(OperatorCheckpointAccess.checkpoint_id)
                                   .where(OperatorCheckpointAccess.user_id == employee.id)))
         if checkpoint is not None and assigned and checkpoint.checkpoint_id not in assigned:
-            status = "WRONG_CHECKPOINT"
+            status = "INVALID"  # registered, but tried a checkpoint they are not assigned to
 
     event = RfidEvent(rfid_uid=payload.uid, employee_id=employee.employee_id if employee else None,
                       node_id=payload.node_id, sequence=payload.seq, status=status,
@@ -54,7 +54,16 @@ def ingest_rfid_scan(db: Session, payload: RfidScanIngest) -> tuple[dict, bool]:
             attendance_action = "EXIT"
     db.commit()
     db.refresh(event)
-    return _event_out(event, employee.full_name if employee else None, attendance_action), False
+    body = _event_out(event, employee.full_name if employee else None, attendance_action)
+    if status == "INVALID":
+        body["reason"] = invalid_reason(checkpoint.checkpoint_id if checkpoint else None, sorted(assigned))
+    return body, False
+
+
+def invalid_reason(attempted: str | None, assigned: list[str]) -> str:
+    """Human-readable reason for an INVALID scan (derived, never stored)."""
+    where = attempted or "an unassigned checkpoint"
+    return f"Tried to access invalid checkpoint {where}; assigned to {', '.join(sorted(assigned)) or 'none'}"
 
 
 def _event_out(event: RfidEvent, employee_name: str | None = None, attendance_action: str | None = None, duplicate: bool = False) -> dict:
