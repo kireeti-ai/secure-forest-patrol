@@ -1,0 +1,28 @@
+{
+  "version": "forest-acoustic-v1",
+  "classes": [
+    "background",
+    "chainsaw",
+    "gunshot"
+  ],
+  "input_shape": [
+    40,
+    101,
+    1
+  ],
+  "sample_rate": 16000,
+  "window_length_s": 1.0,
+  "feature": "mel_spectrogram",
+  "n_mels": 40,
+  "n_fft": 512,
+  "hop_length": 160,
+  "quantization": "int8_full_integer",
+  "input_scale_zero_point": [
+    0.014163422398269176,
+    23
+  ],
+  "dataset_version": "v1",
+  "fp32_tflite_bytes": 13272,
+  "int8_tflite_bytes": 13072,
+  "unsupported_tflm_ops": []
+}

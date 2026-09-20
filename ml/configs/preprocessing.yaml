@@ -1,0 +1,123 @@
+# Audio Preprocessing Configuration
+# SECURE FOREST PATROL - ML Dataset Foundation
+
+# Target audio specifications
+target_sample_rate: 16000  # 16 kHz as per reference architecture
+target_channels: 1  # Mono as per reference architecture
+target_duration: 1.0  # ~1 second windows as per reference architecture
+
+# Resampling settings
+resample_method: "librosa"  # Use librosa for high-quality resampling
+resample_quality: "kaiser_best"  # High-quality resampling
+
+# Audio normalization
+normalize_audio: true
+normalization_method: "peak"  # Options: "peak", "rms", "none"
+target_dB: -3.0  # Target dB for peak normalization
+
+# Windowing/Segmentation
+window_duration: 1.0  # 1-second windows
+hop_duration: 0.5  # 50% overlap between windows
+min_duration: 0.5  # Minimum duration for files to be included
+max_duration: 10.0  # Maximum duration for files
+padding_strategy: "repeat"  # Options: "repeat", "zero_pad", "truncate"
+truncation_strategy: "center"  # Options: "center", "random", "start"
+
+# MFCC settings
+mfcc:
+  enabled: true
+  n_mfcc: 13  # Number of MFCC coefficients
+  n_fft: 512  # FFT window size
+  hop_length: 160  # Hop length in samples (10ms at 16kHz)
+  n_mels: 40  # Number of Mel bins
+  fmin: 0  # Minimum frequency
+  fmax: 8000  # Maximum frequency (Nyquist at 16kHz)
+
+# Mel-spectrogram settings
+mel_spectrogram:
+  enabled: true
+  n_fft: 512  # FFT window size
+  hop_length: 160  # Hop length in samples (10ms at 16kHz)
+  n_mels: 40  # Number of Mel bins
+  fmin: 0  # Minimum frequency
+  fmax: 8000  # Maximum frequency (Nyquist at 16kHz)
+  power: 2.0  # Power for mel spectrogram
+
+# Audio format settings
+output_format: "wav"  # Output audio format
+output_bit_depth: 16  # Output bit depth
+
+# Quality checks
+check_clipping: true
+clipping_threshold: 0.95
+check_silence: true
+silence_threshold: 0.01
+silence_ratio_threshold: 0.8  # Reject if >80% silence
+
+# Dataset splitting
+split_strategy: "by_source"  # Options: "by_source", "by_file", "random"
+split_seed: 42  # Random seed for reproducibility
+train_ratio: 0.7
+val_ratio: 0.15
+test_ratio: 0.15
+
+# File handling
+overwrite_existing: false
+parallel_processing: true
+num_workers: 4
+
+# Paths (relative to ml directory)
+paths:
+  raw: "datasets/raw"
+  processed: "datasets/processed"
+  interim: "datasets/interim"
+  manifests: "datasets/manifests"
+  reports: "reports"
+
+# Dataset-specific settings
+datasets:
+  c3gd:
+    primary_class: "gunshot"
+    sample_rate: null  # Will be detected during audit
+    channels: null  # Will be detected during audit
+    subset_size: 130  # Diverse subset of recordings selected (see DATASET_V1_REPORT.md)
+
+  fsc22:
+    primary_class: "mixed"  # gunshot/chainsaw/background via Class Name mapping
+    sample_rate: null
+
+  rodopi:
+    primary_class: "chainsaw"  # TextGrid "saw" intervals; rest -> background
+    sample_rate: null
+
+  rfcx_frugalai:
+    primary_class: "chainsaw"
+    secondary_class: "environment"
+    sample_rate: 12000  # Typical for Guardian devices
+    channels: 1
+
+  esc50_hf:
+    primary_class: "environmental"
+    chainsaw_class: "chainsaw"
+    sample_rate: 44100
+    channels: null  # Will be detected during audit
+
+  sensing_forest:
+    primary_class: "background"
+    sample_rate: null  # Will be detected during audit
+    channels: null  # Will be detected during audit
+
+# Class mapping (will be populated during preprocessing)
+class_mapping:
+  gunshot: 0
+  chainsaw: 1
+  background: 2
+
+# Digital audio filter (applied to the continuous 16 kHz mono stream BEFORE 1 s windowing).
+# Causal 2nd-order Butterworth high-pass as one biquad (sosfilt, no filtfilt) -> maps 1:1 to an
+# ESP32 IIR biquad. Disabled by default so the frozen v1 (unfiltered) pipeline is reproducible.
+filter:
+  enabled: false
+  type: "highpass"
+  order: 2
+  cutoff_hz: 80

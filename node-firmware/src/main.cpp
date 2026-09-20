@@ -37,6 +37,40 @@
 #define LORA_RST  9
 #define LORA_DIO0 14
 
+// Status light: the on-board RGB LED. Green = card on the whitelist, red =
+// unknown card. ESP32-S3-DevKitM-1 wires its WS2812 to GPIO 48; override with
+// -D FOREST_RGB_LED_PIN=x for boards that differ (e.g. 38 on DevKitC-1 v1.1).
+#ifndef FOREST_RGB_LED_PIN
+#define FOREST_RGB_LED_PIN 48
+#endif
+constexpr std::uint8_t kLedLevel = 64;  // 0-255 brightness
+void setStatusLed(std::uint8_t red, std::uint8_t green) {
+  neopixelWrite(FOREST_RGB_LED_PIN, red, green, 0);
+}
+
+// Cards accepted by this node. Add the UID printed on the serial monitor
+// ("UID: AA:BB:CC:DD") as {0xAA, 0xBB, 0xCC, 0xDD}.
+struct AllowedCard {
+  std::uint8_t size;
+  std::uint8_t uid[10];
+};
+const AllowedCard kAllowedCards[] = {
+    {4, {0x30, 0xBD, 0x57, 0x58}},
+    {4, {0xCD, 0x4E, 0x32, 0x40}},
+    {4, {0x0D, 0x46, 0x91, 0x43}},
+    {4, {0xBD, 0x8C, 0x6D, 0x19}},
+    {4, {0x10, 0x2C, 0xE6, 0x5C}},
+};
+
+bool isCardAllowed(const MFRC522::Uid &uid) {
+  for (const AllowedCard &card : kAllowedCards) {
+    if (card.size == uid.size && memcmp(card.uid, uid.uidByte, uid.size) == 0) {
+      return true;
+    }
+  }
+  return false;
+}
+
 MFRC522 rfid(SS_PIN, RST_PIN);
 forest::node::NodeManager nodeManager(forest::config::kDefaultFirmwareConfig.node, forest::node::DeviceRole::CheckpointNode);
 forest::protocol::PacketFactory packetFactory(nodeManager, forest::config::kDefaultFirmwareConfig.network);
@@ -74,6 +108,7 @@ void setup() {
   digitalWrite(SS_PIN, HIGH);
   pinMode(LORA_CS, OUTPUT);
   digitalWrite(LORA_CS, HIGH);
+  setStatusLed(0, 0);
 
   // Initialize RC522
   selectRfidSpi();
@@ -126,6 +161,10 @@ void loop() {
     if (i < rfid.uid.size - 1) Serial.print(":");
   }
   Serial.println();
+
+  const bool cardValid = isCardAllowed(rfid.uid);
+  setStatusLed(cardValid ? 0 : kLedLevel, cardValid ? kLedLevel : 0);
+  Serial.println(cardValid ? "[CARD] VALID -> green light" : "[CARD] INVALID -> red light");
 
   // Create the payload bytes
   std::array<std::uint8_t, forest::constants::kMaxPayloadSize> payload{};
@@ -183,4 +222,5 @@ void loop() {
   selectRfidSpi();
 
   delay(1000); // Wait 1 second before allowing next scan
+  setStatusLed(0, 0);
 }

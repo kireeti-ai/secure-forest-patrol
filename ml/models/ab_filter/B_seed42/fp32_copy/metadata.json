@@ -1,0 +1,50 @@
+{
+  "architecture": "final depthwise-separable compact CNN",
+  "input_shape": [
+    40,
+    101,
+    1
+  ],
+  "classes": [
+    "background",
+    "chainsaw",
+    "gunshot"
+  ],
+  "n_params": 1315,
+  "weights_size_bytes": 5260,
+  "validation_metrics": {
+    "accuracy": 0.7554043234587671,
+    "balanced_accuracy": 0.7194477811144478,
+    "macro_f1": 0.549863881699542,
+    "macro_precision": 0.5388846876035059,
+    "macro_recall": 0.7194477811144478,
+    "per_class_f1": {
+      "background": 0.8456549935149157,
+      "chainsaw": 0.5147058823529411,
+      "gunshot": 0.28923076923076924
+    },
+    "per_class_recall": {
+      "background": 0.815,
+      "chainsaw": 0.47297297297297297,
+      "gunshot": 0.8703703703703703
+    },
+    "confusion_matrix": [
+      [
+        1630,
+        162,
+        208
+      ],
+      [
+        218,
+        210,
+        16
+      ],
+      [
+        7,
+        0,
+        47
+      ]
+    ],
+    "classification_report": "              precision    recall  f1-score   support\n\n  background       0.88      0.81      0.85      2000\n    chainsaw       0.56      0.47      0.51       444\n     gunshot       0.17      0.87      0.29        54\n\n    accuracy                           0.76      2498\n   macro avg       0.54      0.72      0.55      2498\nweighted avg       0.81      0.76      0.77      2498\n"
+  }
+}

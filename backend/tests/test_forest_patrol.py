@@ -2,7 +2,6 @@
 
 from sqlalchemy import select
 
-from app.core.security import create_access_token
 from app.models.forest_node import ForestNode
 from app.models.patrol_event import PatrolEvent
 from tests.forest_vectors import patrol_payload, public_pem

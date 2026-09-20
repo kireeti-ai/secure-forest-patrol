@@ -1,0 +1,68 @@
+{
+  "clean": {
+    "accuracy": 0.44124587069372345,
+    "macro_f1": 0.36639353907763555,
+    "confusion_matrix": [
+      [
+        639,
+        943,
+        199
+      ],
+      [
+        23,
+        264,
+        8
+      ],
+      [
+        7,
+        4,
+        32
+      ]
+    ],
+    "background_false_alarm_rate": 0.6412128017967434
+  },
+  "moderate": {
+    "accuracy": 0.14299197734780558,
+    "macro_f1": 0.0847876134437638,
+    "confusion_matrix": [
+      [
+        8,
+        1772,
+        1
+      ],
+      [
+        0,
+        295,
+        0
+      ],
+      [
+        1,
+        42,
+        0
+      ]
+    ],
+    "background_false_alarm_rate": 0.9955081414935429
+  },
+  "strong": {
+    "accuracy": 0.13921661160924964,
+    "macro_f1": 0.08146920740127037,
+    "confusion_matrix": [
+      [
+        0,
+        1781,
+        0
+      ],
+      [
+        0,
+        295,
+        0
+      ],
+      [
+        0,
+        43,
+        0
+      ]
+    ],
+    "background_false_alarm_rate": 1.0
+  }
+}

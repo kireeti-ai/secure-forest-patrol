@@ -1,0 +1,2078 @@
+[
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/1-100038-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/1-101296-A-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/1-101296-B-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/1-103298-A-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/1-115521-A-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/1-116765-A-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/1-12653-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/1-12654-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/1-12654-B-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/1-137296-A-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/1-155858-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/1-155858-B-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/1-155858-C-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/1-155858-D-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/1-155858-E-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/1-155858-F-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/1-15689-A-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/1-15689-B-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/1-16746-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/1-17150-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/1-17367-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/1-17565-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/1-17585-A-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/1-17742-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/1-17808-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/1-17808-B-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/1-17970-A-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/1-18527-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/1-18527-B-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/1-18755-A-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/1-18755-B-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/1-18757-A-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/1-19501-A-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/1-19898-A-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/1-19898-B-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/1-19898-C-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/1-21189-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/1-223162-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/1-22882-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/1-23094-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/1-23094-B-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/1-23222-A-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/1-23222-B-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/1-24524-A-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/1-24524-B-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/1-24524-C-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/1-26222-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/1-29532-A-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/1-29561-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/1-31836-A-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/1-31836-B-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/1-34495-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/1-34497-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/1-38559-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/1-38560-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/1-39835-A-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/1-39835-B-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/1-4211-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/1-46040-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/1-46272-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/1-46938-A-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/1-46938-B-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/1-47250-A-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/1-47250-B-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/1-47709-A-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/1-47714-A-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/1-50060-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/1-50454-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/1-50455-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/1-50623-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/1-50661-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/1-51035-A-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/1-51036-A-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/1-51037-A-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/1-51147-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/1-54918-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/1-54918-B-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/1-54958-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/1-56233-A-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/1-56234-A-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/1-56311-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/1-57316-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/1-57318-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/1-59102-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/1-61261-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/1-62565-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/1-63871-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/1-64398-A-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/1-64398-B-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/1-65483-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/1-69760-A-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/1-7057-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/1-73585-A-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/1-7456-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/1-75162-A-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/1-75189-A-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/1-7973-A-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/1-80785-A-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/1-80840-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/1-80841-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/1-90797-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/1-96950-A-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/1-96950-B-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/1-9841-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/2-101676-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/2-104105-A-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/2-104105-B-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/2-104952-A-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/2-106014-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/2-106015-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/2-106015-B-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/2-106019-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/2-106486-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/2-106487-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/2-107228-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/2-107228-B-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/2-108760-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/2-108760-B-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/2-108761-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/2-108763-A-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/2-108766-A-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/2-108767-A-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/2-108767-B-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/2-108767-C-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/2-109231-A-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/2-109231-B-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/2-109231-C-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/2-109371-A-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/2-109371-B-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/2-109371-C-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/2-109371-D-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/2-109374-A-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/2-110613-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/2-117625-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/2-122616-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/2-124564-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/2-125821-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/2-125875-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/2-139748-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/2-139748-B-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/2-139749-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/2-160128-A-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/2-18766-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/2-18766-B-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/2-205966-A-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/2-209471-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/2-209472-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/2-209473-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/2-209474-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/2-209475-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/2-209476-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/2-209477-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/2-209478-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/2-28314-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/2-28314-B-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/2-30322-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/2-30322-B-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/2-32515-A-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/2-32515-B-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/2-32515-C-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/2-32515-D-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/2-32834-A-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/2-39441-A-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/2-39443-A-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/2-39443-B-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/2-39945-A-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/2-39945-B-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/2-39945-C-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/2-50667-A-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/2-50667-B-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/2-50668-A-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/2-50668-B-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/2-52085-A-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/2-52085-B-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/2-52789-A-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/2-61311-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/2-64962-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/2-64963-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/2-65747-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/2-68391-A-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/2-68391-B-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/2-68595-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/2-68595-B-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/2-72547-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/2-72547-B-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/2-72547-C-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/2-72547-D-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/2-72970-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/2-73027-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/2-73260-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/2-77945-A-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/2-77945-B-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/2-78651-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/2-80844-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/2-81731-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/2-81970-A-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/2-81970-B-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/2-81970-C-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/2-82077-A-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/2-82367-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/2-83270-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/2-85139-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/2-87781-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/2-96033-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/2-99955-A-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/2-99955-B-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/2-99955-C-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/3-102908-A-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/3-103050-A-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/3-103051-A-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/3-103051-B-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/3-103051-C-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/3-103597-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/3-103598-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/3-103599-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/3-103599-B-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/3-104632-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/3-104761-A-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/3-104761-B-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/3-104958-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/3-105235-A-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/3-105236-A-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/3-110913-A-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/3-110913-B-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/3-110913-C-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/3-110913-D-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/3-112397-A-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/3-115382-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/3-117293-A-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/3-117504-A-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/3-117504-B-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/3-118656-A-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/3-118657-A-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/3-118657-B-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/3-118658-A-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/3-118658-B-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/3-118972-A-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/3-118972-B-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/3-119455-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/3-120644-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/3-121348-A-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/3-123224-A-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/3-124600-A-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/3-124925-A-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/3-127890-A-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/3-127890-B-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/3-127890-C-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/3-128160-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/3-129264-A-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/3-129338-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/3-129678-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/3-132852-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/3-134699-A-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/3-134699-B-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/3-134699-C-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/3-134802-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/3-136608-A-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/3-140774-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/3-141240-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/3-141240-B-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/3-142005-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/3-142006-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/3-143929-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/3-144891-A-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/3-144891-B-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/3-145774-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/3-146033-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/3-146186-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/3-147965-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/3-154758-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/3-155577-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/3-155578-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/3-155579-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/3-155583-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/3-155584-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/3-155766-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/3-156581-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/3-156581-B-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/3-156907-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/3-157149-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/3-157187-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/3-157487-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/3-157615-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/3-158476-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/3-160119-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/3-162786-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/3-163607-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/3-163607-B-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/3-164592-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/3-164593-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/3-164594-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/3-164595-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/3-165856-A-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/3-166324-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/3-166326-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/3-181132-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/3-246513-A-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/3-246513-B-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/3-249913-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/3-259622-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/3-65748-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/3-70962-A-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/3-70962-B-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/3-70962-C-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/3-71964-A-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/3-71964-B-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/3-71964-C-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/3-83527-A-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/3-94342-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/3-94343-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/3-94344-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/4-117627-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/4-117630-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/4-125070-A-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/4-125071-A-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/4-125072-A-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/4-125072-B-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/4-130584-A-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/4-130891-A-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/4-133895-A-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/4-136381-A-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/4-138344-A-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/4-143118-A-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/4-143118-B-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/4-144083-A-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/4-144083-B-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/4-144083-C-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/4-144085-A-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/4-145081-A-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/4-149294-A-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/4-149294-B-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/4-154793-A-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/4-156227-A-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/4-156993-A-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/4-157611-A-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/4-157611-B-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/4-159426-A-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/4-159609-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/4-159609-B-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/4-160999-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/4-161127-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/4-161519-A-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/4-163264-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/4-163606-A-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/4-163608-B-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/4-163609-A-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/4-163609-B-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/4-163697-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/4-164206-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/4-164661-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/4-164661-B-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/4-165813-A-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/4-165813-B-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/4-165823-A-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/4-165823-B-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/4-166661-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/4-168155-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/4-169127-A-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/4-169127-B-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/4-170247-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/4-170247-B-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/4-171207-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/4-171652-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/4-171823-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/4-172143-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/4-173865-A-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/4-173865-B-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/4-174797-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/4-177250-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/4-180380-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/4-181286-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/4-181362-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/4-181563-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/4-182314-A-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/4-182314-B-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/4-182368-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/4-182369-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/4-182795-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/4-186935-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/4-186936-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/4-186938-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/4-186940-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/4-186962-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/4-187769-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/4-187769-B-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/4-188287-A-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/4-188293-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/4-188293-B-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/4-191246-A-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/4-191246-B-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/4-194246-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/4-194979-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/4-194981-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/4-195451-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/4-195707-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/4-195805-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/4-197871-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/4-198962-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/4-198962-B-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/4-201988-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/4-202749-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/4-212604-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/4-212604-B-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/4-212604-C-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/4-216211-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/4-218304-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/4-218304-B-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/4-223125-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/4-223127-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/4-99193-A-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/4-99193-B-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/4-99644-A-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/4-99644-B-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/4-99644-C-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/4-99644-D-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/5-117773-A-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/5-156026-A-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/5-156026-B-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/5-156026-C-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/5-156026-D-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/5-156999-A-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/5-156999-B-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/5-156999-C-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/5-156999-D-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/5-156999-E-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/5-157204-A-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/5-157204-B-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/5-170338-A-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/5-170338-B-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/5-171653-A-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/5-179496-A-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/5-179496-B-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/5-181766-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/5-185579-A-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/5-185579-B-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/5-186924-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/5-187201-A-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/5-187201-B-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/5-188495-A-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/5-188655-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/5-189212-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/5-189237-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/5-189795-A-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/5-192191-A-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/5-193339-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/5-193473-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/5-193473-B-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/5-194892-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/5-194932-A-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/5-195517-A-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/5-195518-A-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/thunderstorm/5-195557-A-19.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/5-195710-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/5-197446-A-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/5-198278-A-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/5-198278-B-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/5-198278-C-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/5-198321-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/5-202898-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/rain/5-203739-A-10.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/5-204352-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/5-204352-B-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/5-209992-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/5-209992-B-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/5-210540-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/5-213802-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/5-213836-A-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/5-213836-B-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/5-213836-C-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/5-213836-D-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/5-214869-A-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/5-215172-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/5-215179-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/5-215658-A-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crackling_fire/5-215658-B-12.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/5-216213-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/5-216214-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crickets/5-216216-A-13.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/5-216370-A-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/5-216370-B-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/5-217186-A-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/5-217186-B-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/wind/5-217186-C-16.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/5-222041-A-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chainsaw/5-222524-A-41.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/5-232272-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/insects/5-233787-A-7.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/5-234263-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/5-234855-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/5-235507-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/frog/5-237499-A-4.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/5-240671-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/5-241846-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/5-242490-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/5-242491-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/5-242711-A-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/5-243025-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/5-243448-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/5-243449-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/5-243450-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/5-243459-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/5-243459-B-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/5-243773-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/5-243773-B-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/engine/5-243783-A-44.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/5-244310-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/5-254832-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/5-254832-B-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/5-257349-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/chirping_birds/5-257839-A-14.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/5-259180-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/crow/5-261325-A-9.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/5-261433-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/5-261439-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/water_drops/5-262641-A-15.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/5-263490-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/5-263491-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/5-263501-A-25.wav",
+    "not found"
+  ],
+  [
+    "/Users/kireeti/Desktop/Projects/RESQ/SECURE-FOREST-PATROL/ml/datasets/raw/esc50_hf/ESC-50-master/footsteps/5-51149-A-25.wav",
+    "not found"
+  ]
+]

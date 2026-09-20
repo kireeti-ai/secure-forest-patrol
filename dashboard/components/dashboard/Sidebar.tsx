@@ -3,7 +3,6 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { session } from "../../lib/rfidApi";
 import { ForestLogo } from "../ui/ForestLogo";
 
 type SidebarProps = {
@@ -80,12 +79,7 @@ function NavigationGroup({ items }: { items: NavigationItem[] }) {
 }
 
 export function Sidebar({ open, onClose }: SidebarProps) {
-  const currentSession = session();
-  const rfidNavigation: NavigationItem[] = currentSession?.user.role === "OFFICER"
-    ? [{ label: "Live RFID Events", href: "/dashboard/rfid-events", icon: "history" }]
-    : currentSession?.user.role === "EMPLOYEE"
-      ? [{ label: "My Attendance", href: "/dashboard/my-attendance", icon: "user" }]
-      : [];
+  const rfidNavigation: NavigationItem[] = [{ label: "Live RFID Events", href: "/dashboard/rfid-events", icon: "history" }];
   return (
     <>
       <button
