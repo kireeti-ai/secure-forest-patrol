@@ -91,7 +91,9 @@ private:
 
     BackendConfig config_;
     WiFiClient plainClient_;
-    WiFiClientSecure secureClient_;
+    WiFiClientSecure secureClient_;      // MQTT only
+    WiFiClientSecure httpSecureClient_;  // HTTP only: HTTPClient::end() closes its client,
+                                         // which would otherwise drop the MQTT connection
     PubSubClient mqttClient_;
     logging::ILogger* logger_{nullptr};
 
