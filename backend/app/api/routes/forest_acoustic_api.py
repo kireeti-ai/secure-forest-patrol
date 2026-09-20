@@ -3,6 +3,7 @@
 No authentication: see ``docs/BACKEND.md``.
 """
 
+import uuid
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -31,6 +32,17 @@ def acoustic_out(e: AcousticEvent) -> AcousticResponse:
         reviewed_at=e.reviewed_at)
 
 
+def _find_event(db: Session, key: str) -> AcousticEvent | None:
+    """Look an event up by its event id (``NODE_01-U0-5``) or by its row UUID (what the list API returns as ``id``)."""
+    row = db.scalar(select(AcousticEvent).where(AcousticEvent.event_id == key))
+    if row is None:
+        try:
+            row = db.scalar(select(AcousticEvent).where(AcousticEvent.id == uuid.UUID(key)))
+        except ValueError:
+            row = None
+    return row
+
+
 @router.get("/acoustic-events", response_model=list[AcousticResponse])
 def list_acoustic(review_status: str | None = Query(default=None),
                   limit: int = Query(default=200, le=1000),
@@ -44,7 +56,7 @@ def list_acoustic(review_status: str | None = Query(default=None),
 
 @router.get("/acoustic-events/{event_id}", response_model=AcousticResponse)
 def get_acoustic(event_id: str, db: Session = Depends(get_db), _: object = Depends(require_roles("ADMIN", "OPERATOR"))) -> AcousticResponse:
-    row = db.scalar(select(AcousticEvent).where(AcousticEvent.event_id == event_id))
+    row = _find_event(db, event_id)
     if not row:
         raise HTTPException(status_code=404, detail="Acoustic event not found")
     return acoustic_out(row)
@@ -58,7 +70,7 @@ def review_acoustic(event_id: str, payload: AcousticReviewUpdate,
     ``review_status`` is the operational truth; the ML ``classification`` on
     the row is never overwritten by this transition.
     """
-    row = db.scalar(select(AcousticEvent).where(AcousticEvent.event_id == event_id))
+    row = _find_event(db, event_id)
     if not row:
         raise HTTPException(status_code=404, detail="Acoustic event not found")
     row.review_status = payload.review_status

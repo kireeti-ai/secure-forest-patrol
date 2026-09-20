@@ -7,7 +7,7 @@ const mono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500", "600"], 
 import { ClientProviders } from "../components/providers/ClientProviders";
 
 export const metadata: Metadata = {
-  title: "Secure Forest Patrol",
+  title: "Secure Offline Patrol Verification",
   description: "Offline patrol verification for forest areas with limited connectivity",
 };
 

@@ -106,3 +106,17 @@ def test_mqtt_acoustic_topic_routes_unsigned_and_signed(client, db_session, seed
         {"node_id": "NODE_01", "sequence": 7, "classification": "Chainsaw", "confidence": 0.9}).encode()))
     row = db_session.scalar(select(AcousticEvent).where(AcousticEvent.node_id == "NODE_01"))
     assert row is not None and row.classification == "Chainsaw" and row.signature_status == "PENDING"
+
+
+def test_acoustic_event_is_found_by_uuid_and_reviewable(client, db_session, seeded_data):
+    client.post("/api/forest/nodes", json={"node_id": "NODE_01", "checkpoint_id": "CP-01"})
+    body = {"node_id": "NODE_01", "sequence": 0, "classification": "Gunshot", "confidence": 0.7}
+    created = client.post("/api/ingest/gateway/acoustic-node-event", json=body).json()
+    row = client.get("/api/forest/acoustic-events").json()[0]
+    # the dashboard list links with the row UUID: both keys must resolve
+    assert client.get(f"/api/forest/acoustic-events/{row['id']}").status_code == 200
+    assert client.get(f"/api/forest/acoustic-events/{created['event_id']}").status_code == 200
+    r = client.post(f"/api/forest/acoustic-events/{row['id']}/review", json={"review_status": "DISMISSED"})
+    assert r.status_code == 200 and r.json()["reviewStatus"] == "DISMISSED"
+    assert r.json()["classification"] == "Gunshot"          # the ML class is never overwritten
+    assert client.get("/api/forest/acoustic-events/not-a-real-id").status_code == 404

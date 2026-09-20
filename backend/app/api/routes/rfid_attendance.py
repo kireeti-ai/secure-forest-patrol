@@ -13,6 +13,7 @@ from app.models.checkpoint import Checkpoint
 from app.models.operator_checkpoint_access import OperatorCheckpointAccess
 from app.models.rfid import Attendance, RfidEvent
 from app.models.user import User
+from app.services.attendance_state import absent_after, attendance_day, attendance_timezone, presence_state
 from app.services.rfid import invalid_reason
 
 router = APIRouter(prefix="/api", tags=["rfid-attendance"])
@@ -161,12 +162,15 @@ def list_rfid_events(db: Session = Depends(get_db), _: User = Depends(require_ro
 
 @router.get("/officer-presence")
 def officer_presence(db: Session = Depends(get_db), _: User = Depends(require_roles(*_OFFICER_ROLES))) -> list[dict]:
-    """Return the real officer RFID roster and today's presence state.
+    """Return the real officer RFID roster and today's attendance state.
 
-    Presence is green only while an attendance row has an entry and no exit.
-    There is deliberately no fabricated fallback roster or random presence.
+    ``state`` is PRESENT (scanned in, not out), CHECKED_OUT (scanned in and out),
+    YET_TO_ARRIVE (no scan yet, before the cut-off) or ABSENT (no scan, cut-off
+    passed); see ``app/services/attendance_state.py``. ``present`` is kept for
+    older clients and is true only for PRESENT. There is no fabricated roster.
     """
-    today = datetime.now(timezone.utc).date()
+    now = datetime.now(timezone.utc)
+    today = attendance_day(now)
     rows = db.execute(
         select(User, Attendance)
         .outerjoin(Attendance, and_(Attendance.employee_id == User.employee_id,
@@ -176,12 +180,16 @@ def officer_presence(db: Session = Depends(get_db), _: User = Depends(require_ro
     )
     result = []
     for user, attendance in rows:
+        has_entry = bool(attendance and attendance.entry_at)
+        has_exit = bool(attendance and attendance.exit_at)
+        state = presence_state(has_entry, has_exit, now)
         result.append({
             "id": str(user.id), "employee_id": user.employee_id, "name": user.full_name,
             "role": user.role, "rfid_uid": user.rfid_uid, "checkpoints": _checkpoints_of(user),
-            "present": bool(attendance and attendance.entry_at and not attendance.exit_at),
+            "state": state, "present": state == "PRESENT",
             "attendance_date": today.isoformat(),
-            "entry_at": attendance.entry_at.isoformat() if attendance and attendance.entry_at else None,
-            "exit_at": attendance.exit_at.isoformat() if attendance and attendance.exit_at else None,
+            "absent_after": absent_after().strftime("%H:%M"), "timezone": str(attendance_timezone()),
+            "entry_at": attendance.entry_at.isoformat() if has_entry else None,
+            "exit_at": attendance.exit_at.isoformat() if has_exit else None,
         })
     return result

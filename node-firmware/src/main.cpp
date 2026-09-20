@@ -315,7 +315,7 @@ void setup() {
 
   Serial.println();
   Serial.println("==========================================");
-  Serial.println("  SIMPLE RFID -> LORA NODE SENSOR FIRMWARE");
+  Serial.println("  SECURE OFFLINE PATROL VERIFICATION - NODE");
   Serial.println("==========================================");
   Serial.printf("[PIN] RC522 SCK=%d MISO=%d MOSI=%d SS=%d RST=%d\n",
                 SCK_PIN, MISO_PIN, MOSI_PIN, SS_PIN, RST_PIN);

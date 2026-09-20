@@ -9,6 +9,7 @@ from app.models.operator_checkpoint_access import OperatorCheckpointAccess
 from app.models.rfid import Attendance, RfidEvent
 from app.models.user import User
 from app.schemas.forest_ingest import RfidScanIngest
+from app.services.attendance_state import MIN_SECONDS_BEFORE_EXIT, attendance_day
 
 
 DUPLICATE_WINDOW = timedelta(seconds=120)
@@ -61,15 +62,19 @@ def ingest_rfid_scan(db: Session, payload: RfidScanIngest) -> tuple[dict, bool]:
     db.add(event)
     attendance_action = None
     if status == "AUTHORIZED" and employee.employee_id:
+        today = attendance_day(now)
         row = db.scalar(select(Attendance).where(Attendance.employee_id == employee.employee_id,
-                                                 Attendance.attendance_date == now.date()))
+                                                 Attendance.attendance_date == today))
         if row is None:
-            row = Attendance(employee_id=employee.employee_id, attendance_date=now.date(), entry_at=now)
+            row = Attendance(employee_id=employee.employee_id, attendance_date=today, entry_at=now)
             db.add(row)
             attendance_action = "ENTRY"
         elif row.exit_at is None:
-            row.exit_at = now
-            attendance_action = "EXIT"
+            entry_at = row.entry_at if row.entry_at.tzinfo else row.entry_at.replace(tzinfo=timezone.utc)
+            # A tap right after entry is a double tap, not a check-out.
+            if (now - entry_at).total_seconds() >= MIN_SECONDS_BEFORE_EXIT:
+                row.exit_at = now
+                attendance_action = "EXIT"
     db.commit()
     db.refresh(event)
     body = _event_out(event, employee.full_name if employee else None, attendance_action)
