@@ -27,34 +27,34 @@ export default function AcousticEventDetailPage() {
 
   const isThreat = event.classification === "Gunshot" || event.classification === "Chainsaw";
   const reviewColors: Record<string, string> = {
-    PENDING_REVIEW: "#d97706",
-    DETECTED: "#0369a1",
-    REVIEWED: "#16a34a",
-    DISMISSED: "#64748b",
-    CONFIRMED: "#dc2626",
+    PENDING_REVIEW: "var(--color-warning)",
+    DETECTED: "var(--color-forest-dark)",
+    REVIEWED: "var(--color-healthy)",
+    DISMISSED: "var(--color-muted)",
+    CONFIRMED: "var(--color-danger)",
   };
 
   return (
     <div className="dashboard-page" style={{ padding: "1.5rem", maxWidth: "860px" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
         <div>
-          <Link href="/dashboard/acoustic-events" style={{ color: "#64748b", fontSize: "0.85rem", textDecoration: "none" }}>
+          <Link href="/dashboard/acoustic-events" style={{ color: "var(--color-muted)", fontSize: "0.85rem", textDecoration: "none" }}>
             ← Back to Acoustic Threat Queue
           </Link>
-          <h1 style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--color-navy)", marginTop: "6px" }}>
+          <h1>
             Acoustic Event — {event.eventId}
           </h1>
         </div>
       </div>
 
       {/* CLASSIFICATION BANNER */}
-      <Card style={{ marginBottom: "1.5rem", padding: "1.25rem", background: isThreat ? "#fef2f2" : "#f0fdf4", borderLeft: `4px solid ${isThreat ? "#dc2626" : "#16a34a"}` }}>
+      <Card style={{ marginBottom: "1.5rem", padding: "1.25rem", background: isThreat ? "var(--color-danger-bg)" : "var(--color-healthy-bg)" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
-            <h2 style={{ fontSize: "1.3rem", fontWeight: 700, color: isThreat ? "#991b1b" : "#15803d" }}>
-              {isThreat ? "⚠" : "✓"} Edge Classification: {event.classification}
+            <h2 style={{ fontSize: "1.3rem", fontWeight: 700, color: isThreat ? "var(--color-danger)" : "var(--color-healthy)" }}>
+              Classification: {event.classification}
             </h2>
-            <p style={{ fontSize: "0.85rem", color: "#475569", marginTop: "4px" }}>
+            <p style={{ fontSize: "0.85rem", color: "var(--color-text-soft)", marginTop: "4px" }}>
               TinyML on-device inference confidence: <strong>{Math.round(event.confidence * 100)}%</strong>
               {event.modelVersion && ` — Model: ${event.modelVersion}`}
             </p>
@@ -68,8 +68,8 @@ export default function AcousticEventDetailPage() {
 
       {/* EVENT DETAILS */}
       <Card style={{ marginBottom: "1.5rem" }}>
-        <h3 style={{ padding: "1rem 1rem 0.5rem", fontWeight: 700, color: "var(--color-navy)", borderBottom: "1px solid #e2e8f0" }}>Event Information</h3>
-        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.9rem" }}>
+        <h3 style={{ padding: "1rem 1rem 0.5rem", fontWeight: 700, color: "var(--color-navy)", borderBottom: "1px solid var(--color-border)" }}>Event Information</h3>
+        <table>
           <tbody>
             {[
               ["Event ID", event.eventId],
@@ -81,9 +81,9 @@ export default function AcousticEventDetailPage() {
               ["Confidence Score", `${Math.round(event.confidence * 100)}%`],
               ["Audio Clip Stored", event.clipAvailable ? "Yes — Available for manual review" : "No — Edge clip not retained"],
             ].map(([label, value]) => (
-              <tr key={String(label)} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                <td style={{ padding: "10px 16px", color: "#64748b", fontWeight: 600, width: "200px" }}>{label}</td>
-                <td style={{ padding: "10px 16px", color: "#0f172a" }}>{value}</td>
+              <tr key={String(label)}>
+                <td>{label}</td>
+                <td>{value}</td>
               </tr>
             ))}
           </tbody>
@@ -92,7 +92,7 @@ export default function AcousticEventDetailPage() {
 
       {/* REVIEW WORKFLOW */}
       <Card style={{ marginBottom: "1.5rem" }}>
-        <h3 style={{ padding: "1rem 1rem 0.5rem", fontWeight: 700, color: "var(--color-navy)", borderBottom: "1px solid #e2e8f0" }}>Review Workflow State</h3>
+        <h3 style={{ padding: "1rem 1rem 0.5rem", fontWeight: 700, color: "var(--color-navy)", borderBottom: "1px solid var(--color-border)" }}>Review Workflow State</h3>
         <div style={{ padding: "1rem", display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
           {(["DETECTED", "PENDING_REVIEW", "REVIEWED", "CONFIRMED", "DISMISSED"] as const).map((state, i, arr) => (
             <>
@@ -103,14 +103,14 @@ export default function AcousticEventDetailPage() {
                   borderRadius: "24px",
                   fontWeight: 700,
                   fontSize: "0.85rem",
-                  background: event.reviewStatus === state ? reviewColors[state] : "#f1f5f9",
-                  color: event.reviewStatus === state ? "#fff" : "#64748b",
-                  border: `2px solid ${event.reviewStatus === state ? reviewColors[state] : "#e2e8f0"}`,
+                  background: event.reviewStatus === state ? reviewColors[state] : "var(--color-surface-alt)",
+                  color: event.reviewStatus === state ? "#fff" : "var(--color-muted)",
+                  border: `2px solid ${event.reviewStatus === state ? reviewColors[state] : "var(--color-border)"}`,
                 }}
               >
                 {state.replace("_", " ")}
               </div>
-              {i < arr.length - 1 && <span style={{ color: "#cbd5e1", fontSize: "1rem" }}>→</span>}
+              {i < arr.length - 1 && <span style={{ color: "var(--color-border)", fontSize: "1rem" }}>→</span>}
             </>
           ))}
         </div>
@@ -118,14 +118,14 @@ export default function AcousticEventDetailPage() {
 
       {/* INTEGRITY */}
       <Card>
-        <h3 style={{ padding: "1rem 1rem 0.5rem", fontWeight: 700, color: "var(--color-navy)", borderBottom: "1px solid #e2e8f0" }}>Record Integrity</h3>
+        <h3 style={{ padding: "1rem 1rem 0.5rem", fontWeight: 700, color: "var(--color-navy)", borderBottom: "1px solid var(--color-border)" }}>Record Integrity</h3>
         <div style={{ padding: "1rem", display: "flex", gap: "2rem", flexWrap: "wrap" }}>
           <div>
-            <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "#64748b", display: "block", marginBottom: "4px" }}>Signature</span>
+            <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--color-muted)", display: "block", marginBottom: "4px" }}>Signature</span>
             <StatusBadge label={event.signatureStatus === "PENDING" ? "UNSIGNED (pending review)" : event.signatureStatus} tone={event.signatureStatus === "VALID" ? "healthy" : event.signatureStatus === "PENDING" ? "warning" : "danger"} />
           </div>
           <div>
-            <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "#64748b", display: "block", marginBottom: "4px" }}>Sync Status</span>
+            <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "var(--color-muted)", display: "block", marginBottom: "4px" }}>Sync Status</span>
             <StatusBadge label={event.syncStatus} tone={event.syncStatus === "SYNCED" ? "healthy" : "warning"} />
           </div>
         </div>

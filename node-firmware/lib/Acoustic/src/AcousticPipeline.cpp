@@ -99,11 +99,16 @@ void triggerTask(void*) {
     Serial.printf("[ACOUSTIC] Trigger monitor started (HIGH=%.0f LOW=%.0f, %d Hz, %d-sample blocks%s)\n",
                   MAX4466_TRIGGER_HIGH, MAX4466_TRIGGER_LOW, MAX4466_SAMPLE_RATE, MAX4466_BLOCK_SIZE,
                   ACOUSTIC_RELATIVE_TRIGGER ? ", relative-dB" : (ACOUSTIC_ADAPTIVE ? ", adaptive" : ", fixed"));
-    bool reported = false;
+    // The ADC DMA delivers a start-up transient (seen as RMS ~230 in the first blocks); ignore the first
+    // ~0.5 s so it can neither trigger nor pollute the noise-floor warm-up.
+    constexpr int kSettleBlocks = 500 * MAX4466_SAMPLE_RATE / 1000 / MAX4466_BLOCK_SIZE;
+    int settleLeft = kSettleBlocks;
+    bool reported = !detectorConfig().relative;   // the health report only applies to relative mode
     double dcSum = 0.0;
     uint32_t dcBlocks = 0;
     for (;;) {
         if (!g_sampler.readBlock(st, 100)) continue;
+        if (settleLeft > 0) { --settleLeft; continue; }
         const uint32_t now = millis();
         const auto edge = detector.update(st.rms);
         if (!reported) {
@@ -131,7 +136,7 @@ void triggerTask(void*) {
             }
         }
 #if ACOUSTIC_DEBUG_LOG
-        if (now - lastDebugMs >= 250) {
+        if (now - lastDebugMs >= ACOUSTIC_DEBUG_INTERVAL_MS) {
             lastDebugMs = now;
             const float peak = std::max(static_cast<float>(st.max) - st.mean, st.mean - static_cast<float>(st.min));
             Serial.printf("[ACOUSTIC] RMS=%.1f peak=%.0f crest=%.1f floor=%.1f dB=%+.1f%s state=%s\n", st.rms, peak,
@@ -292,6 +297,60 @@ bool runKnownVectorTest() {
     return allOk;
 }
 
+// Mode 4: BENCH DEMO. Both microphones live, no MAX4466 gate: every ACOUSTIC_DEMO_INTERVAL_MS the newest
+// 1 s of real INMP441 audio goes through the real preprocessing + model and the result is logged next to the
+// MAX4466 readings. Nothing is simulated. It is continuous inference (power hungry) and its predictions are
+// unvalidated on real microphones, so it is a bench/showcase mode, not the field configuration.
+volatile float g_maxRms = 0.0f, g_maxDc = 0.0f;
+volatile int g_maxMin = 0, g_maxMax = 0;
+volatile bool g_maxSeen = false;
+
+void maxMonitorTask(void*) {   // keeps the MAX4466 DMA drained and publishes its latest block statistics
+    BlockStats st;
+    for (;;) {
+        if (!g_sampler.readBlock(st, 200)) continue;
+        g_maxRms = st.rms; g_maxDc = st.mean; g_maxMin = st.min; g_maxMax = st.max; g_maxSeen = true;
+    }
+}
+
+void demoTask(void*) {
+    uint32_t n = 0;
+    Serial.printf("[DEMO] bench demo: classifying live INMP441 audio every %d ms (events over LoRa: %s)\n",
+                  ACOUSTIC_DEMO_INTERVAL_MS, ACOUSTIC_DEMO_SEND_EVENTS ? "ON" : "off, log only");
+    for (;;) {
+        vTaskDelay(pdMS_TO_TICKS(ACOUSTIC_DEMO_INTERVAL_MS));
+        const uint32_t end = g_ring->total();
+        if (end < ACOUSTIC_WINDOW_SAMPLES || !g_ring->copyWindow(end - ACOUSTIC_WINDOW_SAMPLES, ACOUSTIC_WINDOW_SAMPLES, g_window)) {
+            Serial.println("[DEMO] waiting for INMP441 audio...");
+            continue;
+        }
+        const PcmStats ps = computePcmStats(g_window, ACOUSTIC_WINDOW_SAMPLES);
+        PreprocessOptions opt;
+        opt.highPass = ACOUSTIC_FILTER_ENABLED != 0;
+        opt.peakNormalize = ACOUSTIC_PEAK_NORMALIZE != 0;
+        opt.peakTarget = ACOUSTIC_PEAK_TARGET;
+        const uint32_t t0 = millis();
+        const bool okPre = g_pre->process(g_window, g_classifier.inputBuffer(), opt, g_filterScratch);
+        const uint32_t t1 = millis();
+        ClassifierResult r;
+        if (!okPre || !g_classifier.invoke(r)) { Serial.println("[DEMO] preprocessing/inference failed"); continue; }
+        ++n;
+        Serial.printf("[DEMO #%lu] INMP441 rms=%.0f min=%d max=%d%s | MAX4466 ", (unsigned long)n, ps.rms, ps.min, ps.max,
+                      (ps.max >= 32767 || ps.min <= -32768) ? " CLIP" : "");
+        if (g_maxSeen) Serial.printf("rms=%.1f dc=%.0f range=%d..%d", g_maxRms, g_maxDc, g_maxMin, g_maxMax);
+        else Serial.print("no data");
+        Serial.printf(" | class=%s conf=%.2f [bg %.2f chainsaw %.2f gunshot %.2f] features=%lums invoke=%.0fms\n",
+                      tables::kClassNames[r.classIndex], r.confidence, r.probs[0], r.probs[1], r.probs[2],
+                      (unsigned long)(t1 - t0), r.invokeUs / 1000.0f);
+#if ACOUSTIC_DEMO_SEND_EVENTS
+        if (r.classIndex != 0 && r.confidence >= ACOUSTIC_MIN_CONFIDENCE) {
+            AcousticEvent ev{static_cast<uint8_t>(r.classIndex), r.confidence, static_cast<uint16_t>(g_maxRms)};
+            if (xQueueSend(g_events, &ev, 0) == pdTRUE) Serial.println("[DEMO] event queued for LoRa");
+        }
+#endif
+    }
+}
+
 bool initCommon(bool needClassifier) {
     g_pre = new (psramOrInternal(sizeof(AudioPreprocessor))) AudioPreprocessor();
     if (g_pre == nullptr) return false;
@@ -328,6 +387,14 @@ bool AcousticPipeline::begin() {
 #elif FOREST_ACOUSTIC_TEST_MODE == 3
     if (!initCommon(true)) return false;
     return runKnownVectorTest();
+#elif FOREST_ACOUSTIC_TEST_MODE == 4
+    if (!initCommon(true) || !initAudioIn()) { Serial.println("[DEMO] init failed"); return false; }
+    g_events = xQueueCreate(4, sizeof(AcousticEvent));
+    xTaskCreatePinnedToCore(captureTask, "ac-capture", 4096, nullptr, 3, nullptr, 0);
+    if (initTrigger()) xTaskCreatePinnedToCore(maxMonitorTask, "ac-max", 4096, nullptr, 2, nullptr, 0);
+    else Serial.println("[DEMO] MAX4466 sampler unavailable - continuing with INMP441 only");
+    xTaskCreatePinnedToCore(demoTask, "ac-demo", 16384, nullptr, 1, nullptr, 0);
+    return true;
 #else
     if (!initCommon(true) || !initAudioIn() || !initTrigger()) {
         Serial.println("[ACOUSTIC] init failed - acoustic pipeline disabled, RFID node continues");

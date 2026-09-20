@@ -30,6 +30,17 @@ RTC is wired.)
 All pins and parameters are compile-time configurable: `node-firmware/lib/Acoustic/src/AcousticConfig.h`
 (`-D FOREST_MAX4466_PIN=1`, `-D FOREST_I2S_BCLK_PIN=6`, ...).
 
+## Integrated firmware (default build)
+
+`pio run -t upload` in `node-firmware/` now builds `esp32-s3-acoustic`: **one firmware** with RFID + LoRa + LED
+(loop, core 1) and the acoustic pipeline (tasks, core 0). It is set to `FOREST_ACOUSTIC_TEST_MODE=4`, the **bench
+demo**: every 2 s the newest 1 s of live INMP441 audio is classified and logged with the MAX4466 readings
+(`[DEMO #n] INMP441 rms/min/max | MAX4466 rms/dc/range | class conf [probs] features invoke`). Log only: set
+`-D ACOUSTIC_DEMO_SEND_EVENTS=1` to also send Gunshot/Chainsaw predictions over LoRa. Predictions on real
+microphone audio are **unvalidated**. Set the mode to 0 for the MAX4466-gated field pipeline. The RFID-only env
+`esp32-s3-devkitm-1` remains as a fallback. Observed on the board: two card scans (`[CARD] VALID`, LoRa
+`endPacket=SUCCESS`) were handled immediately while the demo kept classifying; gateway receipt was not checked.
+
 ## Building and running
 
 The acoustic pipeline lives in its own PlatformIO env so the working RFID firmware is untouched:
@@ -52,14 +63,29 @@ mean = average(samples);  rms = sqrt(average((samples[i] - mean)^2));  trigger w
 
 - Sampled by the ESP32-S3 ADC1 **DMA** at `MAX4466_SAMPLE_RATE` = 8 kHz; the task wakes once per
   `MAX4466_BLOCK_SIZE` = 128 samples (16 ms; short enough not to average a gunshot impulse away).
-- **Hysteresis:** enter TRIGGERED at `RMS >= MAX4466_TRIGGER_HIGH` (120); leave when `RMS < MAX4466_TRIGGER_LOW` (60).
-  After a cycle the trigger only re-arms after the level has fallen below LOW and risen again, so a
-  continuing sound cannot retrigger.
-- **Cooldown:** `ACOUSTIC_COOLDOWN_MS` = 5000 ms after each inference.
-- **Adaptive threshold (optional, off):** `-D ACOUSTIC_ADAPTIVE=1` tracks a slow noise-floor EMA (updated only
-  while quiet) and triggers at `max(HIGH, floor * FACTOR + DELTA)`.
-- **The default thresholds are UNCALIBRATED.** They depend on the MAX4466 gain trimmer and the site. Use test
-  mode 1, read the quiet RMS, and set HIGH to about 3-4x it and LOW to about 2x.
+- **Relative-dB trigger (default, `ACOUSTIC_RELATIVE_TRIGGER=1`).** Thresholds are decibels above a noise floor the
+  node measures itself, so they do not depend on trimmer gain or board:
+  - *Warm-up:* the median block RMS over `ACOUSTIC_NOISE_WARMUP_MS` (4 s) is the floor. **Keep the room quiet
+    for the first 4 s after every reset.** Nothing can trigger during warm-up.
+  - *Trigger:* one block `>= +10 dB` (`ACOUSTIC_TRIGGER_HIGH_DB`, transient / gunshot) **or** `>= +6 dB`
+    (`ACOUSTIC_TRIGGER_LOW_DB`) for `ACOUSTIC_SUSTAIN_BLOCKS` = 4 consecutive blocks (~64 ms, chainsaw).
+  - *Release / re-arm:* below `+6 dB`. Between +6 and +10 dB the state is held (hysteresis).
+  - *Floor tracking:* after warm-up the floor follows the background slowly, but only while the level is below
+    +6 dB, so an event cannot raise its own threshold.
+  - *Example:* floor 14 RMS -> HIGH about 44, LOW about 28.
+- **Sensor-health guard (`ACOUSTIC_MAX_NOISE_FLOOR_RMS` = 40, EXPERIMENTAL bench value).** If the warm-up floor is
+  above 40 RMS (noisy/faulty input) or below 1 RMS (flat/stuck input), the node prints `SENSOR FAULT`, keeps the
+  ML trigger **disabled until reset**, and hints at the cause from the DC mean (`~4095` = OUT tied to 3V3,
+  `~0` = grounded/unpowered). The DC mean is only logged, never used for decisions.
+- **Startup report (serial):** `DC mean`, `Noise floor`, `Sensor status = OK|FAULT`, `HIGH`, `LOW`.
+- **Debug line** (`-D ACOUSTIC_DEBUG_LOG=1`): `RMS`, `peak`, `crest` (peak/RMS, logged only), `floor`, `dB` above floor.
+- **Cooldown:** `ACOUSTIC_COOLDOWN_MS` = 5000 ms after each inference; the trigger re-arms only after the level
+  has fallen below LOW and risen again, so a continuing sound cannot retrigger.
+- **Fallback modes:** `-D ACOUSTIC_RELATIVE_TRIGGER=0` uses fixed `MAX4466_TRIGGER_HIGH/LOW`
+  (**50 / 30, EXPERIMENTAL bench values, not calibrated**); `-D ACOUSTIC_ADAPTIVE=1` (with relative off) is the older
+  linear `floor * factor + delta` rule.
+- **Every value above is a starting engineering parameter, not a field calibration.** Sustained +6 dB over only
+  4 blocks is a loose test and may false-trigger on a noisy input; raise `ACOUSTIC_SUSTAIN_BLOCKS` first if so.
 
 ## INMP441 capture
 
@@ -185,8 +211,12 @@ The parity test compares the device preprocessing with librosa on real windows: 
 | TFLite Micro loads the model and passes the tensor checks | **PHYSICALLY VERIFIED** |
 | On-device preprocessing vs `ml/` features on a real gunshot window | **PHYSICALLY VERIFIED** (4040/4040 elements identical) |
 | Stock TFLM output vs Python reference | **PHYSICALLY VERIFIED as WRONG** (class agreed, probabilities not) -> fixed |
-| Per-channel FC kernel vs Python | **TESTED on host** (343 windows). **Not yet re-run on the device** |
-| MAX4466 ADC + trigger, INMP441 I2S capture, thresholds, I2S shift | IMPLEMENTED; **NOT hardware-tested (no microphones connected)** |
+| Per-channel FC kernel vs Python (host) | **TESTED on host** (343 windows) |
+| Per-channel FC kernel on the ESP32 (test mode 3, 3 known windows) | **PHYSICALLY VERIFIED**: max output diff 3/256 vs Python, all classes agree; `Invoke()` ~268 ms, features ~70 ms |
+| MAX4466 ADC + trigger | **UNDER VALIDATION**: hardware problem, see "Bench findings" below. Thresholds NOT calibrated |
+| INMP441 I2S capture | **PARTIALLY VERIFIED**: I2S delivers varying, non-clipping, non-zero samples; speech-vs-quiet separation, sample rate and I2S shift **NOT verified** |
+| One full trigger -> capture -> inference -> cooldown cycle on the board | **PHYSICALLY VERIFIED** as a state machine only (fired on noise; result background 0.47); not a detection test |
+| Relative-dB trigger + sensor-health guard | IMPLEMENTED, host-tested. **Guard physically verified once**: it flagged a stuck-at-rail input (DC 4095, floor 0) and disabled ML. Good-signal behaviour on hardware **NOT verified** |
 | Trigger/ring logic | TESTED (host unit tests) |
 | Backend unsigned ingest, gateway 'A' branch, MQTT dispatch | TESTED (backend tests, real Postgres concurrency); gateway BUILT only |
 | Acoustic event over real LoRa -> gateway -> backend | NOT verified end-to-end |
@@ -196,11 +226,32 @@ The parity test compares the device preprocessing with librosa on real windows: 
 0.35 / 0.27, so expect many false alarms; the domain gap to real forests is rated significant. Raise
 `ACOUSTIC_MIN_CONFIDENCE` (default 0.0 = every gunshot/chainsaw prediction becomes an event) once field data exists.
 
+## Bench findings (MAX4466 wiring/power) - open issue
+
+Measured on the node board, 8 kHz, 128-sample blocks, gain trimmer turned down:
+
+| State | RMS avg | RMS peak/block | DC mean (ADC counts) |
+|---|---|---|---|
+| First run, trimmer at default | ~148 (steady) | ~172-177 | ~400 |
+| Clap, same run | 155-190 | 300-420 | ~400 |
+| After gain + supply change, quiet (good state) | **~14** | ~20-34 | ~135 |
+| Same session, intermittent noisy state (no sound) | ~105-160 | 175-400 | 200-760 |
+| Latest run (after re-wiring) | 0.0 | 0 | **4095 (stuck at ADC top)** |
+
+Conclusions: an independent `analogRead(GPIO1)` sketch showed the same fault, so it is not the DMA sampler. A
+healthy MAX4466 idles near VCC/2 (~1.65 V, ~2000 counts); this one idled near 135 counts, toggled between a
+~14 and a ~110-150 RMS state, and finally stuck at the rail. Both mics share 3V3/GND and the INMP441 baseline was
+also noisy, so a shared supply/ground or a bad contact is the prime suspect. **Fix the hardware before
+calibrating.** Checklist: fresh short jumpers (off the breadboard), OUT -> GPIO1 only, VCC -> 3V3, GND -> GND,
+10 uF + 100 nF across the mic supply, mic wiring away from the SX1278/antenna, trimmer counter-clockwise then
+~1/4 turn. The firmware now reports the outcome itself at boot (`Sensor status` / `SENSOR FAULT`).
+
 ## Hardware acceptance procedure
 
 1. Flash the RFID env: RC522 reads a card, LoRa transmits, LED works.
 2. Flash the acoustic env with test mode 3: expect `[TEST3] RESULT: PASS`.
-3. Wire the MAX4466, test mode 1: RMS changes with sound; quiet RMS is stable; set HIGH/LOW.
+3. Wire the MAX4466, reset in a quiet room: expect `Sensor status = OK` and a small stable floor; clap and
+   confirm a trigger (debug build: `-D ACOUSTIC_DEBUG_LOG=1`). Test mode 1 prints raw RMS.
 4. Wire the INMP441, test mode 2: sensible min/max/mean/RMS; not all-zero; not clipping (tune `ACOUSTIC_I2S_SHIFT`).
 5. Full pipeline (mode 0): clap or play a recording; expect the log sequence `Trigger detected -> Capturing audio
    -> Running inference -> [ML] class=... -> Event generated -> Cooldown -> Monitoring`.

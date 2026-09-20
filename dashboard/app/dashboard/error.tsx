@@ -10,7 +10,7 @@ export default function DashboardError({ error, reset }: { error: Error & { dige
 
   return (
     <main className="dashboard-error-page" role="alert">
-      <p className="eyebrow">SECURE FOREST PATROL</p>
+      <p className="eyebrow">Secure Forest Patrol</p>
       <h1>Dashboard unavailable.</h1>
       <p>The dashboard could not load this view. Your existing data has not been changed.</p>
       <div className="app-error-actions">

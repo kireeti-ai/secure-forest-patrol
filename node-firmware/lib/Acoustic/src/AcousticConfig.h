@@ -89,6 +89,16 @@
 #define ACOUSTIC_MAX_NOISE_FLOOR_RMS 40.0f
 #endif
 
+// ---- Bench demo (FOREST_ACOUSTIC_TEST_MODE=4) --------------------------------------------------
+// Continuous classification of live INMP441 audio with a log line per window. Bench/showcase only.
+#ifndef ACOUSTIC_DEMO_INTERVAL_MS
+#define ACOUSTIC_DEMO_INTERVAL_MS 2000
+#endif
+// 1 = also send Gunshot/Chainsaw predictions over LoRa (they reach the dashboard; leave 0 while unvalidated).
+#ifndef ACOUSTIC_DEMO_SEND_EVENTS
+#define ACOUSTIC_DEMO_SEND_EVENTS 0
+#endif
+
 // ---- Event cycle ------------------------------------------------------------
 // After an inference the trigger is ignored for this long, so one chainsaw or
 // gunshot burst does not cause dozens of inferences.
@@ -153,6 +163,9 @@
 #endif
 
 // Verbose per-block RMS logging (high frequency; keep 0 outside bring-up).
+#ifndef ACOUSTIC_DEBUG_INTERVAL_MS
+#define ACOUSTIC_DEBUG_INTERVAL_MS 250   // period of the "[ACOUSTIC] RMS=..." status line
+#endif
 #ifndef ACOUSTIC_DEBUG_LOG
 #define ACOUSTIC_DEBUG_LOG 0
 #endif
