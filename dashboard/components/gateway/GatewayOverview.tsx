@@ -27,7 +27,7 @@ export function GatewayOverview() {
     <div className="gateway-page">
       <header className="gateway-header">
         <h1>Gateway Status</h1>
-        <p>Dual-link gateway — LoRa field link (433 MHz) and Wi-Fi backhaul (IP).</p>
+        <p>LoRa link from the field nodes and the Wi-Fi/MQTT link to the backend.</p>
       </header>
 
       <section className="gateway-status-section" aria-label="Gateway status">
@@ -38,7 +38,7 @@ export function GatewayOverview() {
               <p className="gateway-status-title" style={{ fontSize: "1.1rem", fontWeight: 600 }}>
                 {gateway ? `Forest Gateway (${gateway.gatewayId})` : "Gateway unavailable"}
               </p>
-              <p className="gateway-status-message" style={{ color: "#94a3b8", fontSize: "0.9rem" }}>
+              <p className="gateway-status-message" style={{ color: "var(--color-faint)", fontSize: "0.9rem" }}>
                 {gateway
                   ? `LoRa: ${gateway.loraStatus} | Wi-Fi: ${gateway.wifiStatus} | Backend: ${gateway.backendStatus}`
                   : "No gateway record currently available from the backend."}
@@ -56,28 +56,28 @@ export function GatewayOverview() {
         <SectionHeader title="Recent Sync Events" />
         <Card>
           <div style={{ overflowX: "auto", padding: "1rem" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
+            <table>
               <thead>
-                <tr style={{ borderBottom: "2px solid #e2e8f0", color: "#475569" }}>
-                  <th style={{ padding: "0.75rem 1rem" }}>Event ID</th>
-                  <th style={{ padding: "0.75rem 1rem" }}>Node</th>
-                  <th style={{ padding: "0.75rem 1rem" }}>Field Time</th>
-                  <th style={{ padding: "0.75rem 1rem" }}>Gateway Time</th>
-                  <th style={{ padding: "0.75rem 1rem" }}>Result</th>
-                  <th style={{ padding: "0.75rem 1rem" }}>Verification</th>
+                <tr>
+                  <th>Event ID</th>
+                  <th>Node</th>
+                  <th>Field Time</th>
+                  <th>Gateway Time</th>
+                  <th>Result</th>
+                  <th>Verification</th>
                 </tr>
               </thead>
               <tbody>
                 {history.slice(0, 10).map((evt) => (
-                  <tr key={evt.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                    <td style={{ padding: "0.6rem 1rem", fontWeight: 600, color: "var(--color-forest-dark)" }}>{evt.eventId}</td>
-                    <td style={{ padding: "0.6rem 1rem" }}>{evt.nodeId}</td>
-                    <td style={{ padding: "0.6rem 1rem" }}>{evt.eventTimestamp}</td>
-                    <td style={{ padding: "0.6rem 1rem" }}>{evt.gatewayReceiveTime}</td>
-                    <td style={{ padding: "0.6rem 1rem" }}>
+                  <tr key={evt.id}>
+                    <td>{evt.eventId}</td>
+                    <td>{evt.nodeId}</td>
+                    <td>{evt.eventTimestamp}</td>
+                    <td>{evt.gatewayReceiveTime}</td>
+                    <td>
                       <StatusBadge label={evt.syncResult} tone={evt.syncResult === "SUCCESS" ? "healthy" : "danger"} />
                     </td>
-                    <td style={{ padding: "0.6rem 1rem" }}>
+                    <td>
                       <StatusBadge label={evt.verificationResult} tone={evt.verificationResult === "PASSED" ? "healthy" : "danger"} />
                     </td>
                   </tr>

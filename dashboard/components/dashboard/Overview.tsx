@@ -50,13 +50,13 @@ function Metric({
 }) {
   const toneColors = {
     normal: "var(--color-forest-dark)",
-    healthy: "#16a34a",
-    warning: "#d97706",
-    danger: "#dc2626",
+    healthy: "var(--color-healthy)",
+    warning: "var(--color-warning)",
+    danger: "var(--color-danger)",
   };
 
   return (
-    <Card className="overview-metric" style={{ borderLeft: `4px solid ${toneColors[tone]}` }}>
+    <Card className="overview-metric" style={{ }}>
       <p className="overview-metric-label">{label}</p>
       <p className="overview-metric-value" style={{ color: toneColors[tone] }}>
         {value}
@@ -142,19 +142,19 @@ export function Overview() {
     <div className="overview-page">
       <header className="overview-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
         <div>
-          <h1 style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--color-forest-dark)" }}>Forest Operations Overview</h1>
-          <p style={{ color: "#64748b", marginTop: "4px" }}>
+          <h1>Overview</h1>
+          <p style={{ color: "var(--color-muted)", marginTop: "4px" }}>
             Real-time status of patrol verification, acoustic threat monitoring, ledger integrity, and dual-link gateway backhaul.
           </p>
         </div>
       </header>
 
       {isLoraConnected && (
-        <Card style={{ marginTop: "1.25rem", padding: "1rem 1.25rem", background: "#ecfdf5", border: "1px solid #bbf7d0" }}>
+        <Card style={{ marginTop: "1.25rem", padding: "1rem 1.25rem", background: "var(--color-healthy-bg)", border: "1px solid var(--color-border)" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
             <div>
-              <strong style={{ color: "#166534", fontSize: "0.96rem" }}>Field node and gateway are active.</strong>
-              <p style={{ color: "#166534", fontSize: "0.82rem", margin: "4px 0 0" }}>
+              <strong style={{ color: "var(--color-healthy)", fontSize: "0.96rem" }}>Field node and gateway are active.</strong>
+              <p style={{ color: "var(--color-healthy)", fontSize: "0.82rem", margin: "4px 0 0" }}>
                 {`${gw?.gatewayId ?? "Gateway"} last reported ${new Date(gw!.lastSeen).toLocaleTimeString()} · ${liveCheckpoint!.nodeId} (${liveCheckpoint!.checkpointId}) last scan ${liveCheckpoint!.lastPatrolTime}`}
               </p>
             </div>
@@ -165,7 +165,7 @@ export function Overview() {
 
       {/* METRICS GRID */}
       <section className="overview-section" style={{ marginTop: "1.5rem" }}>
-        <div className="overview-metrics" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1rem" }}>
+        <div className="overview-metrics">
           <Metric
             label="ACTIVE CHECKPOINTS"
             value={loading ? "..." : `${activeCheckpoints}/${checkpoints.length}`}
@@ -206,27 +206,27 @@ export function Overview() {
       </section>
 
       {/* GATEWAY DUAL LINK BANNER */}
-      <Card style={{ marginTop: "1.5rem", padding: "1.25rem", background: "#f8fafc", border: "1px solid #e2e8f0" }}>
+      <Card style={{ marginTop: "1.5rem", padding: "1.25rem", background: "var(--color-surface-alt)", border: "1px solid var(--color-border)" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
           <div>
             <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--color-forest-dark)" }}>
               Gateway Backhaul: {gw?.gatewayId ?? "no gateway reported"}
             </h3>
-            <p style={{ fontSize: "0.85rem", color: "#64748b", marginTop: "2px" }}>
+            <p style={{ fontSize: "0.85rem", color: "var(--color-muted)", marginTop: "2px" }}>
               LoRa field link receives offline events from nodes. Wi-Fi backhaul forwards verified records to cloud backend.
             </p>
           </div>
           <div style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
             <div style={{ textAlign: "center" }}>
-              <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600, display: "block" }}>LoRa Field Link</span>
+              <span style={{ fontSize: "0.75rem", color: "var(--color-muted)", fontWeight: 600, display: "block" }}>LoRa Field Link</span>
               <StatusBadge label={linkLabel(gw?.loraStatus)} tone={linkTone(gw?.loraStatus, "ACTIVE")} />
             </div>
             <div style={{ textAlign: "center" }}>
-              <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600, display: "block" }}>Wi-Fi Backhaul</span>
+              <span style={{ fontSize: "0.75rem", color: "var(--color-muted)", fontWeight: 600, display: "block" }}>Wi-Fi Backhaul</span>
               <StatusBadge label={linkLabel(gw?.wifiStatus)} tone={linkTone(gw?.wifiStatus, "CONNECTED")} />
             </div>
             <div style={{ textAlign: "center" }}>
-              <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600, display: "block" }}>Backend API</span>
+              <span style={{ fontSize: "0.75rem", color: "var(--color-muted)", fontWeight: 600, display: "block" }}>Backend API</span>
               <StatusBadge label={linkLabel(gw?.backendStatus)} tone={linkTone(gw?.backendStatus, "REACHABLE")} />
             </div>
             <Link
@@ -235,10 +235,10 @@ export function Overview() {
                 padding: "6px 14px",
                 fontSize: "0.8rem",
                 fontWeight: 600,
-                color: "#0369a1",
-                border: "1px solid #bae6fd",
+                color: "var(--color-forest-dark)",
+                border: "1px solid var(--color-border)",
                 borderRadius: "6px",
-                background: "#f0f9ff",
+                background: "var(--color-surface-alt)",
                 textDecoration: "none",
               }}
             >
@@ -259,32 +259,32 @@ export function Overview() {
                 <p className="overview-empty-title">No patrol events logged</p>
               </div>
             ) : (
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
+              <table>
                 <thead>
-                  <tr style={{ borderBottom: "1px solid #e2e8f0", textAlign: "left", color: "#64748b" }}>
-                    <th style={{ padding: "8px" }}>Time</th>
-                    <th style={{ padding: "8px" }}>Checkpoint</th>
-                    <th style={{ padding: "8px" }}>Officer</th>
-                    <th style={{ padding: "8px" }}>RFID</th>
-                    <th style={{ padding: "8px" }}>Biometric</th>
-                    <th style={{ padding: "8px" }}>Ledger</th>
+                  <tr>
+                    <th>Time</th>
+                    <th>Checkpoint</th>
+                    <th>Officer</th>
+                    <th>RFID</th>
+                    <th>Biometric</th>
+                    <th>Ledger</th>
                   </tr>
                 </thead>
                 <tbody>
                   {patrols.slice(0, 5).map((p) => (
-                    <tr key={p.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                      <td style={{ padding: "8px", fontWeight: 500 }}>{p.timestamp.split(" ")[1] || p.timestamp}</td>
-                      <td style={{ padding: "8px" }}>
+                    <tr key={p.id}>
+                      <td>{p.timestamp.split(" ")[1] || p.timestamp}</td>
+                      <td>
                         <strong>{p.checkpointId}</strong> ({p.nodeId})
                       </td>
-                      <td style={{ padding: "8px" }}>{p.officerName}</td>
-                      <td style={{ padding: "8px" }}>
+                      <td>{p.officerName}</td>
+                      <td>
                         <StatusBadge label={p.rfidStatus} tone={p.rfidStatus === "VALID" ? "healthy" : "danger"} />
                       </td>
-                      <td style={{ padding: "8px" }}>
+                      <td>
                         <StatusBadge label={p.fingerprintStatus} tone={p.fingerprintStatus === "MATCH" ? "healthy" : "danger"} />
                       </td>
-                      <td style={{ padding: "8px" }}>
+                      <td>
                         <StatusBadge label={p.ledgerStatus} tone={p.ledgerStatus === "VALID" ? "healthy" : "danger"} />
                       </td>
                     </tr>
@@ -303,7 +303,7 @@ export function Overview() {
         {/* ACOUSTIC THREAT QUEUE SUMMARY */}
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
           <Card>
-            <SectionHeader title="Acoustic Threat Review Queue" />
+            <SectionHeader title="Acoustic events awaiting review" />
             <div style={{ padding: "1rem" }}>
               {acoustics.length === 0 ? (
                 <div className="overview-empty-state">
@@ -317,12 +317,12 @@ export function Overview() {
                       padding: "0.75rem",
                       borderRadius: "6px",
                       marginBottom: "0.5rem",
-                      background: a.classification === "Gunshot" ? "#fef2f2" : a.classification === "Chainsaw" ? "#fffbeb" : "#f8fafc",
-                      border: "1px solid " + (a.classification === "Gunshot" ? "#fecaca" : a.classification === "Chainsaw" ? "#fef3c7" : "#e2e8f0"),
+                      background: a.classification === "Gunshot" ? "var(--color-danger-bg)" : a.classification === "Chainsaw" ? "var(--color-warning-bg)" : "var(--color-surface-alt)",
+                      border: "1px solid " + (a.classification === "Gunshot" ? "var(--color-border)" : a.classification === "Chainsaw" ? "var(--color-warning-bg)" : "var(--color-border)"),
                     }}
                   >
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <strong style={{ color: a.classification === "Gunshot" ? "#991b1b" : a.classification === "Chainsaw" ? "#92400e" : "#334155" }}>
+                      <strong style={{ color: a.classification === "Gunshot" ? "var(--color-danger)" : a.classification === "Chainsaw" ? "var(--color-warning)" : "var(--color-text)" }}>
                         {a.classification} ({Math.round(a.confidence * 100)}%)
                       </strong>
                       <StatusBadge
@@ -330,7 +330,7 @@ export function Overview() {
                         tone={a.reviewStatus === "CONFIRMED" ? "danger" : a.reviewStatus === "PENDING_REVIEW" ? "warning" : "healthy"}
                       />
                     </div>
-                    <div style={{ fontSize: "0.8rem", color: "#64748b", marginTop: "4px", display: "flex", justifyContent: "space-between" }}>
+                    <div style={{ fontSize: "0.8rem", color: "var(--color-muted)", marginTop: "4px", display: "flex", justifyContent: "space-between" }}>
                       <span>
                         Node {a.nodeId} • {a.zone}
                       </span>
@@ -349,16 +349,16 @@ export function Overview() {
 
           {/* FIELD NODES SUMMARY */}
           <Card>
-            <SectionHeader title="Field Node Health" />
+            <SectionHeader title="Field nodes" />
             <div style={{ padding: "1rem" }}>
               {nodes.map((n) => (
-                <div key={n.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 0", borderBottom: "1px solid #f1f5f9" }}>
+                <div key={n.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 0", borderBottom: "1px solid var(--color-surface-alt)" }}>
                   <div>
                     <strong style={{ fontSize: "0.9rem" }}>{n.nodeId}</strong>
-                    <span style={{ fontSize: "0.8rem", color: "#64748b", marginLeft: "6px" }}>({n.nodeType})</span>
+                    <span style={{ fontSize: "0.8rem", color: "var(--color-muted)", marginLeft: "6px" }}>({n.nodeType})</span>
                   </div>
                   <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                    <span style={{ fontSize: "0.8rem", color: "#64748b" }}>Batt: {n.batteryLevel ?? "—"}%</span>
+                    <span style={{ fontSize: "0.8rem", color: "var(--color-muted)" }}>Batt: {n.batteryLevel ?? "—"}%</span>
                     <StatusBadge label={n.health ?? "UNKNOWN"} tone={n.health === "HEALTHY" ? "healthy" : "warning"} />
                   </div>
                 </div>
@@ -380,27 +380,27 @@ export function Overview() {
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: "8px", fontSize: "0.9rem" }}>
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ color: "#64748b" }}>RFID UID</span>
+                  <span style={{ color: "var(--color-muted)" }}>RFID UID</span>
                   <strong>{rfidScans[0].uid}</strong>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ color: "#64748b" }}>Node</span>
+                  <span style={{ color: "var(--color-muted)" }}>Node</span>
                   <strong>{rfidScans[0].node_id}</strong>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ color: "#64748b" }}>Status</span>
+                  <span style={{ color: "var(--color-muted)" }}>Status</span>
                   <StatusBadge label={rfidScans[0].status} tone={scanTone(rfidScans[0].status)} />
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ color: "#64748b" }}>RSSI</span>
+                  <span style={{ color: "var(--color-muted)" }}>RSSI</span>
                   <strong>{rfidScans[0].rssi} dBm</strong>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ color: "#64748b" }}>SNR</span>
+                  <span style={{ color: "var(--color-muted)" }}>SNR</span>
                   <strong>{rfidScans[0].snr} dB</strong>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ color: "#64748b" }}>Time</span>
+                  <span style={{ color: "var(--color-muted)" }}>Time</span>
                   <strong>{new Date(rfidScans[0].timestamp).toLocaleTimeString()}</strong>
                 </div>
               </div>
@@ -416,32 +416,32 @@ export function Overview() {
                 <p className="overview-empty-title">No events</p>
               </div>
             ) : (
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
+              <table>
                 <thead>
-                  <tr style={{ borderBottom: "1px solid #e2e8f0", textAlign: "left", color: "#64748b" }}>
-                    <th style={{ padding: "8px" }}>Time</th>
-                    <th style={{ padding: "8px" }}>Node</th>
-                    <th style={{ padding: "8px" }}>Checkpoint</th>
-                    <th style={{ padding: "8px" }}>Employee</th>
-                    <th style={{ padding: "8px" }}>RFID UID</th>
-                    <th style={{ padding: "8px" }}>RSSI</th>
-                    <th style={{ padding: "8px" }}>SNR</th>
-                    <th style={{ padding: "8px" }}>Status</th>
+                  <tr>
+                    <th>Time</th>
+                    <th>Node</th>
+                    <th>Checkpoint</th>
+                    <th>Employee</th>
+                    <th>RFID UID</th>
+                    <th>RSSI</th>
+                    <th>SNR</th>
+                    <th>Status</th>
                   </tr>
                 </thead>
                 <tbody>
                   {rfidScans.map((scan) => (
-                    <tr key={scan.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                      <td style={{ padding: "8px", fontWeight: 500 }}>
+                    <tr key={scan.id}>
+                      <td>
                         {new Date(scan.timestamp).toLocaleTimeString()}
                       </td>
-                      <td style={{ padding: "8px" }}>{scan.node_id}</td>
-                      <td style={{ padding: "8px" }}>{scan.checkpoint_id ?? "—"}</td>
-                      <td style={{ padding: "8px" }}>{scan.employee_id ?? "Unknown"}</td>
-                      <td style={{ padding: "8px" }}><strong>{scan.uid}</strong></td>
-                      <td style={{ padding: "8px" }}>{scan.rssi}</td>
-                      <td style={{ padding: "8px" }}>{scan.snr}</td>
-                      <td style={{ padding: "8px" }} title={scan.reason ?? undefined}><StatusBadge label={scan.status} tone={scanTone(scan.status)} />{scan.reason && <div style={{ fontSize: "0.72rem", color: "#b91c1c", marginTop: 2 }}>{scan.reason}</div>}</td>
+                      <td>{scan.node_id}</td>
+                      <td>{scan.checkpoint_id ?? "—"}</td>
+                      <td>{scan.employee_id ?? "Unknown"}</td>
+                      <td><strong>{scan.uid}</strong></td>
+                      <td>{scan.rssi}</td>
+                      <td>{scan.snr}</td>
+                      <td title={scan.reason ?? undefined}><StatusBadge label={scan.status} tone={scanTone(scan.status)} />{scan.reason && <div style={{ fontSize: "0.72rem", color: "var(--color-danger)", marginTop: 2 }}>{scan.reason}</div>}</td>
                     </tr>
                   ))}
                 </tbody>

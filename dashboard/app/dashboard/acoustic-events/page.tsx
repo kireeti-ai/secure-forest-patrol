@@ -9,9 +9,9 @@ import { StatusBadge } from "../../../components/ui/StatusBadge";
 import { useForestWebSocket } from "../../../lib/ws";
 
 const CLASSIFICATION_COLORS: Record<string, { bg: string; border: string; text: string }> = {
-  Gunshot:     { bg: "#fef2f2", border: "#fecaca", text: "#991b1b" },
-  Chainsaw:    { bg: "#fffbeb", border: "#fde68a", text: "#92400e" },
-  "Non-threat": { bg: "#f0fdf4", border: "#bbf7d0", text: "#15803d" },
+  Gunshot:     { bg: "var(--color-danger-bg)", border: "var(--color-border)", text: "var(--color-danger)" },
+  Chainsaw:    { bg: "var(--color-warning-bg)", border: "var(--color-border)", text: "var(--color-warning)" },
+  "Non-threat": { bg: "var(--color-healthy-bg)", border: "var(--color-border)", text: "var(--color-healthy)" },
 };
 
 export default function AcousticEventsPage() {
@@ -46,12 +46,10 @@ export default function AcousticEventsPage() {
   };
 
   return (
-    <div className="dashboard-page" style={{ padding: "1.5rem" }}>
-      <header className="page-header" style={{ marginBottom: "1.5rem" }}>
-        <h1 style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--color-navy)" }}>Acoustic Threat Review Queue</h1>
-        <p style={{ color: "#64748b", marginTop: "4px" }}>
-          Edge-classified acoustic events (Gunshot, Chainsaw, Non-threat) detected by TinyML field nodes. Review, confirm, or dismiss each event.
-        </p>
+    <div className="dashboard-page">
+      <header className="page-header">
+        <h1>Acoustic events</h1>
+        <p>Gunshot and chainsaw detections from field nodes, waiting for review.</p>
       </header>
 
       {/* FILTER TABS */}
@@ -66,9 +64,9 @@ export default function AcousticEventsPage() {
               fontWeight: 700,
               fontSize: "0.85rem",
               cursor: "pointer",
-              border: filter === f ? "2px solid var(--color-navy)" : "2px solid #e2e8f0",
-              background: filter === f ? "var(--color-navy)" : "#f8fafc",
-              color: filter === f ? "#fff" : "#475569",
+              border: filter === f ? "2px solid var(--color-navy)" : "2px solid var(--color-border)",
+              background: filter === f ? "var(--color-navy)" : "var(--color-surface-alt)",
+              color: filter === f ? "#fff" : "var(--color-text-soft)",
             }}
           >
             {f.replace("_", " ")} ({counters[f]})
@@ -82,7 +80,7 @@ export default function AcousticEventsPage() {
           {loading ? (
             <p>Loading acoustic events...</p>
           ) : filtered.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "2rem", color: "#64748b" }}>
+            <div style={{ textAlign: "center", padding: "2rem", color: "var(--color-muted)" }}>
               No events in this queue.
             </div>
           ) : (
@@ -107,22 +105,22 @@ export default function AcousticEventsPage() {
                     <div style={{ flex: 1 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
                         <strong style={{ fontSize: "1.05rem", color: colors.text }}>{evt.classification}</strong>
-                        <span style={{ fontSize: "0.85rem", fontWeight: 700, color: "#475569" }}>
+                        <span style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--color-text-soft)" }}>
                           {Math.round(evt.confidence * 100)}% confidence
                         </span>
                         <StatusBadge label={evt.reviewStatus} tone={evt.reviewStatus === "CONFIRMED" ? "danger" : evt.reviewStatus === "PENDING_REVIEW" ? "warning" : "healthy"} />
                       </div>
-                      <div style={{ marginTop: "6px", fontSize: "0.85rem", color: "#475569", display: "flex", gap: "1.5rem", flexWrap: "wrap" }}>
+                      <div style={{ marginTop: "6px", fontSize: "0.85rem", color: "var(--color-text-soft)", display: "flex", gap: "1.5rem", flexWrap: "wrap" }}>
                         <span><strong>Event ID:</strong> {evt.eventId}</span>
                         <span><strong>Node:</strong> {evt.nodeId}</span>
                         <span><strong>Zone:</strong> {evt.zone}</span>
                         <span><strong>Time:</strong> {evt.timestamp}</span>
                         {evt.modelVersion && <span><strong>Model:</strong> {evt.modelVersion}</span>}
                       </div>
-                      <div style={{ marginTop: "4px", fontSize: "0.8rem", color: "#64748b", display: "flex", gap: "1rem" }}>
+                      <div style={{ marginTop: "4px", fontSize: "0.8rem", color: "var(--color-muted)", display: "flex", gap: "1rem" }}>
                         <span>Signature: <StatusBadge label={evt.signatureStatus === "PENDING" ? "UNSIGNED (pending review)" : evt.signatureStatus} tone={evt.signatureStatus === "VALID" ? "healthy" : evt.signatureStatus === "PENDING" ? "warning" : "danger"} /></span>
                         <span>Sync: <StatusBadge label={evt.syncStatus} tone={evt.syncStatus === "SYNCED" ? "healthy" : "warning"} /></span>
-                        <span>Audio Clip: {evt.clipAvailable ? <span style={{ color: "#16a34a" }}>Available</span> : <span style={{ color: "#94a3b8" }}>Not stored</span>}</span>
+                        <span>Audio Clip: {evt.clipAvailable ? <span style={{ color: "var(--color-healthy)" }}>Available</span> : <span style={{ color: "var(--color-faint)" }}>Not stored</span>}</span>
                       </div>
                     </div>
                     <Link
@@ -131,10 +129,10 @@ export default function AcousticEventsPage() {
                         padding: "8px 16px",
                         fontSize: "0.85rem",
                         fontWeight: 600,
-                        color: "#0369a1",
-                        border: "1px solid #bae6fd",
+                        color: "var(--color-forest-dark)",
+                        border: "1px solid var(--color-border)",
                         borderRadius: "6px",
-                        background: "#f0f9ff",
+                        background: "var(--color-surface-alt)",
                         textDecoration: "none",
                         whiteSpace: "nowrap",
                       }}

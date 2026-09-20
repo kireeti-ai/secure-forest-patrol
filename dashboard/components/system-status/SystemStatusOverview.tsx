@@ -33,14 +33,14 @@ export function SystemStatusOverview() {
   return (
     <div className="system-status-page">
       <header className="system-status-header">
-        <h1>System Architecture Status</h1>
-        <p>Forest patrol system operational health overview.</p>
+        <h1>System status</h1>
+        <p>Health of each part of the pipeline.</p>
       </header>
       {loraConnected && (
-        <Card style={{ marginBottom: "1rem", background: "#ecfdf5", border: "1px solid #bbf7d0" }}>
+        <Card style={{ marginBottom: "1rem", background: "var(--color-healthy-bg)", border: "1px solid var(--color-border)" }}>
           <div style={{ padding: "1rem 1.25rem" }}>
-            <strong style={{ color: "#166534" }}>Both the LoRa sensor and the LoRa gateway are connected and running.</strong>
-            <p style={{ color: "#166534", margin: "6px 0 0" }}>
+            <strong style={{ color: "var(--color-healthy)" }}>Both the LoRa sensor and the LoRa gateway are connected and running.</strong>
+            <p style={{ color: "var(--color-healthy)", margin: "6px 0 0" }}>
               If you want any additional details, tell me which telemetry or node status you would like to inspect.
             </p>
           </div>
@@ -59,14 +59,14 @@ export function SystemStatusOverview() {
                   justifyContent: "space-between",
                   alignItems: "center",
                   padding: "0.75rem 1rem",
-                  background: "#f8fafc",
-                  border: "1px solid #e2e8f0",
+                  background: "var(--color-surface-alt)",
+                  border: "1px solid var(--color-border)",
                   borderRadius: "8px",
                 }}
               >
                 <div>
                   <strong>{c.component}</strong>
-                  <p style={{ fontSize: "0.82rem", color: "#64748b", marginTop: "2px" }}>{c.details}</p>
+                  <p style={{ fontSize: "0.82rem", color: "var(--color-muted)", marginTop: "2px" }}>{c.details}</p>
                 </div>
                 <StatusBadge
                   label={c.status}

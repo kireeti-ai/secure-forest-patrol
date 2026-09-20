@@ -41,11 +41,17 @@ Pending. Awaiting deployment of the FastAPI backend to replace the mock adapters
 ## Acoustic node (MAX4466 trigger + INMP441 + TinyML) - see `docs/ACOUSTIC_NODE.md`
 
 - Firmware pipeline (trigger, I2S capture + ring buffer, mel preprocessing, TFLite Micro classifier, LoRa
-  event): **IMPLEMENTED**, host/build **TESTED**. TFLite Micro loading, on-device preprocessing parity and
-  boot with RC522 + LoRa were **PHYSICALLY VERIFIED** on the node board; **no microphone has been connected**, so
-  the MAX4466 trigger, INMP441 capture and any real-audio classification are **NOT VERIFIED**.
+  event): **IMPLEMENTED**, host/build **TESTED**. TFLite Micro loading, on-device preprocessing parity (4040/4040),
+  the custom per-channel kernel (max diff 3/256 vs Python) and boot with RC522 + LoRa were **PHYSICALLY VERIFIED**
+  on the node board. Microphones are wired but the **MAX4466 signal is faulty** (unstable noise floor, DC far
+  from VCC/2, once stuck at the ADC rail), so the trigger is **UNDER VALIDATION** and thresholds are
+  **NOT calibrated**; the INMP441 is only partly verified (data flows, no speech separation or rate check) and
+  real-audio classification is **NOT VERIFIED**.
+- The trigger is now relative-dB (+10 dB / +6 dB over a 4 s median floor, 4 sustained blocks, 5 s cooldown)
+  with a sensor-health guard that disables ML on a noisy or stuck input. Values are experimental bench starting
+  points. Details and measurements: `docs/ACOUSTIC_NODE.md` ("MAX4466 trigger", "Bench findings").
 - The stock TFLite Micro FULLY_CONNECTED kernel ignores per-channel weight scales and gave wrong outputs for
-  this model; a per-channel kernel replaces it (host-verified, not yet re-run on the device).
+  this model; a per-channel kernel replaces it (host-verified and re-run on the device).
 - Node-side signing, RTC timestamps and hash chain remain **NOT IMPLEMENTED**; acoustic events are unsigned
   and backend-stamped (PENDING, human review).
 - End-to-end (node -> LoRa -> gateway -> MQTT -> backend -> dashboard) for acoustic events: **NOT VERIFIED**.

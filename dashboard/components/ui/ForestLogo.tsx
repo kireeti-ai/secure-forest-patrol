@@ -1,8 +1,12 @@
+// Secure Forest Patrol mark: a three-tier conifer with a beacon signal arc (patrol + radio link).
+// Stroke-only so it inherits `currentColor` and the stroke width set by the container.
 export function ForestLogo({ className = "" }: { className?: string }) {
-  // A simple shield icon for Forest Patrol
   return (
-    <svg viewBox="0 0 24 24" className={className} aria-hidden="true" fill="currentColor">
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    <svg viewBox="0 0 24 24" className={className} aria-hidden="true" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 3 7.5 9H10l-4.5 5.5H9.5L4 20h16l-5.5-5.5h4L14 9h2.5z" />
+      <path d="M12 20v2" />
+      <path d="M17.5 3.5a3.5 3.5 0 0 1 2 3" />
+      <path d="M19 1.6a6 6 0 0 1 3.4 5.2" />
     </svg>
   );
 }

@@ -10,7 +10,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
 
   return (
     <main className="app-error-page" role="alert">
-      <p className="eyebrow">SECURE FOREST PATROL</p>
+      <p className="eyebrow">Secure Forest Patrol</p>
       <h1>Something went wrong.</h1>
       <p>We could not load this page. Try again or return to the dashboard.</p>
       <div className="app-error-actions">

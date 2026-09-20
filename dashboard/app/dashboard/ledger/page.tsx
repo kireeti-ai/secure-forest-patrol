@@ -28,43 +28,41 @@ export default function LedgerPage() {
   const brokenCount = records.filter((r) => r.chainStatus !== "VALID" && r.chainStatus !== "PENDING").length;
 
   return (
-    <div className="dashboard-page" style={{ padding: "1.5rem" }}>
-      <header className="page-header" style={{ marginBottom: "1.5rem" }}>
-        <h1 style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--color-navy)" }}>Tamper-Evident Ledger Integrity</h1>
-        <p style={{ color: "#64748b", marginTop: "4px" }}>
-          Local hash chain inspector. Each record contains a SHA-256 hash chained to the previous record and signed with the node&apos;s RSA private key.
-        </p>
+    <div className="dashboard-page">
+      <header className="page-header">
+        <h1>Ledger</h1>
+        <p>Hash-chained patrol records and their verification status.</p>
       </header>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "1rem", marginBottom: "1.5rem" }}>
-        <Card style={{ padding: "1.25rem", borderLeft: "4px solid #16a34a" }}>
-          <p style={{ fontSize: "0.8rem", fontWeight: 700, color: "#64748b" }}>VALID CHAIN RECORDS</p>
-          <p style={{ fontSize: "2rem", fontWeight: 700, color: "#16a34a" }}>{loading ? "..." : validCount}</p>
+      <div className="stat-grid">
+        <Card className="stat">
+          <p className="stat-label">Valid chain records</p>
+          <p className="stat-value" style={{ color: "var(--color-healthy)" }}>{loading ? "..." : validCount}</p>
         </Card>
-        <Card style={{ padding: "1.25rem", borderLeft: "4px solid #dc2626" }}>
-          <p style={{ fontSize: "0.8rem", fontWeight: 700, color: "#64748b" }}>CHAIN FAILURES</p>
-          <p style={{ fontSize: "2rem", fontWeight: 700, color: brokenCount > 0 ? "#dc2626" : "#16a34a" }}>{loading ? "..." : brokenCount}</p>
+        <Card className="stat">
+          <p className="stat-label">Chain failures</p>
+          <p className="stat-value" style={{ color: brokenCount > 0 ? "var(--color-danger)" : "var(--color-healthy)" }}>{loading ? "..." : brokenCount}</p>
         </Card>
-        <Card style={{ padding: "1.25rem", borderLeft: "4px solid var(--color-navy)" }}>
-          <p style={{ fontSize: "0.8rem", fontWeight: 700, color: "#64748b" }}>TOTAL RECORDS</p>
-          <p style={{ fontSize: "2rem", fontWeight: 700, color: "var(--color-navy)" }}>{loading ? "..." : records.length}</p>
+        <Card className="stat">
+          <p className="stat-label">Total records</p>
+          <p className="stat-value" style={{ color: "var(--color-navy)" }}>{loading ? "..." : records.length}</p>
         </Card>
       </div>
 
       <Card>
         <SectionHeader title="Hash Chain Records" />
         <div style={{ padding: "1rem", overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.88rem", fontFamily: "monospace" }}>
+          <table>
             <thead>
-              <tr style={{ borderBottom: "2px solid #e2e8f0", textAlign: "left", color: "#475569", fontFamily: "inherit" }}>
-                <th style={{ padding: "10px" }}>Seq #</th>
-                <th style={{ padding: "10px" }}>Node ID</th>
-                <th style={{ padding: "10px" }}>Timestamp</th>
-                <th style={{ padding: "10px" }}>Previous Hash</th>
-                <th style={{ padding: "10px" }}>Current Hash</th>
-                <th style={{ padding: "10px" }}>Signature</th>
-                <th style={{ padding: "10px" }}>Chain Status</th>
-                <th style={{ padding: "10px" }}>Duplicate</th>
+              <tr>
+                <th>Seq #</th>
+                <th>Node ID</th>
+                <th>Timestamp</th>
+                <th>Previous Hash</th>
+                <th>Current Hash</th>
+                <th>Signature</th>
+                <th>Chain Status</th>
+                <th>Duplicate</th>
               </tr>
             </thead>
             <tbody>
@@ -72,26 +70,26 @@ export default function LedgerPage() {
                 <tr
                   key={r.sequence}
                   style={{
-                    borderBottom: "1px solid #f1f5f9",
-                    background: r.chainStatus !== "VALID" && r.chainStatus !== "PENDING" ? "#fef2f2" : "transparent",
+                    borderBottom: "1px solid var(--color-surface-alt)",
+                    background: r.chainStatus !== "VALID" && r.chainStatus !== "PENDING" ? "var(--color-danger-bg)" : "transparent",
                   }}
                 >
-                  <td style={{ padding: "10px", fontWeight: 700, color: "var(--color-navy)" }}>#{r.sequence}</td>
-                  <td style={{ padding: "10px" }}>{r.nodeId}</td>
-                  <td style={{ padding: "10px", fontFamily: "sans-serif", fontSize: "0.8rem" }}>{r.timestamp}</td>
-                  <td style={{ padding: "10px" }} title={r.previousHash}>
-                    <code style={{ fontSize: "0.8rem", color: "#475569" }}>{truncateHash(r.previousHash)}</code>
+                  <td>#{r.sequence}</td>
+                  <td>{r.nodeId}</td>
+                  <td>{r.timestamp}</td>
+                  <td title={r.previousHash}>
+                    <code style={{ fontSize: "0.8rem", color: "var(--color-text-soft)" }}>{truncateHash(r.previousHash)}</code>
                   </td>
-                  <td style={{ padding: "10px" }} title={r.currentHash}>
-                    <code style={{ fontSize: "0.8rem", color: "#475569" }}>{truncateHash(r.currentHash)}</code>
+                  <td title={r.currentHash}>
+                    <code style={{ fontSize: "0.8rem", color: "var(--color-text-soft)" }}>{truncateHash(r.currentHash)}</code>
                   </td>
-                  <td style={{ padding: "10px" }}>
+                  <td>
                     <StatusBadge label={r.signatureStatus} tone={r.signatureStatus === "VALID" ? "healthy" : "danger"} />
                   </td>
-                  <td style={{ padding: "10px" }}>
+                  <td>
                     <StatusBadge label={r.chainStatus} tone={r.chainStatus === "VALID" ? "healthy" : "danger"} />
                   </td>
-                  <td style={{ padding: "10px" }}>
+                  <td>
                     <StatusBadge label={r.duplicateStatus} tone={r.duplicateStatus === "UNIQUE" ? "healthy" : "warning"} />
                   </td>
                 </tr>
@@ -101,7 +99,7 @@ export default function LedgerPage() {
         </div>
       </Card>
 
-      <div style={{ marginTop: "1rem", padding: "12px 16px", background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "8px", fontSize: "0.82rem", color: "#64748b" }}>
+      <div style={{ marginTop: "1rem", padding: "12px 16px", background: "var(--color-surface-alt)", border: "1px solid var(--color-border)", borderRadius: "8px", fontSize: "0.82rem", color: "var(--color-muted)" }}>
         <strong>How to read this table:</strong> Each record&apos;s <em>Previous Hash</em> must equal the <em>Current Hash</em> of the record with Seq# − 1.
         A broken chain signals data tampering or a missing record. A bad signature means the record was not produced by the legitimate node key.
         Hover any truncated hash to see the full value.

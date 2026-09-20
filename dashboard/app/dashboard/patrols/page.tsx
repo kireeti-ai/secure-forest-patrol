@@ -30,12 +30,10 @@ export default function PatrolsPage() {
   );
 
   return (
-    <div className="dashboard-page" style={{ padding: "1.5rem" }}>
-      <header className="page-header" style={{ marginBottom: "1.5rem" }}>
-        <h1 style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--color-navy)" }}>Patrol Verification Queue</h1>
-        <p style={{ color: "#64748b", marginTop: "4px" }}>
-          Authenticity verification of field officer check-ins, RFID tags, fingerprint matches, RSA signatures, and ledger hash integrity.
-        </p>
+    <div className="dashboard-page">
+      <header className="page-header">
+        <h1>Patrols</h1>
+        <p>Patrol records and their signature and hash-chain checks.</p>
       </header>
 
       <Card>
@@ -44,58 +42,58 @@ export default function PatrolsPage() {
           {loading ? (
             <p>Loading patrol records...</p>
           ) : (
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.88rem" }}>
+            <table>
               <thead>
-                <tr style={{ borderBottom: "2px solid #e2e8f0", textAlign: "left", color: "#475569" }}>
-                  <th style={{ padding: "10px" }}>Event ID</th>
-                  <th style={{ padding: "10px" }}>Timestamp</th>
-                  <th style={{ padding: "10px" }}>Checkpoint</th>
-                  <th style={{ padding: "10px" }}>Officer</th>
-                  <th style={{ padding: "10px" }}>RFID Status</th>
-                  <th style={{ padding: "10px" }}>Biometric Match</th>
-                  <th style={{ padding: "10px" }}>Signature</th>
-                  <th style={{ padding: "10px" }}>Ledger Chain</th>
-                  <th style={{ padding: "10px" }}>Sync Status</th>
-                  <th style={{ padding: "10px" }}>Action</th>
+                <tr>
+                  <th>Event ID</th>
+                  <th>Timestamp</th>
+                  <th>Checkpoint</th>
+                  <th>Officer</th>
+                  <th>RFID Status</th>
+                  <th>Biometric Match</th>
+                  <th>Signature</th>
+                  <th>Ledger Chain</th>
+                  <th>Sync Status</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
                 {patrols.map((p) => (
-                  <tr key={p.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                    <td style={{ padding: "10px", fontWeight: 700, color: "var(--color-navy)" }}>{p.eventId}</td>
-                    <td style={{ padding: "10px" }}>{p.timestamp}</td>
-                    <td style={{ padding: "10px" }}>
-                      <strong>{p.checkpointId}</strong> <span style={{ color: "#64748b" }}>({p.nodeId})</span>
+                  <tr key={p.id}>
+                    <td>{p.eventId}</td>
+                    <td>{p.timestamp}</td>
+                    <td>
+                      <strong>{p.checkpointId}</strong> <span style={{ color: "var(--color-muted)" }}>({p.nodeId})</span>
                     </td>
-                    <td style={{ padding: "10px" }}>
-                      {p.officerName} <span style={{ color: "#64748b", fontSize: "0.8rem" }}>({p.officerId})</span>
+                    <td>
+                      {p.officerName} <span style={{ color: "var(--color-muted)", fontSize: "0.8rem" }}>({p.officerId})</span>
                     </td>
-                    <td style={{ padding: "10px" }}>
+                    <td>
                       <StatusBadge label={p.rfidStatus} tone={p.rfidStatus === "VALID" ? "healthy" : "danger"} />
                     </td>
-                    <td style={{ padding: "10px" }}>
+                    <td>
                       <StatusBadge label={p.fingerprintStatus} tone={p.fingerprintStatus === "MATCH" ? "healthy" : "danger"} />
                     </td>
-                    <td style={{ padding: "10px" }}>
+                    <td>
                       <StatusBadge label={p.signatureStatus} tone={p.signatureStatus === "VALID" ? "healthy" : "danger"} />
                     </td>
-                    <td style={{ padding: "10px" }}>
+                    <td>
                       <StatusBadge label={p.ledgerStatus} tone={p.ledgerStatus === "VALID" ? "healthy" : "danger"} />
                     </td>
-                    <td style={{ padding: "10px" }}>
+                    <td>
                       <StatusBadge label={p.syncStatus} tone={p.syncStatus === "SYNCED" ? "healthy" : "warning"} />
                     </td>
-                    <td style={{ padding: "10px" }}>
+                    <td>
                       <Link
                         href={`/dashboard/patrols/${p.id}`}
                         style={{
                           padding: "4px 10px",
                           fontSize: "0.8rem",
                           fontWeight: 600,
-                          color: "#0369a1",
-                          border: "1px solid #bae6fd",
+                          color: "var(--color-forest-dark)",
+                          border: "1px solid var(--color-border)",
                           borderRadius: "4px",
-                          background: "#f0f9ff",
+                          background: "var(--color-surface-alt)",
                           textDecoration: "none",
                         }}
                       >
