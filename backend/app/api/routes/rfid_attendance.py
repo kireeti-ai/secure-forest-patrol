@@ -117,7 +117,11 @@ def assign_checkpoints(employee_id: str, payload: CheckpointAssignment, db: Sess
     missing = [cid for cid in wanted if cid not in known]
     if missing:
         raise HTTPException(status_code=404, detail=f"Unknown checkpoint(s): {', '.join(missing)}")
-    employee.checkpoint_access = [OperatorCheckpointAccess(checkpoint_id=cid) for cid in wanted]
+    # Delete first: SQLAlchemy would otherwise INSERT new rows before removing the old
+    # ones and trip the (user, checkpoint) unique constraint on overlapping sets.
+    employee.checkpoint_access.clear()
+    db.flush()
+    employee.checkpoint_access.extend(OperatorCheckpointAccess(checkpoint_id=cid) for cid in wanted)
     db.commit()
     db.refresh(employee)
     return _employee_out(employee)
@@ -133,8 +137,10 @@ def remove_employee(employee_id: str, db: Session = Depends(get_db), _: User = D
 
 @router.get("/rfid-events")
 def list_rfid_events(db: Session = Depends(get_db), _: User = Depends(require_roles(*_OFFICER_ROLES))) -> list[dict]:
-    rows = db.scalars(select(RfidEvent).order_by(RfidEvent.timestamp.desc()).limit(200))
-    return [{"id": str(row.id), "uid": row.rfid_uid, "employee_id": row.employee_id, "node_id": row.node_id,
+    rows = list(db.scalars(select(RfidEvent).order_by(RfidEvent.timestamp.desc()).limit(200)))
+    checkpoint_by_node = {nid: cid for nid, cid in db.execute(
+        select(Checkpoint.node_id, Checkpoint.checkpoint_id).where(Checkpoint.node_id.is_not(None)))}
+    return [{"id": str(row.id), "checkpoint_id": checkpoint_by_node.get(row.node_id), "uid": row.rfid_uid, "employee_id": row.employee_id, "node_id": row.node_id,
              "sequence": row.sequence, "status": row.status, "rssi": row.rssi, "snr": row.snr,
              "timestamp": row.timestamp.isoformat()} for row in rows]
 

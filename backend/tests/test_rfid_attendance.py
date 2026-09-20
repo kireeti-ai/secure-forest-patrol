@@ -78,8 +78,40 @@ def test_assign_employee_to_checkpoints(client, db_session, seeded_data):
     assert ok.status_code == 200
     assert ok.json()["checkpoints"] == ["CP-01", "CP-02"]
 
+    narrowed = client.put("/api/employees/OFF900/checkpoints", json={"checkpoint_ids": ["CP-01"]})
+    assert narrowed.status_code == 200 and narrowed.json()["checkpoints"] == ["CP-01"]
+
     bad = client.put("/api/employees/OFF900/checkpoints", json={"checkpoint_ids": ["CP-99"]})
     assert bad.status_code == 404
 
     presence = client.get("/api/officer-presence").json()
-    assert next(row for row in presence if row["employee_id"] == "OFF900")["checkpoints"] == ["CP-01", "CP-02"]
+    assert next(row for row in presence if row["employee_id"] == "OFF900")["checkpoints"] == ["CP-01"]
+
+
+def test_wrong_checkpoint_scan_is_flagged_and_not_attendance(client, db_session, seeded_data):
+    from datetime import datetime, timezone
+    from app.models.forest_node import ForestNode
+
+    for cid, node in (("CP-01", "NODE_01"), ("CP-02", None)):
+        client.post("/api/forest/checkpoints", json={"checkpoint_id": cid, "name": cid, "node_id": node})
+    client.post("/api/forest/nodes", json={"node_id": "NODE_01", "checkpoint_id": "CP-01"})
+    for emp, uid, cp in (("OFFA", "AA:00:00:01", "CP-01"), ("OFFB", "AA:00:00:02", "CP-02")):
+        db_session.add(User(email=f"{emp}@forest.local", full_name=emp, employee_id=emp, rfid_uid=uid,
+                            password_hash=hash_password("SomePassword123!"), role="OFFICER"))
+        db_session.commit()
+        client.put(f"/api/employees/{emp}/checkpoints", json={"checkpoint_ids": [cp]})
+
+    ok = client.post("/api/ingest/gateway/rfid-scan", json={
+        "type": "RFID_SCAN", "node_id": "NODE_01", "uid": "AA:00:00:01", "seq": 50, "rssi": -60, "snr": 9.0})
+    assert ok.json()["status"] == "AUTHORIZED" and ok.json()["attendance_action"] == "ENTRY"
+
+    wrong = client.post("/api/ingest/gateway/rfid-scan", json={
+        "type": "RFID_SCAN", "node_id": "NODE_01", "uid": "AA:00:00:02", "seq": 51, "rssi": -60, "snr": 9.0})
+    assert wrong.json()["status"] == "WRONG_CHECKPOINT" and wrong.json()["attendance_action"] is None
+
+    states = {c["checkpointId"]: c["state"] for c in client.get("/api/forest/checkpoints").json()}
+    assert (states["CP-01"], states["CP-02"]) == ("ONLINE", "OFFLINE")   # only the one with a live node
+    node = next(n for n in client.get("/api/forest/nodes").json() if n["nodeId"] == "NODE_01")
+    assert node["lastSeenAt"] is not None
+    events = client.get("/api/rfid-events").json()
+    assert {e["checkpoint_id"] for e in events if e["node_id"] == "NODE_01"} == {"CP-01"}

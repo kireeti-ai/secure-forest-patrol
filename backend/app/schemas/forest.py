@@ -97,6 +97,10 @@ class CheckpointResponse(ForestModel):
     longitude: float | None
     node_id: str | None
     active: bool
+    # Derived, never stored: ONLINE only when an attached node has been heard
+    # from recently (see checkpoint_states in forest_nodes.py).
+    state: str = "OFFLINE"
+    last_patrol_at: datetime | None = None
     created_at: datetime
     updated_at: datetime
 

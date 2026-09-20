@@ -151,12 +151,13 @@ export interface SyncLog {
 function normalizeCheckpoint(r: any): Checkpoint {
   return {
     id: r.id, checkpointId: r.checkpointId, zone: r.zoneId, nodeId: r.nodeId,
-    // location/lastPatrolTime/lastSyncEvent/pendingRecords/verificationState
-    // have no backend data source yet (checkpoints aren't cross-referenced
-    // against patrol/sync history) -- honest placeholders, not fabricated.
     location: r.zoneId ?? "—",
-    state: r.active ? "ONLINE" : "OFFLINE",
-    lastPatrolTime: "—", lastSyncEvent: "—", pendingRecords: 0,
+    // state is derived by the backend from the attached node's recent activity.
+    state: r.state === "ONLINE" ? "ONLINE" : "OFFLINE",
+    lastPatrolTime: r.lastPatrolAt ? new Date(r.lastPatrolAt).toLocaleString() : "—",
+    // lastSyncEvent/pendingRecords/verificationState have no backend data
+    // source yet -- honest placeholders, not fabricated.
+    lastSyncEvent: "—", pendingRecords: 0,
     verificationState: "PENDING",
   };
 }
