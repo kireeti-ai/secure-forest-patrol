@@ -13,6 +13,7 @@ from app.models.checkpoint import Checkpoint
 from app.models.operator_checkpoint_access import OperatorCheckpointAccess
 from app.models.rfid import Attendance, RfidEvent
 from app.models.user import User
+from app.services.rfid import invalid_reason
 
 router = APIRouter(prefix="/api", tags=["rfid-attendance"])
 _OFFICER_ROLES = ("OFFICER", "ADMIN")  # ADMIN retains access to legacy forest records.
@@ -140,9 +141,22 @@ def list_rfid_events(db: Session = Depends(get_db), _: User = Depends(require_ro
     rows = list(db.scalars(select(RfidEvent).order_by(RfidEvent.timestamp.desc()).limit(200)))
     checkpoint_by_node = {nid: cid for nid, cid in db.execute(
         select(Checkpoint.node_id, Checkpoint.checkpoint_id).where(Checkpoint.node_id.is_not(None)))}
-    return [{"id": str(row.id), "checkpoint_id": checkpoint_by_node.get(row.node_id), "uid": row.rfid_uid, "employee_id": row.employee_id, "node_id": row.node_id,
-             "sequence": row.sequence, "status": row.status, "rssi": row.rssi, "snr": row.snr,
-             "timestamp": row.timestamp.isoformat()} for row in rows]
+    assigned_by_employee: dict[str, list[str]] = {}
+    for employee_id, checkpoint_id in db.execute(
+            select(User.employee_id, OperatorCheckpointAccess.checkpoint_id)
+            .join(OperatorCheckpointAccess, OperatorCheckpointAccess.user_id == User.id)
+            .where(User.employee_id.is_not(None))):
+        assigned_by_employee.setdefault(employee_id, []).append(checkpoint_id)
+    result = []
+    for row in rows:
+        checkpoint_id = checkpoint_by_node.get(row.node_id)
+        result.append({
+            "id": str(row.id), "checkpoint_id": checkpoint_id, "uid": row.rfid_uid,
+            "employee_id": row.employee_id, "node_id": row.node_id, "sequence": row.sequence,
+            "status": row.status, "rssi": row.rssi, "snr": row.snr, "timestamp": row.timestamp.isoformat(),
+            "reason": invalid_reason(checkpoint_id, assigned_by_employee.get(row.employee_id, [])) if row.status == "INVALID" else None,
+        })
+    return result
 
 
 @router.get("/officer-presence")

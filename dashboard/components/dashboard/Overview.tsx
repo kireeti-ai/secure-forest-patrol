@@ -34,7 +34,7 @@ const OVERVIEW_WS_EVENTS = [
 ] as const;
 
 function scanTone(status: string): "healthy" | "warning" | "danger" {
-  return status === "AUTHORIZED" ? "healthy" : status === "WRONG_CHECKPOINT" ? "warning" : "danger";
+  return status === "AUTHORIZED" ? "healthy" : status === "UNKNOWN" ? "warning" : "danger";
 }
 
 function Metric({
@@ -441,7 +441,7 @@ export function Overview() {
                       <td style={{ padding: "8px" }}><strong>{scan.uid}</strong></td>
                       <td style={{ padding: "8px" }}>{scan.rssi}</td>
                       <td style={{ padding: "8px" }}>{scan.snr}</td>
-                      <td style={{ padding: "8px" }}><StatusBadge label={scan.status} tone={scanTone(scan.status)} /></td>
+                      <td style={{ padding: "8px" }} title={scan.reason ?? undefined}><StatusBadge label={scan.status} tone={scanTone(scan.status)} />{scan.reason && <div style={{ fontSize: "0.72rem", color: "#b91c1c", marginTop: 2 }}>{scan.reason}</div>}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -48,20 +48,21 @@ void setStatusLed(std::uint8_t red, std::uint8_t green) {
   neopixelWrite(FOREST_RGB_LED_PIN, red, green, 0);
 }
 
-// Cards accepted by this node. Add the UID printed on the serial monitor
-// ("UID: AA:BB:CC:DD") as {0xAA, 0xBB, 0xCC, 0xDD}.
+// Cards accepted by this node: the officers assigned to the checkpoint this node
+// is attached to (NODE_01 = CP-01: OFF001-OFF003). Cards not listed light red,
+// including officers assigned to other checkpoints. Keep in sync with the
+// checkpoint assignments in the dashboard; the LED cannot ask the backend.
+// Add a card as {0xAA, 0xBB, 0xCC, 0xDD} using the UID printed on the monitor.
 struct AllowedCard {
   std::uint8_t size;
   std::uint8_t uid[10];
 };
 const AllowedCard kAllowedCards[] = {
-    {4, {0x30, 0xBD, 0x57, 0x58}},
-    {4, {0xCD, 0x4E, 0x32, 0x40}},
-    {4, {0x0D, 0x46, 0x91, 0x43}},
-    {4, {0xBD, 0x8C, 0x6D, 0x19}},
-    {4, {0x10, 0x2C, 0xE6, 0x5C}},
+    {4, {0x30, 0xBD, 0x57, 0x58}},  // OFF001
+    {4, {0xCD, 0x4E, 0x32, 0x40}},  // OFF002
+    {4, {0x0D, 0x46, 0x91, 0x43}},  // OFF003
+    // OFF004 BD:8C:6D:19 and OFF005 10:2C:E6:5C belong to CP-02 -> red here
 };
-
 bool isCardAllowed(const MFRC522::Uid &uid) {
   for (const AllowedCard &card : kAllowedCards) {
     if (card.size == uid.size && memcmp(card.uid, uid.uidByte, uid.size) == 0) {

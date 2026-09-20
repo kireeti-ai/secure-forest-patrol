@@ -107,7 +107,8 @@ def test_wrong_checkpoint_scan_is_flagged_and_not_attendance(client, db_session,
 
     wrong = client.post("/api/ingest/gateway/rfid-scan", json={
         "type": "RFID_SCAN", "node_id": "NODE_01", "uid": "AA:00:00:02", "seq": 51, "rssi": -60, "snr": 9.0})
-    assert wrong.json()["status"] == "WRONG_CHECKPOINT" and wrong.json()["attendance_action"] is None
+    assert wrong.json()["status"] == "INVALID" and wrong.json()["attendance_action"] is None
+    assert "invalid checkpoint CP-01" in wrong.json()["reason"] and "CP-02" in wrong.json()["reason"]
 
     states = {c["checkpointId"]: c["state"] for c in client.get("/api/forest/checkpoints").json()}
     assert (states["CP-01"], states["CP-02"]) == ("ONLINE", "OFFLINE")   # only the one with a live node
@@ -115,3 +116,5 @@ def test_wrong_checkpoint_scan_is_flagged_and_not_attendance(client, db_session,
     assert node["lastSeenAt"] is not None
     events = client.get("/api/rfid-events").json()
     assert {e["checkpoint_id"] for e in events if e["node_id"] == "NODE_01"} == {"CP-01"}
+    bad = next(e for e in events if e["status"] == "INVALID")
+    assert bad["employee_id"] == "OFFB" and "invalid checkpoint CP-01" in bad["reason"]
