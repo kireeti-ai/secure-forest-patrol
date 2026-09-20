@@ -145,7 +145,8 @@ void GatewayService::beginBackend() {
 }
 
 void GatewayService::tick(std::uint32_t currentMs, lora::ILoRaDriver* radioDriver) {
-    backendClient_.tick(currentMs);
+    // Network work runs in BackendIngestionClient's own task; nothing here may block.
+    (void)currentMs;
     if (radioDriver != nullptr) backendClient_.dispatchMessages(*radioDriver);
 }
 

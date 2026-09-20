@@ -118,3 +118,41 @@ def test_wrong_checkpoint_scan_is_flagged_and_not_attendance(client, db_session,
     assert {e["checkpoint_id"] for e in events if e["node_id"] == "NODE_01"} == {"CP-01"}
     bad = next(e for e in events if e["status"] == "INVALID")
     assert bad["employee_id"] == "OFFB" and "invalid checkpoint CP-01" in bad["reason"]
+
+
+def test_sequence_reuse_after_node_reboot_is_a_new_scan(client, db_session, seeded_data):
+    from datetime import datetime, timedelta, timezone
+    from sqlalchemy import select
+    from app.models.rfid import RfidEvent
+
+    scan = {"type": "RFID_SCAN", "node_id": "NODE_01", "uid": "73:21:AC:09", "seq": 0, "rssi": -60, "snr": 9.0}
+    assert client.post("/api/ingest/gateway/rfid-scan", json=scan).json()["outcome"] == "ACCEPTED"
+    # an immediate redelivery is still a duplicate
+    assert client.post("/api/ingest/gateway/rfid-scan", json=scan).json()["outcome"] == "DUPLICATE"
+
+    # node reboots later and restarts its counter at 0: must be recorded, not dropped
+    event = db_session.scalar(select(RfidEvent).where(RfidEvent.rfid_uid == "73:21:AC:09"))
+    event.timestamp = datetime.now(timezone.utc) - timedelta(minutes=10)
+    db_session.commit()
+    assert client.post("/api/ingest/gateway/rfid-scan", json=scan).json()["outcome"] == "ACCEPTED"
+    assert len(list(db_session.scalars(select(RfidEvent).where(RfidEvent.rfid_uid == "73:21:AC:09")))) == 2
+
+
+def test_gateway_goes_offline_when_it_stops_reporting(client, db_session, seeded_data):
+    from datetime import datetime, timedelta, timezone
+    from sqlalchemy import select
+    from app.models.forest_gateway import Gateway
+
+    client.post("/api/ingest/gateway/status", json={
+        "gateway_id": "GW-T", "lora_status": "ACTIVE", "wifi_status": "CONNECTED", "backend_status": "REACHABLE"})
+    live = next(g for g in client.get("/api/forest/gateways").json() if g["gatewayId"] == "GW-T")
+    assert live["online"] is True and live["wifiStatus"] == "CONNECTED"
+
+    row = db_session.scalar(select(Gateway).where(Gateway.gateway_id == "GW-T"))
+    row.last_seen_at = datetime.now(timezone.utc) - timedelta(minutes=10)
+    db_session.commit()
+    stale = next(g for g in client.get("/api/forest/gateways").json() if g["gatewayId"] == "GW-T")
+    assert stale["online"] is False
+    assert (stale["wifiStatus"], stale["backendStatus"], stale["loraStatus"]) == ("DISCONNECTED", "UNREACHABLE", "NO_TRAFFIC")
+    status = client.get("/api/forest/system-status").json()
+    assert "GW-T" not in status["gateway"]["details"] and status["wifiBackhaul"]["details"].startswith("0/")

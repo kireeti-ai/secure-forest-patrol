@@ -44,6 +44,12 @@ BackendIngestionClient::BackendIngestionClient(const BackendConfig& config)
     // PubSubClient's default 256-byte packet limit is too small for the
     // gateway-status JSON plus its topic; oversized publishes fail silently.
     mqttClient_.setBufferSize(512);
+    // Bound every blocking socket operation so a dead broker/DNS cannot hold the
+    // network task for long either.
+    mqttClient_.setSocketTimeout(4);
+    plainClient_.setTimeout(4);
+    secureClient_.setTimeout(4);
+    outboxMutex_ = xSemaphoreCreateMutex();
 }
 
 void BackendIngestionClient::begin() {
@@ -55,6 +61,18 @@ void BackendIngestionClient::begin() {
     Serial.printf("[WIFI] CONNECTING | SSID=%s | status=%s(%d)\n",
                   config_.wifiSsid != nullptr ? config_.wifiSsid : "<unset>",
                   wifiStatusName(WiFi.status()), static_cast<int>(WiFi.status()));
+    if (networkTask_ == nullptr) {
+        // 16 KB stack: the TLS handshake needs far more than the default.
+        xTaskCreatePinnedToCore(&BackendIngestionClient::networkTask, "backend-net", 16384, this, 1, &networkTask_, 0);
+    }
+}
+
+void BackendIngestionClient::networkTask(void* self) {
+    auto* client = static_cast<BackendIngestionClient*>(self);
+    for (;;) {
+        client->tick(millis());
+        vTaskDelay(pdMS_TO_TICKS(10));
+    }
 }
 
 void BackendIngestionClient::logLine(const char* line) {
@@ -145,7 +163,7 @@ void BackendIngestionClient::tickMqtt(std::uint32_t currentMs) {
     // than blocking the tick loop. Never treated as permanent -- there is
     // no "invalid credentials" style failure the gateway can distinguish
     // here, so it always keeps retrying.
-    if ((currentMs - lastMqttAttemptMs_) >= kReconnectIntervalMs) {
+    if ((currentMs - lastMqttAttemptMs_) >= mqttBackoffMs_) {
         lastMqttAttemptMs_ = currentMs;
         mqttState_ = LinkState::Connecting;
         char clientId[24];
@@ -155,32 +173,60 @@ void BackendIngestionClient::tickMqtt(std::uint32_t currentMs) {
             : mqttClient_.connect(clientId);
         if (connected) {
             mqttState_ = LinkState::Connected;
+            mqttBackoffMs_ = kReconnectIntervalMs;
             logLine("[MQTT] CONNECTED");
+        } else {
+            mqttState_ = LinkState::Disconnected;
+            // Back off (5 s -> 30 s) while the broker/DNS is unreachable.
+            mqttBackoffMs_ = (mqttBackoffMs_ * 2U > kMaxMqttBackoffMs) ? kMaxMqttBackoffMs : mqttBackoffMs_ * 2U;
         }
     }
 }
 
 void BackendIngestionClient::enqueue(const ForestEventEnvelope& envelope) {
+    if (xSemaphoreTake(outboxMutex_, pdMS_TO_TICKS(200)) != pdTRUE) {
+        logLine("[MQTT] OUTBOX BUSY, EVENT DROPPED");
+        return;
+    }
     if (outboxCount_ >= kOutboxCapacity) {
         // Outbox full: drop the oldest queued event rather than the new
         // one, so the freshest field data always has a chance to publish.
         outboxHead_ = (outboxHead_ + 1) % kOutboxCapacity;
         outboxCount_--;
+        outboxHeadSerial_++;
         logLine("[MQTT] OUTBOX FULL, DROPPED OLDEST");
     }
     const std::size_t tail = (outboxHead_ + outboxCount_) % kOutboxCapacity;
     outbox_[tail] = envelope;
     outboxCount_++;
+    xSemaphoreGive(outboxMutex_);
 }
 
 void BackendIngestionClient::drainOutbox() {
-    while (outboxCount_ > 0) {
-        const ForestEventEnvelope& envelope = outbox_[outboxHead_];
-        if (!publishEnvelope(envelope)) {
-            break;  // leave it queued, retry next tick
+    for (;;) {
+        // Copy the head out and release the lock before publishing, so a slow
+        // publish can never make the main loop's enqueue() time out and drop scans.
+        ForestEventEnvelope envelope;
+        std::uint32_t serial = 0;
+        if (xSemaphoreTake(outboxMutex_, pdMS_TO_TICKS(50)) != pdTRUE) return;
+        if (outboxCount_ == 0) {
+            xSemaphoreGive(outboxMutex_);
+            return;
         }
-        outboxHead_ = (outboxHead_ + 1) % kOutboxCapacity;
-        outboxCount_--;
+        envelope = outbox_[outboxHead_];
+        serial = outboxHeadSerial_;
+        xSemaphoreGive(outboxMutex_);
+
+        if (!publishEnvelope(envelope)) return;  // leave it queued, retry next tick
+
+        if (xSemaphoreTake(outboxMutex_, pdMS_TO_TICKS(50)) != pdTRUE) return;
+        // If enqueue() dropped this event as "oldest" meanwhile, it is already gone.
+        if (serial == outboxHeadSerial_ && outboxCount_ > 0) {
+            outboxHead_ = (outboxHead_ + 1) % kOutboxCapacity;
+            outboxCount_--;
+            outboxHeadSerial_++;
+        }
+        xSemaphoreGive(outboxMutex_);
     }
 }
 
