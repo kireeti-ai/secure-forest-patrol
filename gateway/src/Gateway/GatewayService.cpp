@@ -130,6 +130,37 @@ void GatewayService::handleReceivedPacket(const lora::RawRadioPacket& packet, lo
                 Serial.printf("RMS   : %u\n", envelope.acousticTriggerRms);
                 Serial.printf("SEQ   : %u\n", parsed.sequenceNumber);
                 Serial.printf("RSSI  : %d dBm  SNR: %.1f dB\n", packet.rssiDbm, static_cast<double>(packet.snrDb));
+            } else if (parsed.payloadSize >= 14 &&
+                       parsed.payload[0] == 0x56U &&
+                       parsed.payload[1] == 0x01U &&
+                       parsed.payload[2] >= 1U && parsed.payload[2] <= 3U &&
+                       parsed.payload[3] <= 10U &&
+                       parsed.payloadSize == static_cast<std::size_t>(10U + parsed.payload[3])) {
+                // Two-factor verification event: ['V', v1, status, uidLen, uid[uidLen],
+                // claimedPageId u16 LE, actualPageId u16 LE, score u16 LE].
+                envelope.hasVerification = true;
+                envelope.verifyStatus = parsed.payload[2];
+                envelope.verifyUidLength = parsed.payload[3];
+                std::size_t off = 4U;
+                for (std::size_t index = 0U; index < envelope.verifyUidLength; ++index) {
+                    envelope.verifyUid[index] = parsed.payload[off + index];
+                }
+                off += envelope.verifyUidLength;
+                envelope.verifyClaimedPageId = static_cast<std::uint16_t>(parsed.payload[off] | (parsed.payload[off + 1] << 8));
+                off += 2U;
+                envelope.verifyActualPageId = static_cast<std::uint16_t>(parsed.payload[off] | (parsed.payload[off + 1] << 8));
+                off += 2U;
+                envelope.verifyScore = static_cast<std::uint16_t>(parsed.payload[off] | (parsed.payload[off + 1] << 8));
+
+                const char* statusStr = envelope.verifyStatus == 1 ? "MATCH" : envelope.verifyStatus == 2 ? "MISMATCH" : "TIMEOUT";
+                Serial.println("================================");
+                Serial.println("VERIFICATION EVENT RECEIVED");
+                Serial.println("================================");
+                Serial.printf("Node   : NODE_%02X\n", parsed.sourceId);
+                Serial.printf("Status : %s\n", statusStr);
+                Serial.printf("Claimed page : %u  Actual page : %u  Score : %u\n",
+                              envelope.verifyClaimedPageId, envelope.verifyActualPageId, envelope.verifyScore);
+                Serial.printf("SEQ    : %u\n", parsed.sequenceNumber);
             } else if (parsed.payloadSize == 9) {
                 envelope.hasRtc = true;
                 envelope.rtcYear = 2000 + parsed.payload[0];

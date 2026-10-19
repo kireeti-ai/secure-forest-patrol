@@ -10,14 +10,12 @@ import { useEffect, useRef } from "react";
 import { API_BASE_URL } from "./api";
 
 export type ForestWsEventType =
-  | "PATROL_EVENT_VERIFIED"
-  | "PATROL_EVENT_REJECTED"
   | "ACOUSTIC_EVENT_RECEIVED"
-  | "LEDGER_VERIFICATION_RESULT"
   | "NODE_STATUS_CHANGED"
   | "GATEWAY_STATUS_CHANGED"
   | "SYNC_UPDATED"
-  | "RFID_SCAN_RECEIVED";
+  | "RFID_SCAN_RECEIVED"
+  | "VERIFICATION_RECEIVED";
 
 export interface ForestWsMessage {
   type: ForestWsEventType;

@@ -27,7 +27,7 @@ constexpr size_t kMaxPayload = 24;
 constexpr uint8_t kRecordMagic = 0xE7;
 constexpr uint8_t kRecordVersion = 1;
 
-enum class EventType : uint8_t { Rfid = 1, Acoustic = 2, Test = 3 };
+enum class EventType : uint8_t { Rfid = 1, Acoustic = 2, Test = 3, Fingerprint = 4, Verification = 5 };
 enum class SyncStatus : uint8_t { PendingSync = 1, Synced = 2 };
 
 struct EventRecord {

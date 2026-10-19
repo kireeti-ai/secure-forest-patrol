@@ -1,0 +1,22 @@
+{
+  "review_states": [
+    "PENDING",
+    "ACCEPTED",
+    "RELABEL_REQUIRED",
+    "AMBIGUOUS",
+    "EXCLUDED",
+    "NEEDS_SECOND_REVIEW"
+  ],
+  "required_fields": [
+    "candidate_id",
+    "reviewer_id",
+    "review_decision",
+    "label_confidence",
+    "event_audible",
+    "event_start_s",
+    "event_end_s",
+    "final_adjudication_status"
+  ],
+  "timestamp_format": "ISO-8601 UTC",
+  "human_review_required": true
+}

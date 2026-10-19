@@ -1,0 +1,68 @@
+{
+  "audit_date": "2026-10-19",
+  "external_audio_downloads": 0,
+  "frozen_artifacts_modified": false,
+  "preprocessing_contract": {
+    "sample_rate_hz": 16000,
+    "channels": 1,
+    "window_seconds": 1.0,
+    "hop_seconds": 0.5,
+    "n_mels": 40,
+    "n_fft": 512,
+    "feature_hop_samples": 160,
+    "peak_target_db": -3.0,
+    "feature_mean": -36.31850051879883,
+    "feature_std": 21.19044303894043,
+    "model_input_shape": [40, 101, 1]
+  },
+  "master_manifest": {
+    "rows": 58918,
+    "original_recordings": 1975,
+    "sample_rate_hz": [16000],
+    "by_dataset": {
+      "rodopi": {"recordings": 9, "segments": 26697, "background": 25056, "chainsaw": 1641, "gunshot": 0},
+      "sensing_forest": {"recordings": 34, "segments": 18338, "background": 18338, "chainsaw": 0, "gunshot": 0},
+      "fsc22": {"recordings": 939, "segments": 7676, "background": 6665, "chainsaw": 669, "gunshot": 342},
+      "esc50_hf": {"recordings": 493, "segments": 4120, "background": 3764, "chainsaw": 356, "gunshot": 0},
+      "rfcx_frugalai": {"recordings": 400, "segments": 1987, "background": 1246, "chainsaw": 741, "gunshot": 0},
+      "c3gd": {"recordings": 100, "segments": 100, "background": 0, "chainsaw": 0, "gunshot": 100}
+    }
+  },
+  "frozen_manifests": {
+    "train_rows": 28741,
+    "validation_rows": 6999,
+    "test_rows": 2119,
+    "frozen_source_domains": ["rodopi", "fsc22", "esc50_hf", "rfcx_frugalai", "c3gd"],
+    "sensing_forest_in_frozen_partitions": false
+  },
+  "phase4_3": {
+    "candidate_rows": 777,
+    "unique_candidate_ids": 777,
+    "training_eligible_rows": 0,
+    "decisions_observed": {"PENDING": 776, "ACCEPTED": 1},
+    "license_states": {"QUARANTINED": 437, "RESEARCH_ONLY": 330, "ELIGIBLE_WITH_ATTRIBUTION": 10}
+  },
+  "frozen_duplicate_audit": {
+    "exact_duplicate_rows": 5008,
+    "exact_duplicate_groups": 2504,
+    "cross_split_groups": 0,
+    "known_rodopi_duplicate_group": ["rodopi_RP3_0h30_to1h20", "rodopi_RP6_0h30_to1h20"]
+  },
+  "online_candidates": [
+    {"rank": 1, "name": "Kenya Forest Sounds Dataset", "url": "https://zenodo.org/records/21443074", "coverage": ["background", "chainsaw"], "reported_recordings": 5500, "reported_license": "CC BY 4.0", "status": "promising_conditional", "blockers": ["no event timestamps demonstrated", "source/session metadata and selective access require verification", "external duplicate check pending"]},
+    {"rank": 2, "name": "Tropical forest gunshot classification training audio dataset", "url": "https://data.mendeley.com/datasets/x48cwz364j/3", "coverage": ["background", "gunshot"], "reported_recordings": {"gunshot": 749, "background": ">35000"}, "reported_license": "CC BY 4.0", "status": "promising_conditional", "blockers": ["download-all presentation", "selective access and exact source manifest require verification", "external duplicate check pending"]},
+    {"rank": 3, "name": "Vietnam passive-acoustic gunshot benchmark", "url": "https://zenodo.org/records/13893977", "coverage": ["gunshot", "background"], "reported_archive_mb": 396.1, "status": "evaluation_only_candidate", "blockers": ["includes Belize derivative", "source-group manifest and license not established"]},
+    {"rank": 4, "name": "IOAI 2026 Nightwatch", "url": "https://huggingface.co/datasets/pkasila/ioai26-ht1-nightwatch", "coverage": ["background-like classes", "chainsaw", "gunshot"], "reported_recordings": 1283, "reported_size_gb": 2.03, "reported_license": "CC BY-SA 4.0", "status": "verification_lead_only", "blockers": ["original provenance and timestamps unclear", "underlying-source overlap unresolved"]},
+    {"rank": 5, "name": "Gunshot/Gunfire Audio Dataset", "url": "https://zenodo.org/records/7004819", "coverage": ["gunshot"], "reported_size_gb": 1.6, "status": "low_priority", "blockers": ["license not exposed", "outdoor range rather than forest domain"]},
+    {"name": "Rodopi chainsaw dataset", "url": "https://zenodo.org/records/5824433", "status": "reject_as_new", "reason": "already present locally; known exact duplicate source group"},
+    {"name": "Sensing the Forest", "url": "https://zenodo.org/records/18909809", "status": "reject_as_new", "reason": "already present locally; natural soundscape has no event labels"},
+    {"name": "FSM5 / ForNet", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13351060/", "status": "reject_as_independent", "reason": "aggregates ESC-50, UrbanSound8K, Freesound, and AudioSet"},
+    {"name": "Illinois gunshot dataset", "url": "https://databank.illinois.edu/datasets/IDB-5664241", "status": "unverified", "reason": "official page returned 403; coverage, files, license, and metadata not established"}
+  ],
+  "recommended_acquisition": {
+    "status": "conditional_verification_only",
+    "sources": ["Kenya Forest Sounds Dataset", "Tropical forest gunshot classification training audio dataset"],
+    "target_original_recordings": {"kenya_background": "30-50", "kenya_chainsaw": "20-30", "belize_gunshot": "20-30", "belize_background_control": "small source-grouped control sample"},
+    "requirement": "No acquisition until file-level provenance, license, source grouping, selective access, and exact/near-duplicate checks are completed."
+  }
+}

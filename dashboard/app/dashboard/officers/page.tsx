@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { fetchOfficerPresence, OfficerPresence, PresenceState } from "../../../lib/rfidApi";
+import { fetchOfficerPresence, fetchVerificationEvents, OfficerPresence, PresenceState, VerificationEvent } from "../../../lib/rfidApi";
 import { Card } from "../../../components/ui/Card";
 import { SectionHeader } from "../../../components/ui/SectionHeader";
 import { StatusBadge } from "../../../components/ui/StatusBadge";
@@ -24,6 +24,7 @@ const clock = (iso: string | null) => (iso ? new Date(iso).toLocaleTimeString([]
 
 export default function OfficersPage() {
   const [officers, setOfficers] = useState<OfficerPresence[]>([]);
+  const [proxyAttempts, setProxyAttempts] = useState<VerificationEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -34,6 +35,14 @@ export default function OfficersPage() {
         .then((data) => { if (active) { setOfficers(data); setError(""); } })
         .catch((err: Error) => { if (active) setError(err.message); })
         .finally(() => { if (active) setLoading(false); });
+    load();
+    const timer = setInterval(load, 5000);
+    return () => { active = false; clearInterval(timer); };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    const load = () => fetchVerificationEvents("MISMATCH").then((data) => { if (active) setProxyAttempts(data); }).catch(() => {});
     load();
     const timer = setInterval(load, 5000);
     return () => { active = false; clearInterval(timer); };
@@ -53,7 +62,7 @@ export default function OfficersPage() {
     <div className="dashboard-page">
       <header className="page-header">
         <h1>Officers</h1>
-        <p>Who has scanned in today, from RFID card reads at the checkpoint nodes.</p>
+        <p>Who has scanned in today. Checkpoints are two-factor: a card tap, then a matching fingerprint within the window.</p>
       </header>
 
       <div className="stat-grid">
@@ -70,7 +79,7 @@ export default function OfficersPage() {
           {error && <p role="alert" style={{ color: "var(--color-danger)" }}>{error}</p>}
           <table>
             <thead>
-              <tr><th>Officer</th><th>Checkpoint</th><th>Card</th><th>Status today</th><th className="num">In</th><th className="num">Out</th></tr>
+              <tr><th>Officer</th><th>Checkpoint</th><th>Card</th><th>Fingerprint</th><th>Status today</th><th className="num">In</th><th className="num">Out</th></tr>
             </thead>
             <tbody>
               {officers.map((o) => {
@@ -80,6 +89,7 @@ export default function OfficersPage() {
                     <td>{o.name}<span className="scan-sub">{o.employee_id}</span></td>
                     <td>{o.checkpoints.length ? o.checkpoints.join(", ") : "Any"}</td>
                     <td className="t-mono">{o.rfid_uid ?? "—"}</td>
+                    <td className="t-mono">{o.fingerprint_page_id ?? "—"}</td>
                     <td><StatusBadge label={st.label} tone={st.tone} /></td>
                     <td className="num t-mono">{clock(o.entry_at)}</td>
                     <td className="num t-mono">{clock(o.exit_at)}</td>
@@ -92,12 +102,37 @@ export default function OfficersPage() {
         </div>
       </Card>
 
+      <Card>
+        <SectionHeader title="Proxy attempts" />
+        <div className="off-body">
+          <p>A card was tapped, but the fingerprint presented within the window belonged to someone else (or no enrolled finger at all). Shown here instead of being silently dropped.</p>
+          <table>
+            <thead>
+              <tr><th>Checkpoint</th><th>Card claimed</th><th>Finger actually matched</th><th className="num">Score</th><th className="num">When</th></tr>
+            </thead>
+            <tbody>
+              {proxyAttempts.map((e) => (
+                <tr key={e.id}>
+                  <td>{e.checkpoint_id ?? e.node_id}</td>
+                  <td>{e.claimed_name ?? e.claimed_employee_id ?? e.claimed_uid}</td>
+                  <td>{e.actual_name ?? e.actual_employee_id ?? (e.actual_page_id === 65535 ? "none presented" : `page ${e.actual_page_id}`)}</td>
+                  <td className="num t-mono">{e.score}</td>
+                  <td className="num t-mono">{clock(e.timestamp)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {proxyAttempts.length === 0 && <p className="scan-empty">No proxy attempts recorded.</p>}
+        </div>
+      </Card>
+
       <dl className="off-basis">
         <dt>How status is decided</dt>
         <dd>
           {STATES.map((s) => <span key={s.key}><b>{s.label}</b>: {s.help}. </span>)}
-          The day runs on {tz || "the configured timezone"}; the cut-off is {cutoff}. The first authorised card read of the day is the check-in, a later read
-          (at least 2 minutes after) is the check-out, and a read at a checkpoint that is not the officer&apos;s own is not counted.
+          The day runs on {tz || "the configured timezone"}; the cut-off is {cutoff}. A card tap alone does not mark attendance -- the officer must also present
+          their enrolled fingerprint at the same checkpoint within the verification window. The first such verified visit of the day is the check-in, a later
+          one (at least 2 minutes after) is the check-out, and a read at a checkpoint that is not the officer&apos;s own is not counted.
         </dd>
       </dl>
     </div>

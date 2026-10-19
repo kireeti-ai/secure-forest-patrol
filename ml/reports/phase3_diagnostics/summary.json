@@ -1,0 +1,852 @@
+{
+  "validation": {
+    "baseline_single_window": {
+      "accuracy": 0.8842691813116159,
+      "balanced_accuracy": 0.6860011834631123,
+      "macro_precision": 0.4996667828663193,
+      "macro_recall": 0.6860011834631123,
+      "macro_f1": 0.5482588972118193,
+      "per_class_precision": {
+        "background": 0.9610158524749272,
+        "chainsaw": 0.32868217054263565,
+        "gunshot": 0.20930232558139536
+      },
+      "per_class_recall": {
+        "background": 0.913859406245193,
+        "chainsaw": 0.4774774774774775,
+        "gunshot": 0.6666666666666666
+      },
+      "per_class_f1": {
+        "background": 0.9368445951273358,
+        "chainsaw": 0.38934802571166205,
+        "gunshot": 0.3185840707964602
+      },
+      "confusion_matrix": [
+        [
+          5941,
+          426,
+          134
+        ],
+        [
+          230,
+          212,
+          2
+        ],
+        [
+          11,
+          7,
+          36
+        ]
+      ],
+      "background_false_positive_windows": 560,
+      "background_false_positive_rate": 0.08614059375480695,
+      "candidate_alerts": 817,
+      "confirmed_alerts": 817,
+      "uncertain_windows": 0,
+      "suppressed_duplicate_candidates": 0,
+      "recordings": 284,
+      "recordings_with_background_false_positive": 129,
+      "recordings_with_event_positive_decision": 186,
+      "event_level_metrics": "unavailable: frozen manifests lack reliable event intervals/time denominators for this replay"
+    },
+    "temporal_2_of_2": {
+      "accuracy": 0.899271324474925,
+      "balanced_accuracy": 0.504770960777729,
+      "macro_precision": 0.4730275176151655,
+      "macro_recall": 0.504770960777729,
+      "macro_f1": 0.4852572222954797,
+      "per_class_precision": {
+        "background": 0.9507458048477315,
+        "chainsaw": 0.3474576271186441,
+        "gunshot": 0.12087912087912088
+      },
+      "per_class_recall": {
+        "background": 0.9412398092601139,
+        "chainsaw": 0.36936936936936937,
+        "gunshot": 0.2037037037037037
+      },
+      "per_class_f1": {
+        "background": 0.9459689263353173,
+        "chainsaw": 0.35807860262008734,
+        "gunshot": 0.15172413793103448
+      },
+      "confusion_matrix": [
+        [
+          6119,
+          303,
+          79
+        ],
+        [
+          279,
+          164,
+          1
+        ],
+        [
+          38,
+          5,
+          11
+        ]
+      ],
+      "background_false_positive_windows": 382,
+      "background_false_positive_rate": 0.05876019073988617,
+      "candidate_alerts": 563,
+      "confirmed_alerts": 563,
+      "uncertain_windows": 254,
+      "suppressed_duplicate_candidates": 0,
+      "recordings": 284,
+      "recordings_with_background_false_positive": 92,
+      "recordings_with_event_positive_decision": 134,
+      "event_level_metrics": "unavailable: frozen manifests lack reliable event intervals/time denominators for this replay"
+    },
+    "temporal_2_of_3": {
+      "accuracy": 0.897699671381626,
+      "balanced_accuracy": 0.5185485054351383,
+      "macro_precision": 0.47569372970659,
+      "macro_recall": 0.5185485054351383,
+      "macro_f1": 0.49163641779632977,
+      "per_class_precision": {
+        "background": 0.9515123168069847,
+        "chainsaw": 0.34291581108829566,
+        "gunshot": 0.1326530612244898
+      },
+      "per_class_recall": {
+        "background": 0.9387786494385479,
+        "chainsaw": 0.3761261261261261,
+        "gunshot": 0.24074074074074073
+      },
+      "per_class_f1": {
+        "background": 0.9451025938830817,
+        "chainsaw": 0.35875402792696026,
+        "gunshot": 0.17105263157894737
+      },
+      "confusion_matrix": [
+        [
+          6103,
+          314,
+          84
+        ],
+        [
+          276,
+          167,
+          1
+        ],
+        [
+          35,
+          6,
+          13
+        ]
+      ],
+      "background_false_positive_windows": 398,
+      "background_false_positive_rate": 0.06122135056145209,
+      "candidate_alerts": 585,
+      "confirmed_alerts": 585,
+      "uncertain_windows": 232,
+      "suppressed_duplicate_candidates": 0,
+      "recordings": 284,
+      "recordings_with_background_false_positive": 92,
+      "recordings_with_event_positive_decision": 134,
+      "event_level_metrics": "unavailable: frozen manifests lack reliable event intervals/time denominators for this replay"
+    },
+    "temporal_3_of_4": {
+      "accuracy": 0.9061294470638662,
+      "balanced_accuracy": 0.4542410430735304,
+      "macro_precision": 0.4631051779951958,
+      "macro_recall": 0.4542410430735304,
+      "macro_f1": 0.4574611794433654,
+      "per_class_precision": {
+        "background": 0.9458758957158103,
+        "chainsaw": 0.353887399463807,
+        "gunshot": 0.08955223880597014
+      },
+      "per_class_recall": {
+        "background": 0.9543147208121827,
+        "chainsaw": 0.2972972972972973,
+        "gunshot": 0.1111111111111111
+      },
+      "per_class_f1": {
+        "background": 0.9500765696784074,
+        "chainsaw": 0.32313341493268055,
+        "gunshot": 0.09917355371900827
+      },
+      "confusion_matrix": [
+        [
+          6204,
+          236,
+          61
+        ],
+        [
+          312,
+          132,
+          0
+        ],
+        [
+          43,
+          5,
+          6
+        ]
+      ],
+      "background_false_positive_windows": 297,
+      "background_false_positive_rate": 0.04568527918781726,
+      "candidate_alerts": 440,
+      "confirmed_alerts": 440,
+      "uncertain_windows": 377,
+      "suppressed_duplicate_candidates": 0,
+      "recordings": 284,
+      "recordings_with_background_false_positive": 72,
+      "recordings_with_event_positive_decision": 109,
+      "event_level_metrics": "unavailable: frozen manifests lack reliable event intervals/time denominators for this replay"
+    },
+    "reject_margin_0.10": {
+      "accuracy": 0.8916988141163024,
+      "balanced_accuracy": 0.6804474448298476,
+      "macro_precision": 0.5113904104289958,
+      "macro_recall": 0.6804474448298476,
+      "macro_f1": 0.558305645030387,
+      "per_class_precision": {
+        "background": 0.9599807907795742,
+        "chainsaw": 0.35126050420168065,
+        "gunshot": 0.2229299363057325
+      },
+      "per_class_recall": {
+        "background": 0.9224734656206738,
+        "chainsaw": 0.47072072072072074,
+        "gunshot": 0.6481481481481481
+      },
+      "per_class_f1": {
+        "background": 0.9408534672105429,
+        "chainsaw": 0.40230991337824834,
+        "gunshot": 0.33175355450236965
+      },
+      "confusion_matrix": [
+        [
+          5997,
+          382,
+          122
+        ],
+        [
+          235,
+          209,
+          0
+        ],
+        [
+          15,
+          4,
+          35
+        ]
+      ],
+      "background_false_positive_windows": 504,
+      "background_false_positive_rate": 0.07752653437932626,
+      "candidate_alerts": 752,
+      "confirmed_alerts": 752,
+      "uncertain_windows": 65,
+      "suppressed_duplicate_candidates": 0,
+      "recordings": 284,
+      "recordings_with_background_false_positive": 129,
+      "recordings_with_event_positive_decision": 175,
+      "event_level_metrics": "unavailable: frozen manifests lack reliable event intervals/time denominators for this replay"
+    },
+    "reject_margin_0.20": {
+      "accuracy": 0.899271324474925,
+      "balanced_accuracy": 0.6749449803595319,
+      "macro_precision": 0.5294911863638784,
+      "macro_recall": 0.6749449803595319,
+      "macro_f1": 0.5749294403904449,
+      "per_class_precision": {
+        "background": 0.9597336715282181,
+        "chainsaw": 0.3672014260249554,
+        "gunshot": 0.26153846153846155
+      },
+      "per_class_recall": {
+        "background": 0.9312413474850023,
+        "chainsaw": 0.46396396396396394,
+        "gunshot": 0.6296296296296297
+      },
+      "per_class_f1": {
+        "background": 0.9452728550238114,
+        "chainsaw": 0.4099502487562189,
+        "gunshot": 0.3695652173913043
+      },
+      "confusion_matrix": [
+        [
+          6054,
+          351,
+          96
+        ],
+        [
+          238,
+          206,
+          0
+        ],
+        [
+          16,
+          4,
+          34
+        ]
+      ],
+      "background_false_positive_windows": 447,
+      "background_false_positive_rate": 0.06875865251499769,
+      "candidate_alerts": 691,
+      "confirmed_alerts": 691,
+      "uncertain_windows": 126,
+      "suppressed_duplicate_candidates": 0,
+      "recordings": 284,
+      "recordings_with_background_false_positive": 129,
+      "recordings_with_event_positive_decision": 164,
+      "event_level_metrics": "unavailable: frozen manifests lack reliable event intervals/time denominators for this replay"
+    },
+    "reject_margin_0.30": {
+      "accuracy": 0.9051293041863123,
+      "balanced_accuracy": 0.6632314132314133,
+      "macro_precision": 0.5411389410446704,
+      "macro_recall": 0.6632314132314133,
+      "macro_f1": 0.5813109308084489,
+      "per_class_precision": {
+        "background": 0.9582614153459909,
+        "chainsaw": 0.3831041257367387,
+        "gunshot": 0.28205128205128205
+      },
+      "per_class_recall": {
+        "background": 0.9393939393939394,
+        "chainsaw": 0.4391891891891892,
+        "gunshot": 0.6111111111111112
+      },
+      "per_class_f1": {
+        "background": 0.948733882243281,
+        "chainsaw": 0.4092339979013641,
+        "gunshot": 0.38596491228070173
+      },
+      "confusion_matrix": [
+        [
+          6107,
+          310,
+          84
+        ],
+        [
+          249,
+          195,
+          0
+        ],
+        [
+          17,
+          4,
+          33
+        ]
+      ],
+      "background_false_positive_windows": 394,
+      "background_false_positive_rate": 0.06060606060606061,
+      "candidate_alerts": 626,
+      "confirmed_alerts": 626,
+      "uncertain_windows": 191,
+      "suppressed_duplicate_candidates": 0,
+      "recordings": 284,
+      "recordings_with_background_false_positive": 129,
+      "recordings_with_event_positive_decision": 151,
+      "event_level_metrics": "unavailable: frozen manifests lack reliable event intervals/time denominators for this replay"
+    },
+    "duplicate_quiet_2_windows": {
+      "accuracy": 0.8842691813116159,
+      "balanced_accuracy": 0.6860011834631123,
+      "macro_precision": 0.4996667828663193,
+      "macro_recall": 0.6860011834631123,
+      "macro_f1": 0.5482588972118193,
+      "per_class_precision": {
+        "background": 0.9610158524749272,
+        "chainsaw": 0.32868217054263565,
+        "gunshot": 0.20930232558139536
+      },
+      "per_class_recall": {
+        "background": 0.913859406245193,
+        "chainsaw": 0.4774774774774775,
+        "gunshot": 0.6666666666666666
+      },
+      "per_class_f1": {
+        "background": 0.9368445951273358,
+        "chainsaw": 0.38934802571166205,
+        "gunshot": 0.3185840707964602
+      },
+      "confusion_matrix": [
+        [
+          5941,
+          426,
+          134
+        ],
+        [
+          230,
+          212,
+          2
+        ],
+        [
+          11,
+          7,
+          36
+        ]
+      ],
+      "background_false_positive_windows": 560,
+      "background_false_positive_rate": 0.08614059375480695,
+      "candidate_alerts": 817,
+      "confirmed_alerts": 232,
+      "uncertain_windows": 0,
+      "suppressed_duplicate_candidates": 585,
+      "recordings": 284,
+      "recordings_with_background_false_positive": 129,
+      "recordings_with_event_positive_decision": 186,
+      "event_level_metrics": "unavailable: frozen manifests lack reliable event intervals/time denominators for this replay"
+    },
+    "duplicate_quiet_4_windows": {
+      "accuracy": 0.8842691813116159,
+      "balanced_accuracy": 0.6860011834631123,
+      "macro_precision": 0.4996667828663193,
+      "macro_recall": 0.6860011834631123,
+      "macro_f1": 0.5482588972118193,
+      "per_class_precision": {
+        "background": 0.9610158524749272,
+        "chainsaw": 0.32868217054263565,
+        "gunshot": 0.20930232558139536
+      },
+      "per_class_recall": {
+        "background": 0.913859406245193,
+        "chainsaw": 0.4774774774774775,
+        "gunshot": 0.6666666666666666
+      },
+      "per_class_f1": {
+        "background": 0.9368445951273358,
+        "chainsaw": 0.38934802571166205,
+        "gunshot": 0.3185840707964602
+      },
+      "confusion_matrix": [
+        [
+          5941,
+          426,
+          134
+        ],
+        [
+          230,
+          212,
+          2
+        ],
+        [
+          11,
+          7,
+          36
+        ]
+      ],
+      "background_false_positive_windows": 560,
+      "background_false_positive_rate": 0.08614059375480695,
+      "candidate_alerts": 817,
+      "confirmed_alerts": 212,
+      "uncertain_windows": 0,
+      "suppressed_duplicate_candidates": 605,
+      "recordings": 284,
+      "recordings_with_background_false_positive": 129,
+      "recordings_with_event_positive_decision": 186,
+      "event_level_metrics": "unavailable: frozen manifests lack reliable event intervals/time denominators for this replay"
+    },
+    "duplicate_quiet_6_windows": {
+      "accuracy": 0.8842691813116159,
+      "balanced_accuracy": 0.6860011834631123,
+      "macro_precision": 0.4996667828663193,
+      "macro_recall": 0.6860011834631123,
+      "macro_f1": 0.5482588972118193,
+      "per_class_precision": {
+        "background": 0.9610158524749272,
+        "chainsaw": 0.32868217054263565,
+        "gunshot": 0.20930232558139536
+      },
+      "per_class_recall": {
+        "background": 0.913859406245193,
+        "chainsaw": 0.4774774774774775,
+        "gunshot": 0.6666666666666666
+      },
+      "per_class_f1": {
+        "background": 0.9368445951273358,
+        "chainsaw": 0.38934802571166205,
+        "gunshot": 0.3185840707964602
+      },
+      "confusion_matrix": [
+        [
+          5941,
+          426,
+          134
+        ],
+        [
+          230,
+          212,
+          2
+        ],
+        [
+          11,
+          7,
+          36
+        ]
+      ],
+      "background_false_positive_windows": 560,
+      "background_false_positive_rate": 0.08614059375480695,
+      "candidate_alerts": 817,
+      "confirmed_alerts": 202,
+      "uncertain_windows": 0,
+      "suppressed_duplicate_candidates": 615,
+      "recordings": 284,
+      "recordings_with_background_false_positive": 129,
+      "recordings_with_event_positive_decision": 186,
+      "event_level_metrics": "unavailable: frozen manifests lack reliable event intervals/time denominators for this replay"
+    }
+  },
+  "selected_components": {
+    "temporal": "baseline_single_window",
+    "reject": "reject_margin_0.30",
+    "duplicate": "duplicate_quiet_4_windows"
+  },
+  "locked_test": {
+    "baseline_single_window": {
+      "configuration": "baseline_single_window",
+      "accuracy": 0.7215667767815007,
+      "balanced_accuracy": 0.798932910646556,
+      "macro_precision": 0.5322104551693598,
+      "macro_recall": 0.798932910646556,
+      "macro_f1": 0.5759599352819692,
+      "per_class_precision": {
+        "background": 0.9651162790697675,
+        "chainsaw": 0.3553956834532374,
+        "gunshot": 0.27611940298507465
+      },
+      "per_class_recall": {
+        "background": 0.6990454800673779,
+        "chainsaw": 0.8372881355932204,
+        "gunshot": 0.8604651162790697
+      },
+      "per_class_f1": {
+        "background": 0.8108108108108109,
+        "chainsaw": 0.498989898989899,
+        "gunshot": 0.4180790960451977
+      },
+      "confusion_matrix": [
+        [
+          1245,
+          448,
+          88
+        ],
+        [
+          39,
+          247,
+          9
+        ],
+        [
+          6,
+          0,
+          37
+        ]
+      ],
+      "background_false_positive_windows": 536,
+      "background_false_positive_rate": 0.3009545199326221,
+      "candidate_alerts": 829,
+      "confirmed_alerts": 829,
+      "uncertain_windows": 0,
+      "suppressed_duplicate_candidates": 0,
+      "recordings": 286,
+      "recordings_with_background_false_positive": 121,
+      "recordings_with_event_positive_decision": 176,
+      "event_level_metrics": "unavailable: frozen manifests lack reliable event intervals/time denominators for this replay"
+    },
+    "temporal_confirmation_only": {
+      "configuration": "temporal_confirmation_only",
+      "accuracy": 0.7215667767815007,
+      "balanced_accuracy": 0.798932910646556,
+      "macro_precision": 0.5322104551693598,
+      "macro_recall": 0.798932910646556,
+      "macro_f1": 0.5759599352819692,
+      "per_class_precision": {
+        "background": 0.9651162790697675,
+        "chainsaw": 0.3553956834532374,
+        "gunshot": 0.27611940298507465
+      },
+      "per_class_recall": {
+        "background": 0.6990454800673779,
+        "chainsaw": 0.8372881355932204,
+        "gunshot": 0.8604651162790697
+      },
+      "per_class_f1": {
+        "background": 0.8108108108108109,
+        "chainsaw": 0.498989898989899,
+        "gunshot": 0.4180790960451977
+      },
+      "confusion_matrix": [
+        [
+          1245,
+          448,
+          88
+        ],
+        [
+          39,
+          247,
+          9
+        ],
+        [
+          6,
+          0,
+          37
+        ]
+      ],
+      "background_false_positive_windows": 536,
+      "background_false_positive_rate": 0.3009545199326221,
+      "candidate_alerts": 829,
+      "confirmed_alerts": 829,
+      "uncertain_windows": 0,
+      "suppressed_duplicate_candidates": 0,
+      "recordings": 286,
+      "recordings_with_background_false_positive": 121,
+      "recordings_with_event_positive_decision": 176,
+      "event_level_metrics": "unavailable: frozen manifests lack reliable event intervals/time denominators for this replay"
+    },
+    "reject_state_only": {
+      "configuration": "reject_state_only",
+      "accuracy": 0.7885795186408683,
+      "balanced_accuracy": 0.8066540855086438,
+      "macro_precision": 0.5813072385526468,
+      "macro_recall": 0.8066540855086438,
+      "macro_f1": 0.6417003222066742,
+      "per_class_precision": {
+        "background": 0.955193482688391,
+        "chainsaw": 0.4149908592321755,
+        "gunshot": 0.37373737373737376
+      },
+      "per_class_recall": {
+        "background": 0.790005614823133,
+        "chainsaw": 0.7694915254237288,
+        "gunshot": 0.8604651162790697
+      },
+      "per_class_f1": {
+        "background": 0.8647818070067609,
+        "chainsaw": 0.5391923990498813,
+        "gunshot": 0.5211267605633803
+      },
+      "confusion_matrix": [
+        [
+          1407,
+          320,
+          54
+        ],
+        [
+          60,
+          227,
+          8
+        ],
+        [
+          6,
+          0,
+          37
+        ]
+      ],
+      "background_false_positive_windows": 374,
+      "background_false_positive_rate": 0.20999438517686692,
+      "candidate_alerts": 646,
+      "confirmed_alerts": 646,
+      "uncertain_windows": 183,
+      "suppressed_duplicate_candidates": 0,
+      "recordings": 286,
+      "recordings_with_background_false_positive": 121,
+      "recordings_with_event_positive_decision": 148,
+      "event_level_metrics": "unavailable: frozen manifests lack reliable event intervals/time denominators for this replay"
+    },
+    "duplicate_suppression_only": {
+      "configuration": "duplicate_suppression_only",
+      "accuracy": 0.7215667767815007,
+      "balanced_accuracy": 0.798932910646556,
+      "macro_precision": 0.5322104551693598,
+      "macro_recall": 0.798932910646556,
+      "macro_f1": 0.5759599352819692,
+      "per_class_precision": {
+        "background": 0.9651162790697675,
+        "chainsaw": 0.3553956834532374,
+        "gunshot": 0.27611940298507465
+      },
+      "per_class_recall": {
+        "background": 0.6990454800673779,
+        "chainsaw": 0.8372881355932204,
+        "gunshot": 0.8604651162790697
+      },
+      "per_class_f1": {
+        "background": 0.8108108108108109,
+        "chainsaw": 0.498989898989899,
+        "gunshot": 0.4180790960451977
+      },
+      "confusion_matrix": [
+        [
+          1245,
+          448,
+          88
+        ],
+        [
+          39,
+          247,
+          9
+        ],
+        [
+          6,
+          0,
+          37
+        ]
+      ],
+      "background_false_positive_windows": 536,
+      "background_false_positive_rate": 0.3009545199326221,
+      "candidate_alerts": 829,
+      "confirmed_alerts": 199,
+      "uncertain_windows": 0,
+      "suppressed_duplicate_candidates": 630,
+      "recordings": 286,
+      "recordings_with_background_false_positive": 121,
+      "recordings_with_event_positive_decision": 176,
+      "event_level_metrics": "unavailable: frozen manifests lack reliable event intervals/time denominators for this replay"
+    },
+    "temporal_plus_reject": {
+      "configuration": "temporal_plus_reject",
+      "accuracy": 0.7885795186408683,
+      "balanced_accuracy": 0.8066540855086438,
+      "macro_precision": 0.5813072385526468,
+      "macro_recall": 0.8066540855086438,
+      "macro_f1": 0.6417003222066742,
+      "per_class_precision": {
+        "background": 0.955193482688391,
+        "chainsaw": 0.4149908592321755,
+        "gunshot": 0.37373737373737376
+      },
+      "per_class_recall": {
+        "background": 0.790005614823133,
+        "chainsaw": 0.7694915254237288,
+        "gunshot": 0.8604651162790697
+      },
+      "per_class_f1": {
+        "background": 0.8647818070067609,
+        "chainsaw": 0.5391923990498813,
+        "gunshot": 0.5211267605633803
+      },
+      "confusion_matrix": [
+        [
+          1407,
+          320,
+          54
+        ],
+        [
+          60,
+          227,
+          8
+        ],
+        [
+          6,
+          0,
+          37
+        ]
+      ],
+      "background_false_positive_windows": 374,
+      "background_false_positive_rate": 0.20999438517686692,
+      "candidate_alerts": 646,
+      "confirmed_alerts": 646,
+      "uncertain_windows": 183,
+      "suppressed_duplicate_candidates": 0,
+      "recordings": 286,
+      "recordings_with_background_false_positive": 121,
+      "recordings_with_event_positive_decision": 148,
+      "event_level_metrics": "unavailable: frozen manifests lack reliable event intervals/time denominators for this replay"
+    },
+    "temporal_plus_duplicate": {
+      "configuration": "temporal_plus_duplicate",
+      "accuracy": 0.7215667767815007,
+      "balanced_accuracy": 0.798932910646556,
+      "macro_precision": 0.5322104551693598,
+      "macro_recall": 0.798932910646556,
+      "macro_f1": 0.5759599352819692,
+      "per_class_precision": {
+        "background": 0.9651162790697675,
+        "chainsaw": 0.3553956834532374,
+        "gunshot": 0.27611940298507465
+      },
+      "per_class_recall": {
+        "background": 0.6990454800673779,
+        "chainsaw": 0.8372881355932204,
+        "gunshot": 0.8604651162790697
+      },
+      "per_class_f1": {
+        "background": 0.8108108108108109,
+        "chainsaw": 0.498989898989899,
+        "gunshot": 0.4180790960451977
+      },
+      "confusion_matrix": [
+        [
+          1245,
+          448,
+          88
+        ],
+        [
+          39,
+          247,
+          9
+        ],
+        [
+          6,
+          0,
+          37
+        ]
+      ],
+      "background_false_positive_windows": 536,
+      "background_false_positive_rate": 0.3009545199326221,
+      "candidate_alerts": 829,
+      "confirmed_alerts": 199,
+      "uncertain_windows": 0,
+      "suppressed_duplicate_candidates": 630,
+      "recordings": 286,
+      "recordings_with_background_false_positive": 121,
+      "recordings_with_event_positive_decision": 176,
+      "event_level_metrics": "unavailable: frozen manifests lack reliable event intervals/time denominators for this replay"
+    },
+    "all_three": {
+      "configuration": "all_three",
+      "accuracy": 0.7885795186408683,
+      "balanced_accuracy": 0.8066540855086438,
+      "macro_precision": 0.5813072385526468,
+      "macro_recall": 0.8066540855086438,
+      "macro_f1": 0.6417003222066742,
+      "per_class_precision": {
+        "background": 0.955193482688391,
+        "chainsaw": 0.4149908592321755,
+        "gunshot": 0.37373737373737376
+      },
+      "per_class_recall": {
+        "background": 0.790005614823133,
+        "chainsaw": 0.7694915254237288,
+        "gunshot": 0.8604651162790697
+      },
+      "per_class_f1": {
+        "background": 0.8647818070067609,
+        "chainsaw": 0.5391923990498813,
+        "gunshot": 0.5211267605633803
+      },
+      "confusion_matrix": [
+        [
+          1407,
+          320,
+          54
+        ],
+        [
+          60,
+          227,
+          8
+        ],
+        [
+          6,
+          0,
+          37
+        ]
+      ],
+      "background_false_positive_windows": 374,
+      "background_false_positive_rate": 0.20999438517686692,
+      "candidate_alerts": 646,
+      "confirmed_alerts": 161,
+      "uncertain_windows": 183,
+      "suppressed_duplicate_candidates": 485,
+      "recordings": 286,
+      "recordings_with_background_false_positive": 121,
+      "recordings_with_event_positive_decision": 148,
+      "event_level_metrics": "unavailable: frozen manifests lack reliable event intervals/time denominators for this replay"
+    }
+  },
+  "canonical_test_prediction_match": true
+}

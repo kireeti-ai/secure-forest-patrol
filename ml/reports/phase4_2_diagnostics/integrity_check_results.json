@@ -1,0 +1,15 @@
+{
+  "manifest_schema_valid": true,
+  "unique_candidate_ids": true,
+  "files_exist": true,
+  "hash_fields_valid": true,
+  "legal_status_complete": true,
+  "review_status_complete": true,
+  "candidate_overlap_with_frozen_eval": true,
+  "provenance_complete": true,
+  "eligibility_consistent": true,
+  "parent_groups_present": true,
+  "acquisition_manifest_consistent": true,
+  "human_review_performed": false,
+  "near_duplicate_review_complete": false
+}

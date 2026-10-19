@@ -1,0 +1,12 @@
+{
+  "decision": "KENYA_ACQUIRED_FOR_STAGING_ONLY_BELIZE_DEFERRED",
+  "kenya_audio_acquired": true,
+  "kenya_audio_files": 175,
+  "kenya_archive_verified": true,
+  "kenya_training_eligible_now": false,
+  "kenya_reason": "Archive integrity and audio format verified. All 129 chainsaw clips are preserved in staging, but source independence is not established: 104/129 share ZOOM0086 and the publisher does not define filename prefixes as parent recordings or sessions. No event timestamps are provided.",
+  "belize_audio_acquired": false,
+  "belize_reason": "Public page exposed no file-level manifest or authorized selective endpoint; Mendeley API requires OAuth and no credentials were supplied.",
+  "next_action": "Request publisher source-group/file manifest for Kenya and Belize; complete human/provenance review before any future training authorization.",
+  "phase5": "BLOCKED"
+}

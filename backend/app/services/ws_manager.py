@@ -87,3 +87,6 @@ def broadcast_gateway_status(gateway_id: str) -> None:
 
 def broadcast_rfid_scan(payload: dict) -> None:
     manager.schedule_broadcast("RFID_SCAN_RECEIVED", payload)
+
+def broadcast_verification(payload: dict) -> None:
+    manager.schedule_broadcast("VERIFICATION_RECEIVED", payload)

@@ -1,0 +1,57 @@
+{
+  "selection_split": "validation",
+  "test_locked_until_selection": true,
+  "canonical_test_prediction_match": true,
+  "configurations_evaluated": [
+    "baseline_single_window",
+    "temporal_2_of_2",
+    "temporal_2_of_3",
+    "temporal_3_of_4",
+    "reject_margin_0.10",
+    "reject_margin_0.20",
+    "reject_margin_0.30",
+    "duplicate_quiet_2_windows",
+    "duplicate_quiet_4_windows",
+    "duplicate_quiet_6_windows",
+    "baseline_single_window",
+    "temporal_confirmation_only",
+    "reject_state_only",
+    "duplicate_suppression_only",
+    "temporal_plus_reject",
+    "temporal_plus_duplicate",
+    "all_three"
+  ],
+  "selected_components": {
+    "temporal": "baseline_single_window",
+    "reject": "reject_margin_0.30",
+    "duplicate": "duplicate_quiet_4_windows"
+  },
+  "selected_test_configuration": "all_three",
+  "temporal_rule": "2 positive windows of the same event class within 2 half-second-indexed windows, maximum gap 1; state resets per recording",
+  "reject_rule": "validation-selected margin rule, if any; scores are uncalibrated",
+  "duplicate_rule": "same-class alerts suppressed while active; episode quiet period is 4 windows = 2.0 seconds; separate state per event class",
+  "event_level_metrics": "unavailable: no reliable event interval and recording-time denominator in frozen replay inputs",
+  "hashes_before": {
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/final.keras": "4ebad60f4de804cdf2659e34bed05e4b56dfc08bade8c1d3058657efaba430bd",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/forest_acoustic_fp32.tflite": "890cf5cd74b28c3618ddbf64bdc9399a68f9048c5fe1117b45177056bded3811",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/forest_acoustic_int8.tflite": "c9b3a391dc45b211587a5946ee15e357aef8c9c6baff6021866884b951972b9b",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/train_v1.csv": "95db880be030cc70dee4b2d76e9ed56e99eab9103faffdcebf92d21fbe7637dc",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/validation_v1.csv": "14b53fceb00cc4dd0e2fa8cf965ccedd458067fb4acae09aed20c2e7fbb2fa96",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/test_v1.csv": "efdb3aeffe986b0347af617575fc34734a12663557ec3ca755510f53ee9b2d28",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/train.npz": "9d98485170affd5891acac8d16658f8d9c642f9d9f76f4e3b43df1ccb676f6e1",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/validation.npz": "a356443e424f5903514130093f02ed4c5a6aa49f81f056ff06422a52dbd9c3b1",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/test.npz": "649a4a3dce19ff470ac773ea99e3d09459ef9b3d98b5a8c2c80f5c43f20743b9"
+  },
+  "hashes_after": {
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/final.keras": "4ebad60f4de804cdf2659e34bed05e4b56dfc08bade8c1d3058657efaba430bd",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/forest_acoustic_fp32.tflite": "890cf5cd74b28c3618ddbf64bdc9399a68f9048c5fe1117b45177056bded3811",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/forest_acoustic_int8.tflite": "c9b3a391dc45b211587a5946ee15e357aef8c9c6baff6021866884b951972b9b",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/train_v1.csv": "95db880be030cc70dee4b2d76e9ed56e99eab9103faffdcebf92d21fbe7637dc",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/validation_v1.csv": "14b53fceb00cc4dd0e2fa8cf965ccedd458067fb4acae09aed20c2e7fbb2fa96",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/test_v1.csv": "efdb3aeffe986b0347af617575fc34734a12663557ec3ca755510f53ee9b2d28",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/train.npz": "9d98485170affd5891acac8d16658f8d9c642f9d9f76f4e3b43df1ccb676f6e1",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/validation.npz": "a356443e424f5903514130093f02ed4c5a6aa49f81f056ff06422a52dbd9c3b1",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/test.npz": "649a4a3dce19ff470ac773ea99e3d09459ef9b3d98b5a8c2c80f5c43f20743b9"
+  },
+  "hashes_unchanged": true
+}

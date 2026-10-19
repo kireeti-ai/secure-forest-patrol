@@ -1,0 +1,24 @@
+{
+  "candidate_rows": 777,
+  "distinct_sources": 777,
+  "by_original_label": {
+    "background": 722,
+    "chainsaw": 35,
+    "gunshot": 20
+  },
+  "by_dataset": {
+    "fsc22": 432,
+    "esc50_hf": 320,
+    "rfcx_frugalai": 10,
+    "c3gd": 10,
+    "rodopi": 5
+  },
+  "license_categories": {
+    "quarantined_license_review": 437,
+    "research_only": 330,
+    "training_eligible": 10
+  },
+  "training_eligible_now": 0,
+  "research_only_license_rows": 330,
+  "quarantined_for_label_review": 777
+}

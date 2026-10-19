@@ -1,0 +1,102 @@
+{
+  "audit_scope": "online source investigation only; no external audio downloaded; no training",
+  "downloads_performed": 0,
+  "frozen_hashes": {
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/final.keras": "4ebad60f4de804cdf2659e34bed05e4b56dfc08bade8c1d3058657efaba430bd",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/forest_acoustic_fp32.tflite": "890cf5cd74b28c3618ddbf64bdc9399a68f9048c5fe1117b45177056bded3811",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/forest_acoustic_int8.tflite": "c9b3a391dc45b211587a5946ee15e357aef8c9c6baff6021866884b951972b9b",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/train_v1.csv": "95db880be030cc70dee4b2d76e9ed56e99eab9103faffdcebf92d21fbe7637dc",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/validation_v1.csv": "14b53fceb00cc4dd0e2fa8cf965ccedd458067fb4acae09aed20c2e7fbb2fa96",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/test_v1.csv": "efdb3aeffe986b0347af617575fc34734a12663557ec3ca755510f53ee9b2d28",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/train.npz": "9d98485170affd5891acac8d16658f8d9c642f9d9f76f4e3b43df1ccb676f6e1",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/validation.npz": "a356443e424f5903514130093f02ed4c5a6aa49f81f056ff06422a52dbd9c3b1",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/test.npz": "649a4a3dce19ff470ac773ea99e3d09459ef9b3d98b5a8c2c80f5c43f20743b9"
+  },
+  "frozen_manifest_rows": {
+    "train": 28741,
+    "validation": 6999,
+    "test": 2119
+  },
+  "frozen_distinct_sources": 1898,
+  "frozen_rows_by_dataset": {
+    "train": {
+      "rodopi": 19009,
+      "fsc22": 5507,
+      "esc50_hf": 2840,
+      "rfcx_frugalai": 1346,
+      "c3gd": 39
+    },
+    "validation": {
+      "rodopi": 5008,
+      "fsc22": 1064,
+      "esc50_hf": 584,
+      "rfcx_frugalai": 330,
+      "c3gd": 13
+    },
+    "test": {
+      "fsc22": 1105,
+      "esc50_hf": 696,
+      "rfcx_frugalai": 311,
+      "c3gd": 7
+    }
+  },
+  "frozen_distinct_sources_by_dataset": {
+    "train": {
+      "c3gd": 39,
+      "esc50_hf": 339,
+      "fsc22": 674,
+      "rfcx_frugalai": 271,
+      "rodopi": 5
+    },
+    "validation": {
+      "c3gd": 13,
+      "esc50_hf": 72,
+      "fsc22": 131,
+      "rfcx_frugalai": 66,
+      "rodopi": 2
+    },
+    "test": {
+      "c3gd": 7,
+      "esc50_hf": 82,
+      "fsc22": 134,
+      "rfcx_frugalai": 63
+    }
+  },
+  "phase4_3_candidate_rows": 777,
+  "phase4_3_candidate_unique_ids": 777,
+  "phase4_3_candidate_missing_files": 0,
+  "phase4_3_candidate_overlap_with_frozen_validation_test_sources": 0,
+  "frozen_exact_duplicate_rows": 5008,
+  "frozen_exact_duplicate_groups": 2504,
+  "frozen_exact_duplicate_cross_split_groups": 0,
+  "rodopi_frozen_sources": [
+    "rodopi_PR_20161205_115013",
+    "rodopi_RP11_5h50_to_6h20",
+    "rodopi_RP14_10h5m_to_10h30m",
+    "rodopi_RP15_1h10_till_1h25",
+    "rodopi_RP3_0h30_to1h20",
+    "rodopi_RP6_0h30_to1h20",
+    "rodopi_SW2_20181115_7h45_8h20"
+  ],
+  "preprocessing_contract": {
+    "sample_rate_hz": 16000,
+    "channels": 1,
+    "window_duration_s": 1.0,
+    "hop_duration_s": 0.5,
+    "normalization": "peak",
+    "target_db": -3.0,
+    "n_mels": 40,
+    "n_fft": 512,
+    "feature_hop_length": 160,
+    "power": 2.0,
+    "filter_enabled": false
+  },
+  "frozen_model_input_shape": [
+    40,
+    101,
+    1
+  ],
+  "frozen_feature_mean": -36.31850051879883,
+  "frozen_feature_std": 21.19044303894043,
+  "eligibility_policy": "No online source is eligible until license/provenance, source-group split protection, file integrity, and human label/event review pass."
+}

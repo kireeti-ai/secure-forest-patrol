@@ -1,0 +1,28 @@
+{
+  "decision": "TARGETED_REVIEW_RECOMMENDED",
+  "basis": [
+    "Validation chainsaw recall is 0.4887 and gunshot recall is 0.6852, with 225 and 10 false negatives to background respectively.",
+    "Validation background errors include 143 background-to-chainsaw and 46 background-to-gunshot windows.",
+    "A small existing Phase 4.3 first batch is already defined as 30 background, 20 chainsaw, and 10 gunshot candidates.",
+    "The evidence supports a bounded human review to resolve label/event uncertainty before any training decision; it does not justify online acquisition or review of all 777 candidates."
+  ],
+  "recommended_scope": {
+    "candidate_count": 60,
+    "existing_batch": "BATCH_1",
+    "by_class": {
+      "background": 30,
+      "chainsaw": 20,
+      "gunshot": 10
+    },
+    "status": "recommendation_only; no candidates marked reviewed or training eligible"
+  },
+  "next_action": "Review the existing Phase 4.3 BATCH_1 with the repaired reviewer, then reassess label quality, event occupancy, and eligibility. Keep model investigation diagnostic-only until those observations exist.",
+  "online_acquisition": "NO-GO",
+  "phase5": "BLOCKED",
+  "limitations": [
+    "No validation per-sample prediction CSV or validation confidence scores were found, so validation source concentration and confidence separation cannot be measured.",
+    "Phase 1 per-source and confidence evidence is from the frozen test diagnostic and is not used to tune thresholds or select candidate IDs here.",
+    "No audio was listened to in this audit; acoustic causes and label correctness remain unverified.",
+    "No candidate has been marked human-reviewed or training-eligible by this analysis."
+  ]
+}

@@ -27,6 +27,19 @@ build/
 .cache/
 compile_commands.json
 
+# ML datasets: raw/processed audio and feature caches are multi-GB and
+# regenerable from ml/datasets/manifests/ + the pipeline scripts -- never
+# commit them. Small candidate/report CSVs and manifests stay tracked.
+ml/datasets/raw/
+ml/datasets/processed/
+ml/datasets/processed_filtered/
+ml/datasets/features_cache/
+ml/datasets/features_cache_filtered/
+ml/datasets/interim/
+ml/datasets/phase4_5_acquisition/kenya_original/
+ml/datasets/phase4_5_acquisition/kenya_extracted/
+*.zip
+
 # OS / editor
 .DS_Store
 *.swp

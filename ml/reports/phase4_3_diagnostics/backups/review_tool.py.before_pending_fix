@@ -1,0 +1,74 @@
+#!/usr/bin/env python3
+"""Local, resumable reviewer for the Phase 4.3 queue.
+
+Writes only review_decisions.csv. It never edits Phase 4.2 artifacts or the
+Phase 4.3 manifest. Use on a machine with an audio interface.
+"""
+import argparse
+import csv
+import shutil
+import subprocess
+from datetime import datetime, timezone
+from pathlib import Path
+
+ROOT = Path(__file__).parents[2]
+QUEUE = ROOT / "datasets/phase4_3_candidate/review_queue.csv"
+OUTPUT = ROOT / "datasets/phase4_3_candidate/review_decisions.csv"
+STATES = {"a": "ACCEPTED", "r": "RELABEL_REQUIRED", "m": "AMBIGUOUS", "x": "EXCLUDED", "s": "NEEDS_SECOND_REVIEW"}
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--reviewer", required=True)
+    ap.add_argument("--limit", type=int, default=0)
+    args = ap.parse_args()
+    queue = list(csv.DictReader(QUEUE.open(newline="")))
+    if len({r["candidate_id"] for r in queue}) != len(queue):
+        raise SystemExit("Refusing to run: duplicate candidate IDs in queue")
+    existing = {}
+    if OUTPUT.exists():
+        for row in csv.DictReader(OUTPUT.open(newline="")):
+            cid = row["candidate_id"]
+            if cid in existing and existing[cid].get("decision") != row.get("decision"):
+                raise SystemExit(f"Refusing to run: conflicting duplicate decision for {cid}")
+            existing[cid] = row
+    pending = [r for r in queue if r["candidate_id"] not in existing]
+    if args.limit:
+        pending = pending[:args.limit]
+    fields = list(queue[0]) + ["human_verified_label", "reviewer_id", "review_timestamp_utc", "label_confidence", "target_event_audible", "event_start_s", "event_end_s", "partial_or_low_energy", "multi_event_indicator", "ambiguity_notes", "decision", "exclusion_reason"]
+    for item in pending:
+        print(f"\n{item['candidate_id']} | {item['source_dataset']} | proposed={item['original_label']} | {item['batch_membership']}")
+        print(item["audio_path"])
+        if shutil.which("afplay") and Path(item["audio_path"]).exists():
+            subprocess.run(["afplay", item["audio_path"]], check=False)
+        key = input("Decision [a/r/m/x/s, q=quit]: ").strip().lower()
+        if key == "q":
+            break
+        if key not in STATES:
+            print("Skipped; not recorded.")
+            continue
+        row = dict(item)
+        row.update({
+            "human_verified_label": input("Human label (blank if not assigned): ").strip(),
+            "reviewer_id": args.reviewer,
+            "review_timestamp_utc": datetime.now(timezone.utc).isoformat(),
+            "label_confidence": input("Confidence [high/medium/low]: ").strip(),
+            "target_event_audible": input("Event audible [YES/NO/UNCERTAIN]: ").strip().upper(),
+            "event_start_s": input("Start seconds (blank if unknown): ").strip(),
+            "event_end_s": input("End seconds (blank if unknown): ").strip(),
+            "partial_or_low_energy": input("Partial/low-energy [YES/NO/UNKNOWN]: ").strip().upper(),
+            "multi_event_indicator": input("Multiple event classes [YES/NO/UNKNOWN]: ").strip().upper(),
+            "ambiguity_notes": input("Notes: ").strip(),
+            "decision": STATES[key],
+            "exclusion_reason": input("Exclusion reason (blank if none): ").strip(),
+        })
+        existing[item["candidate_id"]] = row
+        with OUTPUT.open("w", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=fields)
+            writer.writeheader()
+            writer.writerows(existing.values())
+        print(f"Saved {STATES[key]}; total completed decisions: {len(existing)}")
+
+
+if __name__ == "__main__":
+    main()

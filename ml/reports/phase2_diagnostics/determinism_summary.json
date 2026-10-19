@@ -1,0 +1,12 @@
+{
+  "golden_sample_count": 10,
+  "repetitions_per_sample": 5,
+  "feature_max_abs_across_repeats": 0.0,
+  "feature_mean_abs_across_repeats": 0.0,
+  "feature_rmse_across_repeats": 0.0,
+  "quantized_input_disagreements_across_repeats": 0,
+  "output_max_abs_across_repeats": 0.0,
+  "output_mean_abs_across_repeats": 0.0,
+  "prediction_class_disagreements_across_repeats": 0,
+  "method": "same processed WAV decoded and passed through FeatureExtractor five times; model invoked five times per resulting input"
+}

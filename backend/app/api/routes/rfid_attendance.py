@@ -11,7 +11,7 @@ from app.api.dependencies.database import get_db
 from app.core.security import hash_password, require_roles
 from app.models.checkpoint import Checkpoint
 from app.models.operator_checkpoint_access import OperatorCheckpointAccess
-from app.models.rfid import Attendance, RfidEvent
+from app.models.rfid import Attendance, RfidEvent, VerificationEvent
 from app.models.user import User
 from app.services.attendance_state import absent_after, attendance_day, attendance_timezone, presence_state
 from app.services.rfid import invalid_reason
@@ -55,6 +55,10 @@ class RfidAssignment(BaseModel):
         return EmployeeCreate.normalize_rfid_uid(value)
 
 
+class FingerprintAssignment(BaseModel):
+    fingerprint_page_id: int | None = Field(default=None, ge=0, le=65535)
+
+
 class CheckpointAssignment(BaseModel):
     checkpoint_ids: list[str] = Field(max_length=100)
 
@@ -65,7 +69,8 @@ def _checkpoints_of(user: User) -> list[str]:
 
 def _employee_out(user: User) -> dict:
     return {"id": str(user.id), "employee_id": user.employee_id, "name": user.full_name,
-            "email": user.email, "role": user.role, "rfid_uid": user.rfid_uid, "active": user.is_active,
+            "email": user.email, "role": user.role, "rfid_uid": user.rfid_uid,
+            "fingerprint_page_id": user.fingerprint_page_id, "active": user.is_active,
             "checkpoints": _checkpoints_of(user)}
 
 
@@ -105,6 +110,25 @@ def assign_rfid(employee_id: str, payload: RfidAssignment, db: Session = Depends
     except Exception as exc:
         db.rollback()
         raise HTTPException(status_code=409, detail="RFID UID is already registered") from exc
+    db.refresh(employee)
+    return _employee_out(employee)
+
+
+@router.put("/employees/{employee_id}/fingerprint")
+def assign_fingerprint(employee_id: str, payload: FingerprintAssignment, db: Session = Depends(get_db),
+                       _: User = Depends(require_roles(*_OFFICER_ROLES))) -> dict:
+    """Assign, replace, or clear an employee's enrolled R307S fingerprint template id.
+
+    This must match the page id enrolled into node-firmware's kAllowedCards[] for the
+    checkpoint(s) this officer uses -- see node-firmware/src/fingerprint_enroll_diagnostic.cpp.
+    """
+    employee = _find_employee(employee_id, db)
+    employee.fingerprint_page_id = payload.fingerprint_page_id
+    try:
+        db.commit()
+    except Exception as exc:
+        db.rollback()
+        raise HTTPException(status_code=409, detail="Fingerprint page id is already registered") from exc
     db.refresh(employee)
     return _employee_out(employee)
 
@@ -160,6 +184,34 @@ def list_rfid_events(db: Session = Depends(get_db), _: User = Depends(require_ro
     return result
 
 
+@router.get("/verification-events")
+def list_verification_events(status: str | None = None, db: Session = Depends(get_db),
+                             _: User = Depends(require_roles(*_OFFICER_ROLES))) -> list[dict]:
+    """Two-factor checkpoint results (card + fingerprint). Pass ``status=MISMATCH`` to see
+    only possible proxy attempts (fingerprint did not match the claimed card's officer).
+    """
+    query = select(VerificationEvent).order_by(VerificationEvent.timestamp.desc()).limit(200)
+    if status:
+        query = query.where(VerificationEvent.status == status)
+    names_by_employee = {employee_id: name for employee_id, name in
+                         db.execute(select(User.employee_id, User.full_name).where(User.employee_id.is_not(None)))}
+    checkpoint_by_node = {nid: cid for nid, cid in db.execute(
+        select(Checkpoint.node_id, Checkpoint.checkpoint_id).where(Checkpoint.node_id.is_not(None)))}
+    result = []
+    for row in db.scalars(query):
+        result.append({
+            "id": str(row.id), "status": row.status, "checkpoint_id": checkpoint_by_node.get(row.node_id),
+            "claimed_uid": row.claimed_uid, "claimed_employee_id": row.claimed_employee_id,
+            "claimed_name": names_by_employee.get(row.claimed_employee_id),
+            "claimed_page_id": row.claimed_page_id, "actual_page_id": row.actual_page_id,
+            "actual_employee_id": row.actual_employee_id,
+            "actual_name": names_by_employee.get(row.actual_employee_id),
+            "score": row.score, "node_id": row.node_id, "sequence": row.sequence,
+            "timestamp": row.timestamp.isoformat(),
+        })
+    return result
+
+
 @router.get("/officer-presence")
 def officer_presence(db: Session = Depends(get_db), _: User = Depends(require_roles(*_OFFICER_ROLES))) -> list[dict]:
     """Return the real officer RFID roster and today's attendance state.
@@ -185,7 +237,8 @@ def officer_presence(db: Session = Depends(get_db), _: User = Depends(require_ro
         state = presence_state(has_entry, has_exit, now)
         result.append({
             "id": str(user.id), "employee_id": user.employee_id, "name": user.full_name,
-            "role": user.role, "rfid_uid": user.rfid_uid, "checkpoints": _checkpoints_of(user),
+            "role": user.role, "rfid_uid": user.rfid_uid, "fingerprint_page_id": user.fingerprint_page_id,
+            "checkpoints": _checkpoints_of(user),
             "state": state, "present": state == "PRESENT",
             "attendance_date": today.isoformat(),
             "absent_after": absent_after().strftime("%H:%M"), "timezone": str(attendance_timezone()),

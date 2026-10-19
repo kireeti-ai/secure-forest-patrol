@@ -16,13 +16,15 @@ constexpr int loraCs = 10;
 constexpr int loraReset = 9;
 constexpr int loraDio0 = 14;
 
+SPIClass loraSpi(FSPI);
+
 std::uint8_t readRegisterDiagnostic(std::uint8_t address) {
-    SPI.beginTransaction(SPISettings(200000U, MSBFIRST, SPI_MODE0));
+    loraSpi.beginTransaction(SPISettings(200000U, MSBFIRST, SPI_MODE0));
     digitalWrite(loraCs, LOW);
-    SPI.transfer(address & 0x7FU);
-    const std::uint8_t value = SPI.transfer(0x00U);
+    loraSpi.transfer(address & 0x7FU);
+    const std::uint8_t value = loraSpi.transfer(0x00U);
     digitalWrite(loraCs, HIGH);
-    SPI.endTransaction();
+    loraSpi.endTransaction();
     return value;
 }
 
@@ -39,8 +41,6 @@ void printInitializationDiagnostics() {
     Serial.printf("[GATEWAY DIAG] SX127x REG_SYNC_WORD(0x39)=0x%02X\n",
                   static_cast<unsigned>(readRegisterDiagnostic(0x39U)));
 }
-
-SPIClass loraSpi(FSPI);
 
 std::uint8_t readLoraRegister(std::uint8_t address) {
     loraSpi.beginTransaction(SPISettings(200000U, MSBFIRST, SPI_MODE0));
@@ -82,6 +82,12 @@ bool Sx1278LoRaDriver::begin() {
 
 bool Sx1278LoRaDriver::configureRadio_() {
     if (!LoRa.begin(frequencyHz)) return false;
+    // LoRa.begin() checks REG_VERSION once; on a flaky SPI link the chip can drop off the bus
+    // again microseconds later. If it has, setSpreadingFactor()/setSignalBandwidth() below read
+    // garbage registers and the library's setLdoFlag() divides by a bandwidth of -1, which
+    // panics the MCU (IntegerDivideByZero) instead of just failing init. Re-check the link here
+    // so a flaky chip fails cleanly and the watchdog can retry.
+    if (readLoraRegister(0x42U) != 0x12U) return false;
     LoRa.setSpreadingFactor(spreadingFactor);
     LoRa.setSignalBandwidth(signalBandwidthHz);
     LoRa.setCodingRate4(codingRateDenominator);
@@ -103,7 +109,16 @@ void Sx1278LoRaDriver::watchdog_() {
 
     if ((opMode & 0x87U) != 0x85U) {
         ++watchdogRearms_;
-        Serial.printf("[LoRa WATCHDOG] receiver not in RX mode (RegOpMode=0x%02X): re-arming (#%lu)\n",
+        // RegVersion (0x42) is 0x12 on a live SX1276/78. Anything else means the SPI link itself is dead
+        // (wiring, power, chip in reset), which re-arming cannot fix: hard-reset and re-initialise instead.
+        const std::uint8_t version = readLoraRegister(0x42U);
+        if (version != 0x12U) {
+            Serial.printf("[LoRa WATCHDOG] SX1278 not answering on SPI (RegVersion=0x%02X, RegOpMode=0x%02X): hard reset + re-init (#%lu)\n",
+                          static_cast<unsigned>(version), static_cast<unsigned>(opMode), static_cast<unsigned long>(watchdogRearms_));
+            if (!configureRadio_()) Serial.println("[LoRa WATCHDOG] re-initialisation FAILED");
+            return;
+        }
+        Serial.printf("[LoRa WATCHDOG] receiver not in RX mode (RegOpMode=0x%02X, chip alive): re-arming (#%lu)\n",
                       static_cast<unsigned>(opMode), static_cast<unsigned long>(watchdogRearms_));
         LoRa.receive();
         return;

@@ -1,0 +1,30 @@
+{
+  "decision": "QUARANTINED_PENDING_LICENSE",
+  "counts": {
+    "extracted": 175,
+    "eligible_training_only": 0,
+    "quarantined_provenance_blocker": 175,
+    "quarantined_license_primary": 175,
+    "possible_or_confirmed_overlap": 0,
+    "excluded": 0
+  },
+  "evidence_references": [
+    "provenance_evidence.csv",
+    "kenya_file_provenance.csv",
+    "kenya_source_group_audit.csv",
+    "duplicate_and_overlap_audit.csv",
+    "license_provenance_audit.csv"
+  ],
+  "unresolved_blockers": [
+    "No verified file-level parent/source/session mapping",
+    "No file-level event timestamps",
+    "Dataset-level CC BY 4.0 is authoritative but file-level applicability/attribution has not been separately confirmed",
+    "Coarse crop screen cannot prove absence of crop overlap"
+  ],
+  "future_admission_conditions": [
+    "Publisher or curator confirms file-level provenance and license applicability",
+    "Human review confirms labels and event occupancy",
+    "Source-group split is enforced using verified lineage, not filename prefix",
+    "Repeat duplicate/crop audit after any approved ingestion"
+  ]
+}

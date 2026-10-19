@@ -1,0 +1,96 @@
+{
+  "audit_timestamp_utc": "2026-10-18T19:38:04.488187+00:00",
+  "tool": "run_provenance_audit.py",
+  "python": "3.10.13",
+  "numpy": "2.2.6",
+  "soundfile": "0.14.0",
+  "archive": {
+    "path": "ml/datasets/phase4_5_acquisition/kenya_original/Kenya-Forest-Sounds-Dataset-v1.0.1.zip",
+    "size_bytes": 716622014,
+    "sha256": "2e270bf4918885f8f5fe35e204f9b1ccf2cae14ecff5623fe272be1ec7a5feae"
+  },
+  "extracted_file_count": 175,
+  "extracted_sha256_count": 175,
+  "audit_artifacts_sha256": {
+    "ml/reports/phase4_7_provenance_resolution/PROVENANCE_RESOLUTION_REPORT.md": "483be79e73ab1f0663707278da177458eed8da30b41ed84674193a0ae855da76",
+    "ml/reports/phase4_7_provenance_resolution/class_source_coverage.json": "780baf0beb38c9ead89f60389a686893de684d38332395f8ce8189fdbff040ea",
+    "ml/reports/phase4_7_provenance_resolution/duplicate_and_overlap_audit.csv": "0499c18ca6b29bfe1b66281981255be3269929bbef3abe5928754677eadf54db",
+    "ml/reports/phase4_7_provenance_resolution/kenya_file_provenance.csv": "47799c2016efa2a7cd7953bdafaa2bef9471d603485b3ab68407e82ddff185ea",
+    "ml/reports/phase4_7_provenance_resolution/kenya_source_group_audit.csv": "d7272488aae78b2608276f7aa1e0702bee51c85edf2b272243ac5f02be5e8df0",
+    "ml/reports/phase4_7_provenance_resolution/license_provenance_audit.csv": "1fbc3e2bf15e403c66e3b1f6ac0fd251b5b720997e10c84b18beed298fc4af48",
+    "ml/reports/phase4_7_provenance_resolution/provenance_decision.json": "29423373c6a459318af3da698ede447387216940afb14d20a423146bba98f67a",
+    "ml/reports/phase4_7_provenance_resolution/provenance_evidence.csv": "27db3fa5f6bc3fa211c61c99b53676c2a0f6a69f79d75f7dce3128fab8e4b3b8",
+    "ml/reports/phase4_7_provenance_resolution/run_provenance_audit.py": "c5a18693e5c1eaf6f1e8dc8468ba1d425a4ab1d6a7481f8efdf65df85de375da"
+  },
+  "files_not_processed": {
+    "raw_decode_failures": 0,
+    "crop_screen_local_raw_files": 15103
+  },
+  "protected_hash_verification": {
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/final.keras": {
+      "expected_sha256": "4ebad60f4de804cdf2659e34bed05e4b56dfc08bade8c1d3058657efaba430bd",
+      "actual_sha256": "4ebad60f4de804cdf2659e34bed05e4b56dfc08bade8c1d3058657efaba430bd",
+      "unchanged": true
+    },
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/forest_acoustic_fp32.tflite": {
+      "expected_sha256": "890cf5cd74b28c3618ddbf64bdc9399a68f9048c5fe1117b45177056bded3811",
+      "actual_sha256": "890cf5cd74b28c3618ddbf64bdc9399a68f9048c5fe1117b45177056bded3811",
+      "unchanged": true
+    },
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/forest_acoustic_int8.tflite": {
+      "expected_sha256": "c9b3a391dc45b211587a5946ee15e357aef8c9c6baff6021866884b951972b9b",
+      "actual_sha256": "c9b3a391dc45b211587a5946ee15e357aef8c9c6baff6021866884b951972b9b",
+      "unchanged": true
+    },
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/train_v1.csv": {
+      "expected_sha256": "95db880be030cc70dee4b2d76e9ed56e99eab9103faffdcebf92d21fbe7637dc",
+      "actual_sha256": "95db880be030cc70dee4b2d76e9ed56e99eab9103faffdcebf92d21fbe7637dc",
+      "unchanged": true
+    },
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/validation_v1.csv": {
+      "expected_sha256": "14b53fceb00cc4dd0e2fa8cf965ccedd458067fb4acae09aed20c2e7fbb2fa96",
+      "actual_sha256": "14b53fceb00cc4dd0e2fa8cf965ccedd458067fb4acae09aed20c2e7fbb2fa96",
+      "unchanged": true
+    },
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/test_v1.csv": {
+      "expected_sha256": "efdb3aeffe986b0347af617575fc34734a12663557ec3ca755510f53ee9b2d28",
+      "actual_sha256": "efdb3aeffe986b0347af617575fc34734a12663557ec3ca755510f53ee9b2d28",
+      "unchanged": true
+    },
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/train.npz": {
+      "expected_sha256": "9d98485170affd5891acac8d16658f8d9c642f9d9f76f4e3b43df1ccb676f6e1",
+      "actual_sha256": "9d98485170affd5891acac8d16658f8d9c642f9d9f76f4e3b43df1ccb676f6e1",
+      "unchanged": true
+    },
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/validation.npz": {
+      "expected_sha256": "a356443e424f5903514130093f02ed4c5a6aa49f81f056ff06422a52dbd9c3b1",
+      "actual_sha256": "a356443e424f5903514130093f02ed4c5a6aa49f81f056ff06422a52dbd9c3b1",
+      "unchanged": true
+    },
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/test.npz": {
+      "expected_sha256": "649a4a3dce19ff470ac773ea99e3d09459ef9b3d98b5a8c2c80f5c43f20743b9",
+      "actual_sha256": "649a4a3dce19ff470ac773ea99e3d09459ef9b3d98b5a8c2c80f5c43f20743b9",
+      "unchanged": true
+    }
+  },
+  "protected_artifact_changes": {
+    "models": false,
+    "preprocessing": false,
+    "frozen_manifests": false,
+    "frozen_caches": false,
+    "firmware": false,
+    "phase4_3_decisions": false
+  },
+  "model_training_started": false,
+  "model_inference_started": false,
+  "threshold_tuning_started": false,
+  "crop_screen": {
+    "local_raw_files_searched": 15103,
+    "local_raw_frame_count": 3938474,
+    "elapsed_seconds": 32.935396909713745,
+    "threshold": 0.98,
+    "max_score": 0.918352,
+    "plausible_matches": 0,
+    "method": "64-bit deterministic spectral frame signatures; consecutive candidate frame sequence; negative is not proof of no overlap"
+  }
+}

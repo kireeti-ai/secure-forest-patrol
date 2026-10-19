@@ -1,0 +1,14 @@
+category,sample_id,original_recording_id,dataset_id,audio_path,predicted_class,prediction_confidence
+background_to_chainsaw,fsc22_21_12142_0007,fsc22_21_12142,fsc22,/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/processed/fsc22_21_12142_0007.wav,chainsaw,0.98046875
+background_to_chainsaw,rfcx_rfcx_train_00297_environment_0004,rfcx_rfcx_train_00297_environment,rfcx_frugalai,/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/processed/rfcx_rfcx_train_00297_environment_0004.wav,chainsaw,0.96875
+background_to_chainsaw,fsc22_23_12318_0003,fsc22_23_12318,fsc22,/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/processed/fsc22_23_12318_0003.wav,chainsaw,0.96875
+background_to_chainsaw,rfcx_rfcx_train_00155_environment_0000,rfcx_rfcx_train_00155_environment,rfcx_frugalai,/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/processed/rfcx_rfcx_train_00155_environment_0000.wav,chainsaw,0.96875
+background_to_gunshot,esc50hf_2-124564-A-15_0005,esc50hf_2-124564-A-15,esc50_hf,/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/processed/esc50hf_2-124564-A-15_0005.wav,gunshot,0.98046875
+background_to_gunshot,fsc22_23_12303_0000,fsc22_23_12303,fsc22,/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/processed/fsc22_23_12303_0000.wav,gunshot,0.96875
+background_to_gunshot,esc50hf_1-17565-A-12_0000,esc50hf_1-17565-A-12,esc50_hf,/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/processed/esc50hf_1-17565-A-12_0000.wav,gunshot,0.94921875
+background_to_gunshot,esc50hf_3-83527-A-4_0007,esc50hf_3-83527-A-4,esc50_hf,/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/processed/esc50hf_3-83527-A-4_0007.wav,gunshot,0.921875
+chainsaw_to_background,rfcx_rfcx_train_00154_chainsaw_0003,rfcx_rfcx_train_00154_chainsaw,rfcx_frugalai,/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/processed/rfcx_rfcx_train_00154_chainsaw_0003.wav,background,0.8984375
+chainsaw_to_background,fsc22_11_11142_0002,fsc22_11_11142,fsc22,/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/processed/fsc22_11_11142_0002.wav,background,0.83984375
+chainsaw_to_background,fsc22_11_11151_0000,fsc22_11_11151,fsc22,/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/processed/fsc22_11_11151_0000.wav,background,0.828125
+chainsaw_to_background,rfcx_rfcx_train_00260_chainsaw_0003,rfcx_rfcx_train_00260_chainsaw,rfcx_frugalai,/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/processed/rfcx_rfcx_train_00260_chainsaw_0003.wav,background,0.78515625
+gunshot_to_background,fsc22_15_11563_0008,fsc22_15_11563,fsc22,/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/processed/fsc22_15_11563_0008.wav,background,0.83203125

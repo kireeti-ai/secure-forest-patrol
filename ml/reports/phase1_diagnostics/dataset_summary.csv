@@ -1,0 +1,5 @@
+dataset_id,test_windows,test_recordings,background_windows,background_fp_windows,background_fp_rate,chainsaw_windows,chainsaw_fn_to_background,gunshot_windows,gunshot_fn_to_background
+c3gd,7,7,0,0,,0,0,7,0
+esc50_hf,696,82,642,188,0.29283489096573206,54,2,0,0
+fsc22,1105,134,946,222,0.2346723044397463,123,26,36,6
+rfcx_frugalai,311,63,193,126,0.6528497409326425,118,11,0,0

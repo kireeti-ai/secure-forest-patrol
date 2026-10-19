@@ -1,0 +1,39 @@
+{
+  "file_count": 175,
+  "sample_rates_hz": [
+    16000
+  ],
+  "channels": [
+    1
+  ],
+  "duration_min_s": 0.0696875,
+  "duration_max_s": 5.0155,
+  "contract_checks": {
+    "resample_needed": false,
+    "mono_conversion_needed": false,
+    "peak_normalization_applied_for_check": true,
+    "window_samples": 16000,
+    "hop_samples": 8000,
+    "mel_shape_representatives": [
+      {
+        "filename": "ZOOM0003_6_16k.wav",
+        "segment_samples": 16000,
+        "mel_shape": [
+          40,
+          101
+        ],
+        "normalized_peak": 0.7079457640647888
+      },
+      {
+        "filename": "ZOOM0228_983_16k.wav",
+        "segment_samples": 16000,
+        "mel_shape": [
+          40,
+          101
+        ],
+        "normalized_peak": 0.5004518628120422
+      }
+    ],
+    "frozen_feature_mean_std_unchanged": true
+  }
+}

@@ -4,33 +4,27 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   fetchCheckpoints,
-  fetchPatrols,
   fetchAcousticEvents,
-  fetchLedger,
   fetchGateways,
   fetchNodes,
   Checkpoint,
-  PatrolRecord,
   AcousticEvent,
-  LedgerRecord,
   GatewayStatus,
   FieldNode,
 } from "../../lib/api";
 import { Card } from "../ui/Card";
 import { SectionHeader } from "../ui/SectionHeader";
 import { StatusBadge } from "../ui/StatusBadge";
-import { fetchRfidEvents, type RfidEvent } from "../../lib/rfidApi";
+import { fetchRfidEvents, fetchVerificationEvents, type RfidEvent, type VerificationEvent } from "../../lib/rfidApi";
 import { useForestWebSocket } from "../../lib/ws";
 
 const OVERVIEW_WS_EVENTS = [
-  "PATROL_EVENT_VERIFIED",
-  "PATROL_EVENT_REJECTED",
   "ACOUSTIC_EVENT_RECEIVED",
-  "LEDGER_VERIFICATION_RESULT",
   "NODE_STATUS_CHANGED",
   "GATEWAY_STATUS_CHANGED",
   "SYNC_UPDATED",
   "RFID_SCAN_RECEIVED",
+  "VERIFICATION_RECEIVED",
 ] as const;
 
 function scanTone(status: string): "healthy" | "warning" | "danger" {
@@ -68,9 +62,8 @@ function Metric({
 
 export function Overview() {
   const [checkpoints, setCheckpoints] = useState<Checkpoint[]>([]);
-  const [patrols, setPatrols] = useState<PatrolRecord[]>([]);
+  const [verifications, setVerifications] = useState<VerificationEvent[]>([]);
   const [acoustics, setAcoustics] = useState<AcousticEvent[]>([]);
-  const [ledger, setLedger] = useState<LedgerRecord[]>([]);
   const [gateways, setGateways] = useState<GatewayStatus[]>([]);
   const [nodes, setNodes] = useState<FieldNode[]>([]);
   const [loading, setLoading] = useState(true);
@@ -82,20 +75,18 @@ export function Overview() {
     let mounted = true;
 
     async function loadData() {
-      const [cpData, patData, acData, ledData, gwData, nodeData, rfidData] = await Promise.all([
+      const [cpData, verData, acData, gwData, nodeData, rfidData] = await Promise.all([
         fetchCheckpoints(),
-        fetchPatrols(),
+        fetchVerificationEvents().catch(() => [] as VerificationEvent[]),
         fetchAcousticEvents(),
-        fetchLedger(),
         fetchGateways(),
         fetchNodes(),
         fetchRfidEvents().catch(() => [] as RfidEvent[]),
       ]);
       if (!mounted) return;
       setCheckpoints(cpData);
-      setPatrols(patData);
+      setVerifications(verData);
       setAcoustics(acData);
-      setLedger(ledData);
       setGateways(gwData);
       setNodes(nodeData);
       setRfidScans(rfidData.slice(0, 10));
@@ -120,12 +111,10 @@ export function Overview() {
   );
 
   const activeCheckpoints = checkpoints.filter((c) => c.state === "ONLINE").length;
-  const verifiedPatrols = patrols.filter((p) => p.rfidStatus === "VALID" && p.fingerprintStatus === "MATCH").length;
-  const identityMismatches = patrols.filter((p) => p.fingerprintStatus === "NO_MATCH" || p.rfidStatus === "INVALID").length;
+  const verifiedVisits = verifications.filter((v) => v.status === "MATCH").length;
+  const proxyAttempts = verifications.filter((v) => v.status === "MISMATCH").length;
   const pendingAcousticReviews = acoustics.filter((a) => a.reviewStatus === "PENDING_REVIEW").length;
-  const validLedgerRecords = ledger.filter((l) => l.chainStatus === "VALID").length;
-  const ledgerFailures = ledger.filter((l) => l.chainStatus === "BROKEN" || l.signatureStatus === "INVALID").length;
-  const pendingSyncCount = patrols.filter((p) => p.syncStatus === "PENDING").length + checkpoints.reduce((acc, c) => acc + c.pendingRecords, 0);
+  const pendingSyncCount = checkpoints.reduce((acc, c) => acc + c.pendingRecords, 0);
 
   const gw = gateways[0];
   const RECENT_MS = 2 * 60 * 1000;
@@ -144,7 +133,7 @@ export function Overview() {
         <div>
           <h1>Overview</h1>
           <p style={{ color: "var(--color-muted)", marginTop: "4px" }}>
-            Real-time status of patrol verification, acoustic threat monitoring, ledger integrity, and dual-link gateway backhaul.
+            Real-time status of checkpoint verification, acoustic threat monitoring, and dual-link gateway backhaul.
           </p>
         </div>
       </header>
@@ -173,28 +162,22 @@ export function Overview() {
             tone="healthy"
           />
           <Metric
-            label="VERIFIED PATROLS"
-            value={loading ? "..." : verifiedPatrols}
-            supportingText={`${patrols.length} total events logged`}
+            label="VERIFIED VISITS"
+            value={loading ? "..." : verifiedVisits}
+            supportingText={`${verifications.length} total checkpoint verifications`}
             tone="healthy"
           />
           <Metric
-            label="IDENTITY MISMATCHES"
-            value={loading ? "..." : identityMismatches}
-            supportingText={identityMismatches > 0 ? "Requires verification review" : "Zero mismatches"}
-            tone={identityMismatches > 0 ? "danger" : "healthy"}
+            label="PROXY ATTEMPTS"
+            value={loading ? "..." : proxyAttempts}
+            supportingText={proxyAttempts > 0 ? "Card tapped, fingerprint did not match -- review" : "Zero mismatches"}
+            tone={proxyAttempts > 0 ? "danger" : "healthy"}
           />
           <Metric
             label="ACOUSTIC QUEUE"
             value={loading ? "..." : pendingAcousticReviews}
             supportingText={pendingAcousticReviews > 0 ? `${pendingAcousticReviews} pending review` : "Review queue clear"}
             tone={pendingAcousticReviews > 0 ? "warning" : "healthy"}
-          />
-          <Metric
-            label="VALID LEDGER RECORDS"
-            value={loading ? "..." : `${validLedgerRecords}/${ledger.length}`}
-            supportingText={ledgerFailures > 0 ? `${ledgerFailures} broken chain records` : "Tamper-evident chain valid"}
-            tone={ledgerFailures > 0 ? "danger" : "healthy"}
           />
           <Metric
             label="PENDING SYNC"
@@ -252,11 +235,11 @@ export function Overview() {
       <div style={{ display: "grid", gridTemplateColumns: "1.2fr 0.8fr", gap: "1.5rem", marginTop: "1.5rem" }}>
         {/* RECENT PATROLS & VERIFICATION */}
         <Card>
-          <SectionHeader title="Recent Patrol Events" />
+          <SectionHeader title="Recent Checkpoint Verifications" />
           <div style={{ padding: "1rem" }}>
-            {patrols.length === 0 ? (
+            {verifications.length === 0 ? (
               <div className="overview-empty-state">
-                <p className="overview-empty-title">No patrol events logged</p>
+                <p className="overview-empty-title">No verification events logged</p>
               </div>
             ) : (
               <table>
@@ -265,27 +248,19 @@ export function Overview() {
                     <th>Time</th>
                     <th>Checkpoint</th>
                     <th>Officer</th>
-                    <th>RFID</th>
-                    <th>Biometric</th>
-                    <th>Ledger</th>
+                    <th>Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {patrols.slice(0, 5).map((p) => (
-                    <tr key={p.id}>
-                      <td>{p.timestamp.split(" ")[1] || p.timestamp}</td>
+                  {verifications.slice(0, 5).map((v) => (
+                    <tr key={v.id}>
+                      <td>{new Date(v.timestamp).toLocaleTimeString()}</td>
                       <td>
-                        <strong>{p.checkpointId}</strong> ({p.nodeId})
+                        <strong>{v.checkpoint_id ?? "—"}</strong> ({v.node_id})
                       </td>
-                      <td>{p.officerName}</td>
+                      <td>{v.claimed_name ?? v.claimed_employee_id ?? v.claimed_uid}</td>
                       <td>
-                        <StatusBadge label={p.rfidStatus} tone={p.rfidStatus === "VALID" ? "healthy" : "danger"} />
-                      </td>
-                      <td>
-                        <StatusBadge label={p.fingerprintStatus} tone={p.fingerprintStatus === "MATCH" ? "healthy" : "danger"} />
-                      </td>
-                      <td>
-                        <StatusBadge label={p.ledgerStatus} tone={p.ledgerStatus === "VALID" ? "healthy" : "danger"} />
+                        <StatusBadge label={v.status} tone={v.status === "MATCH" ? "healthy" : v.status === "MISMATCH" ? "danger" : "warning"} />
                       </td>
                     </tr>
                   ))}
@@ -293,8 +268,8 @@ export function Overview() {
               </table>
             )}
             <div style={{ marginTop: "1rem", textAlign: "right" }}>
-              <Link href="/dashboard/patrols" style={{ fontSize: "0.85rem", color: "var(--color-forest-dark)", fontWeight: 600 }}>
-                View All Patrol Events →
+              <Link href="/dashboard/officers" style={{ fontSize: "0.85rem", color: "var(--color-forest-dark)", fontWeight: 600 }}>
+                View Officers →
               </Link>
             </div>
           </div>

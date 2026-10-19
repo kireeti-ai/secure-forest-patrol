@@ -1,0 +1,895 @@
+{
+  "evaluation_path": "default desktop tf.lite.Interpreter, matching ROBUSTNESS_REPORT clean run",
+  "sample_count": 2119,
+  "sample_id_order_verified": true,
+  "label_order_verified": true,
+  "audio_files_readable": 2119,
+  "audio_files_unreadable": 0,
+  "accuracy": 0.7215667767815007,
+  "balanced_accuracy": 0.798932910646556,
+  "macro_f1": 0.5759599352819692,
+  "macro_precision": 0.5322104551693598,
+  "macro_recall": 0.798932910646556,
+  "confusion_matrix": [
+    [
+      1245,
+      448,
+      88
+    ],
+    [
+      39,
+      247,
+      9
+    ],
+    [
+      6,
+      0,
+      37
+    ]
+  ],
+  "per_class_precision": {
+    "background": 0.9651162790697675,
+    "chainsaw": 0.3553956834532374,
+    "gunshot": 0.27611940298507465
+  },
+  "per_class_recall": {
+    "background": 0.6990454800673779,
+    "chainsaw": 0.8372881355932204,
+    "gunshot": 0.8604651162790697
+  },
+  "per_class_f1": {
+    "background": 0.8108108108108109,
+    "chainsaw": 0.498989898989899,
+    "gunshot": 0.4180790960451977
+  },
+  "background_false_alarm_count": 536,
+  "background_false_alarm_rate": 0.3009545199326221,
+  "failure_groups": {
+    "background_to_chainsaw": {
+      "windows": 448,
+      "recordings": 97,
+      "datasets": {
+        "fsc22": 171,
+        "esc50_hf": 151,
+        "rfcx_frugalai": 126
+      },
+      "mean_confidence": 0.7539149693080357,
+      "median_confidence": 0.7734375,
+      "mean_margin": 0.5215279715401786,
+      "median_margin": 0.5625,
+      "rms_median": 0.12850713729858398,
+      "peak_median": 0.619293212890625,
+      "clipped_windows": 0
+    },
+    "background_to_gunshot": {
+      "windows": 88,
+      "recordings": 34,
+      "datasets": {
+        "fsc22": 51,
+        "esc50_hf": 37
+      },
+      "mean_confidence": 0.6798206676136364,
+      "median_confidence": 0.681640625,
+      "mean_margin": 0.4059836647727273,
+      "median_margin": 0.427734375,
+      "rms_median": 0.07021302729845047,
+      "peak_median": 0.586944580078125,
+      "clipped_windows": 0
+    },
+    "chainsaw_to_background": {
+      "windows": 39,
+      "recordings": 13,
+      "datasets": {
+        "fsc22": 26,
+        "rfcx_frugalai": 11,
+        "esc50_hf": 2
+      },
+      "mean_confidence": 0.6153846153846154,
+      "median_confidence": 0.59765625,
+      "mean_margin": 0.3268229166666667,
+      "median_margin": 0.25390625,
+      "rms_median": 0.07673246413469315,
+      "peak_median": 0.5714111328125,
+      "clipped_windows": 0
+    },
+    "gunshot_to_background": {
+      "windows": 6,
+      "recordings": 1,
+      "datasets": {
+        "fsc22": 6
+      },
+      "mean_confidence": 0.6373697916666666,
+      "median_confidence": 0.6171875,
+      "mean_margin": 0.3014322916666667,
+      "median_margin": 0.251953125,
+      "rms_median": 0.039180900901556015,
+      "peak_median": 0.533447265625,
+      "clipped_windows": 0
+    }
+  },
+  "confidence_groups": {
+    "correct": {
+      "count": 1529,
+      "confidence_q10_q50_q90": [
+        0.5625,
+        0.796875,
+        0.95703125
+      ],
+      "margin_q10_q50_q90": [
+        0.17890625000000004,
+        0.6328125,
+        0.91796875
+      ],
+      "rms_q10_q50_q90": [
+        0.03571122214198113,
+        0.10791578888893127,
+        0.17195872068405152
+      ],
+      "peak_q10_q50_q90": [
+        0.239190673828125,
+        0.602264404296875,
+        0.70794677734375
+      ]
+    },
+    "false_positives": {
+      "count": 536,
+      "confidence_q10_q50_q90": [
+        0.53125,
+        0.755859375,
+        0.9375
+      ],
+      "margin_q10_q50_q90": [
+        0.10546875,
+        0.525390625,
+        0.875
+      ],
+      "rms_q10_q50_q90": [
+        0.04347925819456577,
+        0.11937218904495239,
+        0.17130285501480103
+      ],
+      "peak_q10_q50_q90": [
+        0.3367462158203125,
+        0.615386962890625,
+        0.7079315185546875
+      ]
+    },
+    "false_negatives": {
+      "count": 45,
+      "confidence_q10_q50_q90": [
+        0.4375,
+        0.6015625,
+        0.83671875
+      ],
+      "margin_q10_q50_q90": [
+        0.012500000000000011,
+        0.25390625,
+        0.7156250000000001
+      ],
+      "rms_q10_q50_q90": [
+        0.028820159286260607,
+        0.05421517789363861,
+        0.11410821229219437
+      ],
+      "peak_q10_q50_q90": [
+        0.332733154296875,
+        0.569122314453125,
+        0.707916259765625
+      ]
+    },
+    "background_to_chainsaw": {
+      "count": 448,
+      "confidence_q10_q50_q90": [
+        0.5390625,
+        0.7734375,
+        0.94140625
+      ],
+      "margin_q10_q50_q90": [
+        0.12109375,
+        0.5625,
+        0.8828125
+      ],
+      "rms_q10_q50_q90": [
+        0.0587279636412859,
+        0.12850713729858398,
+        0.17086313962936403
+      ],
+      "peak_q10_q50_q90": [
+        0.3490447998046875,
+        0.619293212890625,
+        0.70794677734375
+      ]
+    },
+    "background_to_gunshot": {
+      "count": 88,
+      "confidence_q10_q50_q90": [
+        0.51953125,
+        0.681640625,
+        0.8355468749999999
+      ],
+      "margin_q10_q50_q90": [
+        0.08984375,
+        0.427734375,
+        0.681640625
+      ],
+      "rms_q10_q50_q90": [
+        0.030273763835430144,
+        0.07021302729845047,
+        0.22564596533775327
+      ],
+      "peak_q10_q50_q90": [
+        0.2838470458984375,
+        0.586944580078125,
+        0.707916259765625
+      ]
+    },
+    "chainsaw_to_background": {
+      "count": 39,
+      "confidence_q10_q50_q90": [
+        0.4234375,
+        0.59765625,
+        0.8445312500000001
+      ],
+      "margin_q10_q50_q90": [
+        0.0,
+        0.25390625,
+        0.7296875
+      ],
+      "rms_q10_q50_q90": [
+        0.030280136317014695,
+        0.07673246413469315,
+        0.11621457785367967
+      ],
+      "peak_q10_q50_q90": [
+        0.333282470703125,
+        0.5714111328125,
+        0.707916259765625
+      ]
+    },
+    "gunshot_to_background": {
+      "count": 6,
+      "confidence_q10_q50_q90": [
+        0.556640625,
+        0.6171875,
+        0.73828125
+      ],
+      "margin_q10_q50_q90": [
+        0.14453125,
+        0.251953125,
+        0.5078125
+      ],
+      "rms_q10_q50_q90": [
+        0.02414523810148239,
+        0.039180900901556015,
+        0.04847138002514839
+      ],
+      "peak_q10_q50_q90": [
+        0.2936859130859375,
+        0.533447265625,
+        0.707916259765625
+      ]
+    }
+  },
+  "top_false_positive_recordings": [
+    {
+      "original_recording_id": "esc50hf_1-50661-A-44",
+      "dataset_id": "esc50_hf",
+      "total_test_windows": 9,
+      "background_windows": 9,
+      "chainsaw_windows": 0,
+      "gunshot_windows": 0,
+      "background_fp_windows": 9,
+      "background_to_chainsaw": 9,
+      "background_to_gunshot": 0,
+      "chainsaw_fn_to_background": 0,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": 1.0,
+      "chainsaw_fn_rate": NaN,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.31764228145281476,
+      "mean_peak": 0.7031487358940972
+    },
+    {
+      "original_recording_id": "esc50hf_2-205966-A-16",
+      "dataset_id": "esc50_hf",
+      "total_test_windows": 9,
+      "background_windows": 9,
+      "chainsaw_windows": 0,
+      "gunshot_windows": 0,
+      "background_fp_windows": 9,
+      "background_to_chainsaw": 5,
+      "background_to_gunshot": 4,
+      "chainsaw_fn_to_background": 0,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": 1.0,
+      "chainsaw_fn_rate": NaN,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.17059705323643154,
+      "mean_peak": 0.6471625434027778
+    },
+    {
+      "original_recording_id": "esc50hf_4-223125-A-14",
+      "dataset_id": "esc50_hf",
+      "total_test_windows": 9,
+      "background_windows": 9,
+      "chainsaw_windows": 0,
+      "gunshot_windows": 0,
+      "background_fp_windows": 9,
+      "background_to_chainsaw": 9,
+      "background_to_gunshot": 0,
+      "chainsaw_fn_to_background": 0,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": 1.0,
+      "chainsaw_fn_rate": NaN,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.11895325697130626,
+      "mean_peak": 0.562286376953125
+    },
+    {
+      "original_recording_id": "esc50hf_5-198278-A-7",
+      "dataset_id": "esc50_hf",
+      "total_test_windows": 9,
+      "background_windows": 9,
+      "chainsaw_windows": 0,
+      "gunshot_windows": 0,
+      "background_fp_windows": 9,
+      "background_to_chainsaw": 9,
+      "background_to_gunshot": 0,
+      "chainsaw_fn_to_background": 0,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": 1.0,
+      "chainsaw_fn_rate": NaN,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.1417092200782564,
+      "mean_peak": 0.592132568359375
+    },
+    {
+      "original_recording_id": "esc50hf_5-243773-A-44",
+      "dataset_id": "esc50_hf",
+      "total_test_windows": 9,
+      "background_windows": 9,
+      "chainsaw_windows": 0,
+      "gunshot_windows": 0,
+      "background_fp_windows": 9,
+      "background_to_chainsaw": 9,
+      "background_to_gunshot": 0,
+      "chainsaw_fn_to_background": 0,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": 1.0,
+      "chainsaw_fn_rate": NaN,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.1362661901447508,
+      "mean_peak": 0.6323581271701388
+    },
+    {
+      "original_recording_id": "fsc22_21_12114",
+      "dataset_id": "fsc22",
+      "total_test_windows": 9,
+      "background_windows": 9,
+      "chainsaw_windows": 0,
+      "gunshot_windows": 0,
+      "background_fp_windows": 9,
+      "background_to_chainsaw": 9,
+      "background_to_gunshot": 0,
+      "chainsaw_fn_to_background": 0,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": 1.0,
+      "chainsaw_fn_rate": NaN,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.17252435286839804,
+      "mean_peak": 0.6580369737413194
+    },
+    {
+      "original_recording_id": "fsc22_21_12142",
+      "dataset_id": "fsc22",
+      "total_test_windows": 9,
+      "background_windows": 9,
+      "chainsaw_windows": 0,
+      "gunshot_windows": 0,
+      "background_fp_windows": 9,
+      "background_to_chainsaw": 9,
+      "background_to_gunshot": 0,
+      "chainsaw_fn_to_background": 0,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": 1.0,
+      "chainsaw_fn_rate": NaN,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.13750751978821224,
+      "mean_peak": 0.6146240234375
+    },
+    {
+      "original_recording_id": "fsc22_22_12242",
+      "dataset_id": "fsc22",
+      "total_test_windows": 9,
+      "background_windows": 9,
+      "chainsaw_windows": 0,
+      "gunshot_windows": 0,
+      "background_fp_windows": 9,
+      "background_to_chainsaw": 8,
+      "background_to_gunshot": 1,
+      "chainsaw_fn_to_background": 0,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": 1.0,
+      "chainsaw_fn_rate": NaN,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.08577141331301795,
+      "mean_peak": 0.5954827202690972
+    },
+    {
+      "original_recording_id": "fsc22_23_12317",
+      "dataset_id": "fsc22",
+      "total_test_windows": 9,
+      "background_windows": 9,
+      "chainsaw_windows": 0,
+      "gunshot_windows": 0,
+      "background_fp_windows": 9,
+      "background_to_chainsaw": 9,
+      "background_to_gunshot": 0,
+      "chainsaw_fn_to_background": 0,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": 1.0,
+      "chainsaw_fn_rate": NaN,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.11103743314743042,
+      "mean_peak": 0.5982089572482638
+    },
+    {
+      "original_recording_id": "fsc22_23_12318",
+      "dataset_id": "fsc22",
+      "total_test_windows": 9,
+      "background_windows": 9,
+      "chainsaw_windows": 0,
+      "gunshot_windows": 0,
+      "background_fp_windows": 9,
+      "background_to_chainsaw": 8,
+      "background_to_gunshot": 1,
+      "chainsaw_fn_to_background": 0,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": 1.0,
+      "chainsaw_fn_rate": NaN,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.11088454723358154,
+      "mean_peak": 0.554168701171875
+    },
+    {
+      "original_recording_id": "fsc22_23_12321",
+      "dataset_id": "fsc22",
+      "total_test_windows": 9,
+      "background_windows": 9,
+      "chainsaw_windows": 0,
+      "gunshot_windows": 0,
+      "background_fp_windows": 9,
+      "background_to_chainsaw": 9,
+      "background_to_gunshot": 0,
+      "chainsaw_fn_to_background": 0,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": 1.0,
+      "chainsaw_fn_rate": NaN,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.10016030652655496,
+      "mean_peak": 0.5048455132378472
+    },
+    {
+      "original_recording_id": "fsc22_23_12359",
+      "dataset_id": "fsc22",
+      "total_test_windows": 9,
+      "background_windows": 9,
+      "chainsaw_windows": 0,
+      "gunshot_windows": 0,
+      "background_fp_windows": 9,
+      "background_to_chainsaw": 9,
+      "background_to_gunshot": 0,
+      "chainsaw_fn_to_background": 0,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": 1.0,
+      "chainsaw_fn_rate": NaN,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.11585569298929638,
+      "mean_peak": 0.5555623372395834
+    },
+    {
+      "original_recording_id": "fsc22_27_12707",
+      "dataset_id": "fsc22",
+      "total_test_windows": 9,
+      "background_windows": 9,
+      "chainsaw_windows": 0,
+      "gunshot_windows": 0,
+      "background_fp_windows": 9,
+      "background_to_chainsaw": 0,
+      "background_to_gunshot": 9,
+      "chainsaw_fn_to_background": 0,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": 1.0,
+      "chainsaw_fn_rate": NaN,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.08524984369675319,
+      "mean_peak": 0.5057847764756944
+    },
+    {
+      "original_recording_id": "fsc22_5_10515",
+      "dataset_id": "fsc22",
+      "total_test_windows": 9,
+      "background_windows": 9,
+      "chainsaw_windows": 0,
+      "gunshot_windows": 0,
+      "background_fp_windows": 9,
+      "background_to_chainsaw": 0,
+      "background_to_gunshot": 9,
+      "chainsaw_fn_to_background": 0,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": 1.0,
+      "chainsaw_fn_rate": NaN,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.2275275323126051,
+      "mean_peak": 0.6194051106770834
+    },
+    {
+      "original_recording_id": "fsc22_5_10554",
+      "dataset_id": "fsc22",
+      "total_test_windows": 9,
+      "background_windows": 9,
+      "chainsaw_windows": 0,
+      "gunshot_windows": 0,
+      "background_fp_windows": 9,
+      "background_to_chainsaw": 9,
+      "background_to_gunshot": 0,
+      "chainsaw_fn_to_background": 0,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": 1.0,
+      "chainsaw_fn_rate": NaN,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.15891906950208876,
+      "mean_peak": 0.6482781304253472
+    },
+    {
+      "original_recording_id": "esc50hf_1-46938-B-7",
+      "dataset_id": "esc50_hf",
+      "total_test_windows": 9,
+      "background_windows": 9,
+      "chainsaw_windows": 0,
+      "gunshot_windows": 0,
+      "background_fp_windows": 8,
+      "background_to_chainsaw": 8,
+      "background_to_gunshot": 0,
+      "chainsaw_fn_to_background": 0,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": 0.8888888888888888,
+      "chainsaw_fn_rate": NaN,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.041160857822332114,
+      "mean_peak": 0.2766757541232639
+    },
+    {
+      "original_recording_id": "esc50hf_1-57318-A-13",
+      "dataset_id": "esc50_hf",
+      "total_test_windows": 9,
+      "background_windows": 9,
+      "chainsaw_windows": 0,
+      "gunshot_windows": 0,
+      "background_fp_windows": 8,
+      "background_to_chainsaw": 8,
+      "background_to_gunshot": 0,
+      "chainsaw_fn_to_background": 0,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": 0.8888888888888888,
+      "chainsaw_fn_rate": NaN,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.18026605579588148,
+      "mean_peak": 0.6430697970920138
+    },
+    {
+      "original_recording_id": "esc50hf_3-110913-D-7",
+      "dataset_id": "esc50_hf",
+      "total_test_windows": 9,
+      "background_windows": 9,
+      "chainsaw_windows": 0,
+      "gunshot_windows": 0,
+      "background_fp_windows": 8,
+      "background_to_chainsaw": 8,
+      "background_to_gunshot": 0,
+      "chainsaw_fn_to_background": 0,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": 0.8888888888888888,
+      "chainsaw_fn_rate": NaN,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.11762666288349363,
+      "mean_peak": 0.5347764756944444
+    },
+    {
+      "original_recording_id": "esc50hf_3-156581-A-14",
+      "dataset_id": "esc50_hf",
+      "total_test_windows": 9,
+      "background_windows": 9,
+      "chainsaw_windows": 0,
+      "gunshot_windows": 0,
+      "background_fp_windows": 8,
+      "background_to_chainsaw": 8,
+      "background_to_gunshot": 0,
+      "chainsaw_fn_to_background": 0,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": 0.8888888888888888,
+      "chainsaw_fn_rate": NaN,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.09629744291305542,
+      "mean_peak": 0.46685791015625
+    },
+    {
+      "original_recording_id": "esc50hf_3-83527-A-4",
+      "dataset_id": "esc50_hf",
+      "total_test_windows": 9,
+      "background_windows": 9,
+      "chainsaw_windows": 0,
+      "gunshot_windows": 0,
+      "background_fp_windows": 8,
+      "background_to_chainsaw": 3,
+      "background_to_gunshot": 5,
+      "chainsaw_fn_to_background": 0,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": 0.8888888888888888,
+      "chainsaw_fn_rate": NaN,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.04524869326916006,
+      "mean_peak": 0.4462144639756944
+    }
+  ],
+  "top_false_negative_recordings": [
+    {
+      "original_recording_id": "fsc22_11_11166",
+      "dataset_id": "fsc22",
+      "total_test_windows": 9,
+      "background_windows": 0,
+      "chainsaw_windows": 9,
+      "gunshot_windows": 0,
+      "background_fp_windows": 0,
+      "background_to_chainsaw": 0,
+      "background_to_gunshot": 0,
+      "chainsaw_fn_to_background": 7,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": NaN,
+      "chainsaw_fn_rate": 0.7777777777777778,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.06536259088251326,
+      "mean_peak": 0.6624789767795138
+    },
+    {
+      "original_recording_id": "fsc22_11_11164",
+      "dataset_id": "fsc22",
+      "total_test_windows": 9,
+      "background_windows": 0,
+      "chainsaw_windows": 9,
+      "gunshot_windows": 0,
+      "background_fp_windows": 0,
+      "background_to_chainsaw": 0,
+      "background_to_gunshot": 0,
+      "chainsaw_fn_to_background": 5,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": NaN,
+      "chainsaw_fn_rate": 0.5555555555555556,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.05556592345237732,
+      "mean_peak": 0.5270589192708334
+    },
+    {
+      "original_recording_id": "rfcx_rfcx_train_00154_chainsaw",
+      "dataset_id": "rfcx_frugalai",
+      "total_test_windows": 5,
+      "background_windows": 0,
+      "chainsaw_windows": 5,
+      "gunshot_windows": 0,
+      "background_fp_windows": 0,
+      "background_to_chainsaw": 0,
+      "background_to_gunshot": 0,
+      "chainsaw_fn_to_background": 5,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": NaN,
+      "chainsaw_fn_rate": 1.0,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.10147338807582855,
+      "mean_peak": 0.62083740234375
+    },
+    {
+      "original_recording_id": "fsc22_11_11101",
+      "dataset_id": "fsc22",
+      "total_test_windows": 6,
+      "background_windows": 0,
+      "chainsaw_windows": 6,
+      "gunshot_windows": 0,
+      "background_fp_windows": 0,
+      "background_to_chainsaw": 0,
+      "background_to_gunshot": 0,
+      "chainsaw_fn_to_background": 4,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": NaN,
+      "chainsaw_fn_rate": 0.6666666666666666,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.04541635482261578,
+      "mean_peak": 0.5438995361328125
+    },
+    {
+      "original_recording_id": "fsc22_11_11142",
+      "dataset_id": "fsc22",
+      "total_test_windows": 9,
+      "background_windows": 0,
+      "chainsaw_windows": 9,
+      "gunshot_windows": 0,
+      "background_fp_windows": 0,
+      "background_to_chainsaw": 0,
+      "background_to_gunshot": 0,
+      "chainsaw_fn_to_background": 3,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": NaN,
+      "chainsaw_fn_rate": 0.3333333333333333,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.13657265487644407,
+      "mean_peak": 0.6248847113715278
+    },
+    {
+      "original_recording_id": "rfcx_rfcx_train_00260_chainsaw",
+      "dataset_id": "rfcx_frugalai",
+      "total_test_windows": 3,
+      "background_windows": 0,
+      "chainsaw_windows": 3,
+      "gunshot_windows": 0,
+      "background_fp_windows": 0,
+      "background_to_chainsaw": 0,
+      "background_to_gunshot": 0,
+      "chainsaw_fn_to_background": 3,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": NaN,
+      "chainsaw_fn_rate": 1.0,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.04029055622716745,
+      "mean_peak": 0.5714925130208334
+    },
+    {
+      "original_recording_id": "esc50hf_3-118658-A-41",
+      "dataset_id": "esc50_hf",
+      "total_test_windows": 9,
+      "background_windows": 0,
+      "chainsaw_windows": 9,
+      "gunshot_windows": 0,
+      "background_fp_windows": 0,
+      "background_to_chainsaw": 0,
+      "background_to_gunshot": 0,
+      "chainsaw_fn_to_background": 2,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": NaN,
+      "chainsaw_fn_rate": 0.2222222222222222,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.11529074319534832,
+      "mean_peak": 0.5613165961371528
+    },
+    {
+      "original_recording_id": "fsc22_11_11151",
+      "dataset_id": "fsc22",
+      "total_test_windows": 9,
+      "background_windows": 0,
+      "chainsaw_windows": 9,
+      "gunshot_windows": 0,
+      "background_fp_windows": 0,
+      "background_to_chainsaw": 0,
+      "background_to_gunshot": 0,
+      "chainsaw_fn_to_background": 2,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": NaN,
+      "chainsaw_fn_rate": 0.2222222222222222,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.1095321848988533,
+      "mean_peak": 0.5551384819878472
+    },
+    {
+      "original_recording_id": "fsc22_11_11161",
+      "dataset_id": "fsc22",
+      "total_test_windows": 9,
+      "background_windows": 0,
+      "chainsaw_windows": 9,
+      "gunshot_windows": 0,
+      "background_fp_windows": 0,
+      "background_to_chainsaw": 0,
+      "background_to_gunshot": 0,
+      "chainsaw_fn_to_background": 2,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": NaN,
+      "chainsaw_fn_rate": 0.2222222222222222,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.03313736534780926,
+      "mean_peak": 0.4673902723524306
+    },
+    {
+      "original_recording_id": "fsc22_11_11165",
+      "dataset_id": "fsc22",
+      "total_test_windows": 9,
+      "background_windows": 0,
+      "chainsaw_windows": 9,
+      "gunshot_windows": 0,
+      "background_fp_windows": 0,
+      "background_to_chainsaw": 0,
+      "background_to_gunshot": 0,
+      "chainsaw_fn_to_background": 2,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": NaN,
+      "chainsaw_fn_rate": 0.2222222222222222,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.05527948112123542,
+      "mean_peak": 0.4952460394965278
+    },
+    {
+      "original_recording_id": "rfcx_rfcx_train_00122_chainsaw",
+      "dataset_id": "rfcx_frugalai",
+      "total_test_windows": 5,
+      "background_windows": 0,
+      "chainsaw_windows": 5,
+      "gunshot_windows": 0,
+      "background_fp_windows": 0,
+      "background_to_chainsaw": 0,
+      "background_to_gunshot": 0,
+      "chainsaw_fn_to_background": 2,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": NaN,
+      "chainsaw_fn_rate": 0.4,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.13435970693826677,
+      "mean_peak": 0.651605224609375
+    },
+    {
+      "original_recording_id": "fsc22_11_11107",
+      "dataset_id": "fsc22",
+      "total_test_windows": 9,
+      "background_windows": 0,
+      "chainsaw_windows": 9,
+      "gunshot_windows": 0,
+      "background_fp_windows": 0,
+      "background_to_chainsaw": 0,
+      "background_to_gunshot": 0,
+      "chainsaw_fn_to_background": 1,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": NaN,
+      "chainsaw_fn_rate": 0.1111111111111111,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.15487661792172325,
+      "mean_peak": 0.5821702745225694
+    },
+    {
+      "original_recording_id": "rfcx_rfcx_train_00062_chainsaw",
+      "dataset_id": "rfcx_frugalai",
+      "total_test_windows": 5,
+      "background_windows": 0,
+      "chainsaw_windows": 5,
+      "gunshot_windows": 0,
+      "background_fp_windows": 0,
+      "background_to_chainsaw": 0,
+      "background_to_gunshot": 0,
+      "chainsaw_fn_to_background": 1,
+      "gunshot_fn_to_background": 0,
+      "background_fp_rate": NaN,
+      "chainsaw_fn_rate": 0.2,
+      "gunshot_fn_rate": NaN,
+      "mean_rms": 0.1426176071166992,
+      "mean_peak": 0.602386474609375
+    },
+    {
+      "original_recording_id": "fsc22_15_11563",
+      "dataset_id": "fsc22",
+      "total_test_windows": 6,
+      "background_windows": 0,
+      "chainsaw_windows": 0,
+      "gunshot_windows": 6,
+      "background_fp_windows": 0,
+      "background_to_chainsaw": 0,
+      "background_to_gunshot": 0,
+      "chainsaw_fn_to_background": 0,
+      "gunshot_fn_to_background": 6,
+      "background_fp_rate": NaN,
+      "chainsaw_fn_rate": NaN,
+      "gunshot_fn_rate": 1.0,
+      "mean_rms": 0.037265839676062264,
+      "mean_peak": 0.5116831461588541
+    }
+  ],
+  "read_failures": [],
+  "artifact_hashes": {
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/forest_acoustic_int8.tflite": "c9b3a391dc45b211587a5946ee15e357aef8c9c6baff6021866884b951972b9b",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/test_v1.csv": "efdb3aeffe986b0347af617575fc34734a12663557ec3ca755510f53ee9b2d28",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/test.npz": "649a4a3dce19ff470ac773ea99e3d09459ef9b3d98b5a8c2c80f5c43f20743b9"
+  }
+}

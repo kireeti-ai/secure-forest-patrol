@@ -9,6 +9,7 @@ namespace {
 constexpr const char* kTopicNodeStatus = "forest/events/node-status";
 constexpr const char* kTopicRfid = "forest/events/rfid";
 constexpr const char* kTopicAcoustic = "forest/events/acoustic";
+constexpr const char* kTopicVerification = "forest/events/verification";
 constexpr const char* kTopicGatewayStatus = "forest/events/gateway-status";
 constexpr int kProtocolVersion = 4;  // matches forest::protocol wire format
 
@@ -240,6 +241,9 @@ bool BackendIngestionClient::publishEnvelope(const ForestEventEnvelope& envelope
     if (envelope.hasAcoustic) {
         return publishAcoustic(envelope);
     }
+    if (envelope.hasVerification) {
+        return publishVerification(envelope);
+    }
 
     JsonDocument doc;
     char gatewayIdStr[8];
@@ -283,6 +287,8 @@ bool BackendIngestionClient::publishRfid(const ForestEventEnvelope& envelope) {
     doc["node_id"] = nodeIdStr;
 
     char uid[32]{};
+    static_assert(sizeof(uid) >= ForestEventEnvelope::kMaxUidLength * 3U + 1U,
+                 "uid buffer too small for ForestEventEnvelope::kMaxUidLength");
     for (std::size_t index = 0U; index < envelope.rfidUidLength; ++index) {
         snprintf(uid + (index * 3U), sizeof(uid) - (index * 3U), "%02X%s", envelope.rfidUid[index],
                  (index == envelope.rfidUidLength - 1) ? "" : ":");
@@ -324,6 +330,37 @@ bool BackendIngestionClient::publishAcoustic(const ForestEventEnvelope& envelope
     Serial.printf("[MQTT PUBLISH] topic=%s node=%s class=%s conf=%u/255 seq=%u -> %s\n", kTopicAcoustic, nodeIdStr,
                   envelope.acousticClass == 2 ? "Gunshot" : "Chainsaw", envelope.acousticConfidenceU8,
                   static_cast<unsigned>(envelope.sequenceNumber), ok ? "PUBLISHED" : "FAILED");
+    return ok;
+}
+
+bool BackendIngestionClient::publishVerification(const ForestEventEnvelope& envelope) {
+    JsonDocument doc;
+    char nodeIdStr[16];
+    snprintf(nodeIdStr, sizeof(nodeIdStr), "NODE_%02X", envelope.sourceId);
+    doc["node_id"] = nodeIdStr;
+    doc["sequence"] = envelope.sequenceNumber;
+    const char* statusStr = envelope.verifyStatus == 1 ? "MATCH" : envelope.verifyStatus == 2 ? "MISMATCH" : "TIMEOUT";
+    doc["status"] = statusStr;
+
+    char uid[32]{};
+    static_assert(sizeof(uid) >= ForestEventEnvelope::kMaxUidLength * 3U + 1U,
+                 "uid buffer too small for ForestEventEnvelope::kMaxUidLength");
+    for (std::size_t index = 0U; index < envelope.verifyUidLength; ++index) {
+        snprintf(uid + (index * 3U), sizeof(uid) - (index * 3U), "%02X%s", envelope.verifyUid[index],
+                 (index == envelope.verifyUidLength - 1) ? "" : ":");
+    }
+    doc["claimed_uid"] = uid;
+    doc["claimed_page_id"] = envelope.verifyClaimedPageId;
+    doc["actual_page_id"] = envelope.verifyActualPageId;
+    doc["score"] = envelope.verifyScore;
+    doc["rssi"] = envelope.rssiDbm;
+    doc["snr"] = envelope.snrDb;
+
+    char payload[320];
+    const size_t len = serializeJson(doc, payload, sizeof(payload));
+    const bool ok = mqttClient_.publish(kTopicVerification, reinterpret_cast<const uint8_t*>(payload), len, false);
+    Serial.printf("[MQTT PUBLISH] topic=%s node=%s status=%s uid=%s seq=%u -> %s\n", kTopicVerification, nodeIdStr,
+                  statusStr, uid, static_cast<unsigned>(envelope.sequenceNumber), ok ? "PUBLISHED" : "FAILED");
     return ok;
 }
 

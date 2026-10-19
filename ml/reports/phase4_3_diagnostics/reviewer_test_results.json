@@ -1,0 +1,18 @@
+{
+  "tool_path": "reports/phase4_3_diagnostics/review_tool.py",
+  "tool_compile": true,
+  "queue_load": true,
+  "audio_path_resolution": true,
+  "original_signal_playback": "implemented via afplay without preprocessing",
+  "decision_states": [
+    "PENDING",
+    "ACCEPTED",
+    "RELABEL_REQUIRED",
+    "AMBIGUOUS",
+    "EXCLUDED",
+    "NEEDS_SECOND_REVIEW"
+  ],
+  "resume_preservation": true,
+  "conflict_detection": true,
+  "human_review_performed": false
+}

@@ -2,7 +2,10 @@ from app.core.security import hash_password
 from app.models.user import User
 
 
-def test_rfid_scan_authorizes_and_marks_entry_then_exit(client, db_session, seeded_data):
+def test_rfid_scan_authorizes_but_does_not_mark_attendance(client, db_session, seeded_data):
+    # A card tap alone is only the first of two factors: it records the scan and
+    # whether the checkpoint was the officer's own, but attendance now only moves
+    # once the matching fingerprint resolves the visit (see the verification tests).
     employee = User(email="employee@forest.local", full_name="RFID Employee", employee_id="EMP001",
                     rfid_uid="A3:B7:91:2F", password_hash=hash_password("EmployeePassword123!"), role="EMPLOYEE")
     db_session.add(employee)
@@ -12,31 +15,54 @@ def test_rfid_scan_authorizes_and_marks_entry_then_exit(client, db_session, seed
         "type": "RFID_SCAN", "node_id": "NODE_01", "uid": "a3:b7:91:2f", "seq": 15, "rssi": -67, "snr": 8.5})
     assert first.status_code == 202
     assert first.json()["status"] == "AUTHORIZED"
-    assert first.json()["attendance_action"] == "ENTRY"
+    assert first.json()["attendance_action"] is None
+    assert client.get("/api/officer-presence").json()[0]["state"] in ("YET_TO_ARRIVE", "ABSENT")
 
     duplicate = client.post("/api/ingest/gateway/rfid-scan", json={
         "type": "RFID_SCAN", "node_id": "NODE_01", "uid": "A3:B7:91:2F", "seq": 15, "rssi": -67, "snr": 8.5})
     assert duplicate.status_code == 200
     assert duplicate.json()["outcome"] == "DUPLICATE"
 
-    # a second tap straight after entry is a double tap, not a check-out
-    double_tap = client.post("/api/ingest/gateway/rfid-scan", json={
-        "type": "RFID_SCAN", "node_id": "NODE_01", "uid": "A3:B7:91:2F", "seq": 16, "rssi": -67, "snr": 8.5})
-    assert double_tap.status_code == 202
-    assert double_tap.json()["attendance_action"] is None
+
+def test_verification_match_marks_entry_then_exit_mismatch_does_not(client, db_session, seeded_data):
+    employee = User(email="employee2@forest.local", full_name="Verified Employee", employee_id="EMP003",
+                    rfid_uid="A3:B7:91:30", fingerprint_page_id=1,
+                    password_hash=hash_password("EmployeePassword123!"), role="EMPLOYEE")
+    db_session.add(employee)
+    db_session.commit()
+
+    entry = client.post("/api/ingest/gateway/verification-scan", json={
+        "node_id": "NODE_01", "status": "MATCH", "claimed_uid": "a3:b7:91:30", "claimed_page_id": 1,
+        "actual_page_id": 1, "score": 120, "seq": 1, "rssi": -60, "snr": 9.0})
+    assert entry.status_code == 202
+    assert entry.json()["attendance_action"] == "ENTRY"
     assert client.get("/api/officer-presence").json()[0]["state"] == "PRESENT"
+
+    duplicate = client.post("/api/ingest/gateway/verification-scan", json={
+        "node_id": "NODE_01", "status": "MATCH", "claimed_uid": "a3:b7:91:30", "claimed_page_id": 1,
+        "actual_page_id": 1, "score": 120, "seq": 1, "rssi": -60, "snr": 9.0})
+    assert duplicate.json()["outcome"] == "DUPLICATE"
+
+    # a mismatch (wrong finger for this card -- possible proxy) never touches attendance
+    mismatch = client.post("/api/ingest/gateway/verification-scan", json={
+        "node_id": "NODE_01", "status": "MISMATCH", "claimed_uid": "a3:b7:91:30", "claimed_page_id": 1,
+        "actual_page_id": 7, "score": 0, "seq": 2, "rssi": -60, "snr": 9.0})
+    assert mismatch.json()["attendance_action"] is None
+    assert client.get("/api/officer-presence").json()[0]["state"] == "PRESENT"
+    proxy = client.get("/api/verification-events?status=MISMATCH").json()
+    assert len(proxy) == 1 and proxy[0]["claimed_employee_id"] == "EMP003"
 
     from datetime import datetime, timedelta, timezone
     from sqlalchemy import select
     from app.models.rfid import Attendance
-    row = db_session.scalar(select(Attendance).where(Attendance.employee_id == "EMP001"))
+    row = db_session.scalar(select(Attendance).where(Attendance.employee_id == "EMP003"))
     row.entry_at = datetime.now(timezone.utc) - timedelta(minutes=30)
     db_session.commit()
 
-    second = client.post("/api/ingest/gateway/rfid-scan", json={
-        "type": "RFID_SCAN", "node_id": "NODE_01", "uid": "A3:B7:91:2F", "seq": 17, "rssi": -67, "snr": 8.5})
-    assert second.status_code == 202
-    assert second.json()["attendance_action"] == "EXIT"
+    exit_ = client.post("/api/ingest/gateway/verification-scan", json={
+        "node_id": "NODE_01", "status": "MATCH", "claimed_uid": "a3:b7:91:30", "claimed_page_id": 1,
+        "actual_page_id": 1, "score": 110, "seq": 3, "rssi": -60, "snr": 9.0})
+    assert exit_.json()["attendance_action"] == "EXIT"
     assert client.get("/api/officer-presence").json()[0]["state"] == "CHECKED_OUT"
 
 
@@ -59,6 +85,21 @@ def test_rfid_assignment_is_normalized(client, db_session, seeded_data):
     assert assigned.json()["rfid_uid"] == "AA:BB:CC:DD"
 
 
+def test_fingerprint_assignment(client, db_session, seeded_data):
+    employee = User(email="fp@forest.local", full_name="FP Employee", employee_id="EMP004",
+                    password_hash=hash_password("ManagedPassword123!"), role="EMPLOYEE")
+    db_session.add(employee)
+    db_session.commit()
+
+    assigned = client.put("/api/employees/EMP004/fingerprint", json={"fingerprint_page_id": 5})
+    assert assigned.status_code == 200
+    assert assigned.json()["fingerprint_page_id"] == 5
+
+    cleared = client.put("/api/employees/EMP004/fingerprint", json={"fingerprint_page_id": None})
+    assert cleared.status_code == 200
+    assert cleared.json()["fingerprint_page_id"] is None
+
+
 def test_mqtt_rfid_and_gateway_status_topics(client, db_session, seeded_data):
     import json
     from types import SimpleNamespace
@@ -79,6 +120,33 @@ def test_mqtt_rfid_and_gateway_status_topics(client, db_session, seeded_data):
     from app.models.rfid import RfidEvent
     assert db_session.scalar(select(RfidEvent).where(RfidEvent.sequence == 40)).status == "UNKNOWN"
     assert db_session.scalar(select(Gateway).where(Gateway.gateway_id == "GW-FE")).wifi_status == "CONNECTED"
+
+
+def test_mqtt_verification_topic(client, db_session, seeded_data):
+    import json
+    from types import SimpleNamespace
+
+    from app.services.mqtt_consumer import TOPIC_VERIFICATION, MqttConsumer
+
+    employee = User(email="mqttverify@forest.local", full_name="MQTT Verify", employee_id="EMP777",
+                    rfid_uid="BB:00:00:01", fingerprint_page_id=9,
+                    password_hash=hash_password("SomePassword123!"), role="EMPLOYEE")
+    db_session.add(employee)
+    db_session.commit()
+
+    consumer = MqttConsumer(session_factory=lambda: db_session)
+    db_session.close = lambda: None  # the consumer closes its session; keep the test one open
+
+    def send(topic, body):
+        consumer._on_message(None, None, SimpleNamespace(topic=topic, payload=json.dumps(body).encode()))
+
+    send(TOPIC_VERIFICATION, {"node_id": "NODE_01", "status": "MATCH", "claimed_uid": "BB:00:00:01",
+                             "claimed_page_id": 9, "actual_page_id": 9, "score": 100, "seq": 1, "rssi": -60, "snr": 9.0})
+
+    from sqlalchemy import select
+    from app.models.rfid import Attendance
+    row = db_session.scalar(select(Attendance).where(Attendance.employee_id == "EMP777"))
+    assert row is not None and row.exit_at is None
 
 
 def test_assign_employee_to_checkpoints(client, db_session, seeded_data):
@@ -118,7 +186,7 @@ def test_wrong_checkpoint_scan_is_flagged_and_not_attendance(client, db_session,
 
     ok = client.post("/api/ingest/gateway/rfid-scan", json={
         "type": "RFID_SCAN", "node_id": "NODE_01", "uid": "AA:00:00:01", "seq": 50, "rssi": -60, "snr": 9.0})
-    assert ok.json()["status"] == "AUTHORIZED" and ok.json()["attendance_action"] == "ENTRY"
+    assert ok.json()["status"] == "AUTHORIZED" and ok.json()["attendance_action"] is None
 
     wrong = client.post("/api/ingest/gateway/rfid-scan", json={
         "type": "RFID_SCAN", "node_id": "NODE_01", "uid": "AA:00:00:02", "seq": 51, "rssi": -60, "snr": 9.0})

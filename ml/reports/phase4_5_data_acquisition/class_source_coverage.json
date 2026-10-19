@@ -1,0 +1,34 @@
+{
+  "audio_files_acquired": 0,
+  "usable_audio_duration_seconds": 0,
+  "kenya_metadata_verified": {
+    "human_annotated_rows": 3164,
+    "ml_annotated_people_talking_rows": 2336,
+    "advertised_total_clips": 5500,
+    "chainsaw_clips": 129,
+    "chainsaw_filename_prefix_groups": 5,
+    "background_relevant_publisher_labels": {
+      "Birds": 213,
+      "Wind": 231,
+      "Vehicle": 703,
+      "Crickets": 3,
+      "Engine": 3,
+      "Flowing water": 21,
+      "Axe": 90,
+      "Cutting wood": 7
+    },
+    "gunshot_clips": 0,
+    "event_timestamps": false,
+    "explicit_parent_recording_ids": false
+  },
+  "belize_metadata_verified": {
+    "advertised_gunshot_files": 749,
+    "advertised_background_files": ">35000",
+    "sample_rate_hz": 8000,
+    "clip_duration_seconds": 4.09,
+    "event_extraction": "manual listening and spectrogram inspection described by publisher",
+    "individual_file_listing_retrieved": false,
+    "selective_download_verified": false
+  },
+  "training_eligibility": "none; no acquired audio and no human review"
+}

@@ -1,0 +1,52 @@
+{
+  "audit_date": "2026-10-19",
+  "archive": {
+    "filename": "Kenya-Forest-Sounds-Dataset-v1.0.1.zip",
+    "size_bytes": 716622014,
+    "sha256": "2e270bf4918885f8f5fe35e204f9b1ccf2cae14ecff5623fe272be1ec7a5feae",
+    "md5": "9789f781d9bec915bfb2e15f0c91a42a",
+    "zip_integrity": "PASS",
+    "members": 5500,
+    "wav_members": 5500
+  },
+  "acquired_subset": {
+    "audio_files": 175,
+    "chainsaw_clips": 129,
+    "background_control_clips": 46,
+    "publisher_labels": {
+      "birds": 10,
+      "chainsaw": 129,
+      "crickets": 3,
+      "engine": 3,
+      "flowing water": 10,
+      "vehicle": 10,
+      "wind": 10
+    },
+    "provisional_filename_prefix_groups": 33,
+    "chainsaw_prefix_groups": 5,
+    "independent_source_recordings_established": false,
+    "event_timestamps_available": false,
+    "human_reviewed": false,
+    "duration_seconds": {
+      "total": 850.4176875,
+      "chainsaw": 638.9728125,
+      "background_control_total": 211.444875,
+      "publisher_label_duration_seconds": {
+        "birds": 45.693875,
+        "chainsaw": 638.9728125,
+        "crickets": 15.0465,
+        "engine": 14.953625,
+        "flowing water": 35.53375,
+        "vehicle": 50.155,
+        "wind": 50.062125
+      }
+    }
+  },
+  "storage_bytes": {
+    "archive": 716622014,
+    "metadata": 247991,
+    "extracted_audio_subset": 27236116,
+    "total_staging_bytes": 744106121
+  },
+  "training_eligibility": "not eligible; separate staging only pending provenance/licensing/duplicate review and human review"
+}

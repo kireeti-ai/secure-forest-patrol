@@ -108,3 +108,25 @@ class RfidScanIngest(BaseModel):
         if not re.fullmatch(r"[0-9A-F]{2}(?::[0-9A-F]{2}){3,9}", normalized):
             raise ValueError("uid must be colon-separated hexadecimal bytes")
         return normalized
+
+
+class VerificationIngest(BaseModel):
+    """Two-factor checkpoint result: a card claimed an officer, then a fingerprint was
+    (or wasn't) presented within the node's verification window. Only MATCH marks
+    attendance; MISMATCH is a possible proxy attempt (wrong/no finger for the card)
+    and is kept for review, not silently dropped. See docs/GATEWAY_BACKEND_CONTRACT.md.
+    """
+    node_id: str = Field(min_length=1, max_length=64)
+    status: str = Field(pattern="^(MATCH|MISMATCH|TIMEOUT)$")
+    claimed_uid: str = Field(min_length=8, max_length=29)
+    claimed_page_id: int = Field(ge=0, le=65535)
+    actual_page_id: int = Field(ge=0, le=65535)
+    score: int = Field(ge=0, le=65535)
+    seq: int = Field(ge=0, le=4294967295)
+    rssi: int
+    snr: float
+
+    @field_validator("claimed_uid")
+    @classmethod
+    def normalize_uid(cls, value: str) -> str:
+        return RfidScanIngest.normalize_uid(value)

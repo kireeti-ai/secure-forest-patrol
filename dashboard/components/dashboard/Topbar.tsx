@@ -13,10 +13,8 @@ type TopbarProps = {
 const routeTitles: Record<string, string> = {
   "/dashboard": "Overview",
   "/dashboard/checkpoints": "Checkpoints",
-  "/dashboard/patrols": "Patrols",
   "/dashboard/officers": "Officers",
   "/dashboard/acoustic-events": "Acoustic events",
-  "/dashboard/ledger": "Ledger",
   "/dashboard/gateway": "Gateway",
   "/dashboard/nodes": "Field nodes",
   "/dashboard/sync-history": "Sync history",
@@ -29,7 +27,7 @@ export function Topbar({ sidebarOpen, onMenuClick }: TopbarProps) {
   const [gatewayStatus, setGatewayStatus] = useState<"ONLINE" | "OFFLINE" | "UNKNOWN">("UNKNOWN");
   const [lastSync, setLastSync] = useState<string>("Unavailable");
 
-  const pageTitle = routeTitles[pathname] || (pathname.startsWith("/dashboard/patrols/") ? "Patrol record" : pathname.startsWith("/dashboard/acoustic-events/") ? "Acoustic event" : "Overview");
+  const pageTitle = routeTitles[pathname] || (pathname.startsWith("/dashboard/acoustic-events/") ? "Acoustic event" : "Overview");
 
   useEffect(() => {
     let mounted = true;

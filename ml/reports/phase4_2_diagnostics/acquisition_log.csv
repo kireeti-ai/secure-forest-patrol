@@ -1,0 +1,3 @@
+acquisition_id,dataset,status,source_url,download_size_bytes,selected_recordings,reason,next_action
+sensing_forest_targeted_subset,sensing_forest,INVESTIGATED_NOT_ACQUIRED,https://zenodo.org/records/18911592,0,0,Official record exposes approximately 24.4 GB archive; no justified provider-supported file-level subset was available. Full download was not performed.,"Request provider-approved subset of at least 20 source recordings with IDs, hashes, metadata, and intended-use confirmation."
+phase4_1_existing_sources,existing candidate sources,NOT_NEEDED_NOW,phase4_1 manifests,0,0,"Remediation priority is human review and legal resolution, not indiscriminate volume expansion.",Review existing isolated queue.

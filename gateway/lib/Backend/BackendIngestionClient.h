@@ -53,9 +53,25 @@ struct ForestEventEnvelope {
     std::uint8_t acousticClass{0};
     std::uint8_t acousticConfidenceU8{0};
     std::uint16_t acousticTriggerRms{0};
+    // Shared cap on raw UID bytes for both rfidUid and verifyUid below, enforced by
+    // GatewayService when it parses the LoRa payload. The formatted-hex scratch buffers
+    // in BackendIngestionClient.cpp (`char uid[32]`) are sized off this constant via a
+    // static_assert -- bump both together if the UID format ever grows.
+    static constexpr std::size_t kMaxUidLength = 10U;
+
     bool hasRfid{false};
-    std::uint8_t rfidUid[10]{};
+    std::uint8_t rfidUid[kMaxUidLength]{};
     std::uint8_t rfidUidLength{0};
+    // Two-factor verification result ('V' payload): card claimed an officer, then a
+    // fingerprint was (or wasn't) presented within the node's verification window.
+    // verifyStatus: 1=MATCH, 2=MISMATCH (wrong/no finger -- possible proxy), 3=TIMEOUT.
+    bool hasVerification{false};
+    std::uint8_t verifyStatus{0};
+    std::uint8_t verifyUid[kMaxUidLength]{};
+    std::uint8_t verifyUidLength{0};
+    std::uint16_t verifyClaimedPageId{0};
+    std::uint16_t verifyActualPageId{0};
+    std::uint16_t verifyScore{0};
 };
 
 enum class LinkState { Disconnected, Connecting, Connected };
@@ -99,6 +115,7 @@ private:
     bool publishEnvelope(const ForestEventEnvelope& envelope);
     bool publishRfid(const ForestEventEnvelope& envelope);
     bool publishAcoustic(const ForestEventEnvelope& envelope);
+    bool publishVerification(const ForestEventEnvelope& envelope);
     void logLine(const char* line);
     static void networkTask(void* self);
 

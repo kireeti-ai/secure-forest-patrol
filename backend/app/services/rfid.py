@@ -6,17 +6,17 @@ from sqlalchemy.orm import Session
 from app.models.checkpoint import Checkpoint
 from app.models.forest_node import ForestNode
 from app.models.operator_checkpoint_access import OperatorCheckpointAccess
-from app.models.rfid import Attendance, RfidEvent
+from app.models.rfid import RfidEvent
 from app.models.user import User
 from app.schemas.forest_ingest import RfidScanIngest
-from app.services.attendance_state import MIN_SECONDS_BEFORE_EXIT, attendance_day
 
 
 DUPLICATE_WINDOW = timedelta(seconds=120)
 
 
 def ingest_rfid_scan(db: Session, payload: RfidScanIngest) -> tuple[dict, bool]:
-    """Persist exactly one gateway scan and toggle the employee's daily attendance."""
+    """Persist exactly one gateway card scan. First factor of two -- see module docstring note
+    above ``event = RfidEvent(...)`` for why this no longer toggles Attendance directly."""
     # Two deliveries of one scan can arrive milliseconds apart (webhook retries,
     # duplicate rules). Without a unique constraint the check below would let both
     # through, so serialise per (node, sequence, card): the second request waits for
@@ -56,28 +56,17 @@ def ingest_rfid_scan(db: Session, payload: RfidScanIngest) -> tuple[dict, bool]:
         if checkpoint is not None and assigned and checkpoint.checkpoint_id not in assigned:
             status = "INVALID"  # registered, but tried a checkpoint they are not assigned to
 
+    # This only records the card tap and whether it was at an assigned checkpoint; it no
+    # longer toggles Attendance. The card is the first of two factors -- attendance is
+    # only marked once the matching fingerprint resolves the visit (see
+    # app/services/verification.py::ingest_verification, status == MATCH).
     event = RfidEvent(rfid_uid=payload.uid, employee_id=employee.employee_id if employee else None,
                       node_id=payload.node_id, sequence=payload.seq, status=status,
                       rssi=payload.rssi, snr=payload.snr, timestamp=now)
     db.add(event)
-    attendance_action = None
-    if status == "AUTHORIZED" and employee.employee_id:
-        today = attendance_day(now)
-        row = db.scalar(select(Attendance).where(Attendance.employee_id == employee.employee_id,
-                                                 Attendance.attendance_date == today))
-        if row is None:
-            row = Attendance(employee_id=employee.employee_id, attendance_date=today, entry_at=now)
-            db.add(row)
-            attendance_action = "ENTRY"
-        elif row.exit_at is None:
-            entry_at = row.entry_at if row.entry_at.tzinfo else row.entry_at.replace(tzinfo=timezone.utc)
-            # A tap right after entry is a double tap, not a check-out.
-            if (now - entry_at).total_seconds() >= MIN_SECONDS_BEFORE_EXIT:
-                row.exit_at = now
-                attendance_action = "EXIT"
     db.commit()
     db.refresh(event)
-    body = _event_out(event, employee.full_name if employee else None, attendance_action)
+    body = _event_out(event, employee.full_name if employee else None, None)
     if status == "INVALID":
         body["reason"] = invalid_reason(checkpoint.checkpoint_id if checkpoint else None, sorted(assigned))
     return body, False

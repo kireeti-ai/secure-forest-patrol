@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { fetchAcousticEvents } from "../../lib/api";
-import { fetchRfidEvents } from "../../lib/rfidApi";
+import { fetchRfidEvents, fetchVerificationEvents } from "../../lib/rfidApi";
 
 type Tone = "healthy" | "warning" | "danger";
 type Note = { key: string; tone: Tone; tag: string; title: string; detail: string; href: string; at: number };
@@ -25,9 +25,10 @@ export function Notifications() {
   useEffect(() => {
     let alive = true;
     async function poll() {
-      const [rfid, acoustic] = await Promise.all([
+      const [rfid, acoustic, verification] = await Promise.all([
         fetchRfidEvents().catch(() => null),
         fetchAcousticEvents().catch(() => null),
+        fetchVerificationEvents().catch(() => null),
       ]);
       if (!alive) return;
       const fresh: Note[] = [];
@@ -39,6 +40,15 @@ export function Notifications() {
         else if (e.status === "INVALID") fresh.push({ key, tone: "danger", tag: "INVALID", title: "Wrong checkpoint", detail: e.reason ?? `${e.employee_id ?? e.uid} at ${e.checkpoint_id ?? e.node_id}`, href: "/dashboard/rfid-events", at: Date.parse(e.timestamp) });
         else fresh.push({ key, tone: "warning", tag: "UNKNOWN", title: "Unregistered card", detail: `${e.uid} at ${e.checkpoint_id ?? e.node_id}`, href: "/dashboard/rfid-events", at: Date.parse(e.timestamp) });
       }
+      for (const v of verification ?? []) {
+        const key = `v:${v.id}`;
+        if (seen.current.has(key)) continue;
+        seen.current.add(key);
+        const who = v.claimed_name ?? v.claimed_employee_id ?? v.claimed_uid;
+        if (v.status === "MATCH") fresh.push({ key, tone: "healthy", tag: "ATTENDANCE", title: "Verified check-in", detail: `${who} at ${v.checkpoint_id ?? v.node_id}`, href: "/dashboard/officers", at: Date.parse(v.timestamp) });
+        else if (v.status === "MISMATCH") fresh.push({ key, tone: "danger", tag: "PROXY", title: "Possible proxy attempt", detail: `${who} at ${v.checkpoint_id ?? v.node_id}`, href: "/dashboard/officers", at: Date.parse(v.timestamp) });
+        else fresh.push({ key, tone: "warning", tag: "TIMEOUT", title: "Fingerprint not presented", detail: `${who} at ${v.checkpoint_id ?? v.node_id}`, href: "/dashboard/officers", at: Date.parse(v.timestamp) });
+      }
       for (const a of acoustic ?? []) {
         const key = `a:${a.id}`;
         if (seen.current.has(key)) continue;
@@ -46,7 +56,7 @@ export function Notifications() {
         fresh.push({ key, tone: "danger", tag: "ACOUSTIC", title: a.classification, detail: `${Math.round(a.confidence * 100)}% at ${a.checkpointId || a.nodeId}`, href: `/dashboard/acoustic-events/${a.id}`, at: Date.parse(a.timestamp) });
       }
       // The first poll only establishes the baseline; existing history is not "new".
-      if (!primed.current) { primed.current = rfid !== null || acoustic !== null; return; }
+      if (!primed.current) { primed.current = rfid !== null || acoustic !== null || verification !== null; return; }
       if (!fresh.length) return;
       fresh.sort((x, y) => y.at - x.at);
       setNotes((n) => [...fresh, ...n].slice(0, MAX_KEPT));

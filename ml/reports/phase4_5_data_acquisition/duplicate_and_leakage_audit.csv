@@ -1,0 +1,4 @@
+dataset,audio_files_acquired,exact_sha256_check,near_duplicate_check,source_id_overlap_check,parent_crop_check,frozen_split_action,decision,notes
+kenya_forest_sounds,0,NOT_RUN_NO_AUDIO_ACQUIRED,NOT_RUN_NO_AUDIO_ACQUIRED,IDENTIFIER_ONLY_NO_DIRECT_MATCH,NOT_RUN_NO_AUDIO_ACQUIRED,NO_CHANGE,DEFERRED,"No audio hash can be compared; no direct ZOOM identifiers found locally"
+belize_tropical_forest_gunshot,0,NOT_RUN_NO_AUDIO_ACQUIRED,NOT_RUN_NO_AUDIO_ACQUIRED,NOT_RUN_NO_FILE_MANIFEST,NOT_RUN_NO_AUDIO_ACQUIRED,NO_CHANGE,DEFERRED,"No individual files or source manifest exposed"
+existing_frozen_data,0,PASS_FROM_PRIOR_AUDIT,PASS_FROM_PRIOR_AUDIT,PASS_FROM_PRIOR_AUDIT,PASS_FROM_PRIOR_AUDIT,NO_CHANGE,PRESERVED,"5008 duplicate rows; 2504 groups; zero cross-split groups"

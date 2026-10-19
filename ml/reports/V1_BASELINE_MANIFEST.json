@@ -1,0 +1,108 @@
+{
+  "baseline_id": "secure-forest-patrol-v1",
+  "audit_date": "2026-10-18",
+  "scope": "Phase 0 freeze and audit only",
+  "repository": {
+    "branch": "main",
+    "working_tree_note": "Unrelated user changes were present and preserved. See V1_BASELINE.md.",
+    "commit": "not recorded by this audit"
+  },
+  "dataset": {
+    "master_manifest": "ml/datasets/v1/master_v1.csv",
+    "splits": {
+      "train": "ml/datasets/v1/train_v1.csv",
+      "validation": "ml/datasets/v1/validation_v1.csv",
+      "test": "ml/datasets/v1/test_v1.csv",
+      "external_test": "ml/datasets/v1/external_test_v1.csv"
+    },
+    "counts": {
+      "master_segments": 58918,
+      "master_recordings": 1975,
+      "train_segments": 28741,
+      "train_recordings": 1328,
+      "validation_segments": 6999,
+      "validation_recordings": 284,
+      "test_segments": 2119,
+      "test_recordings": 286,
+      "external_test_segments": 21059,
+      "external_test_recordings": 77
+    },
+    "class_counts_master": {
+      "background": 55069,
+      "chainsaw": 3407,
+      "gunshot": 442
+    },
+    "integrity": {
+      "leakage_validation": "passed",
+      "recording_overlap_all_split_pairs": 0,
+      "raw_audit_total_files": 15103,
+      "raw_audit_corrupted": 0,
+      "raw_audit_zero_length": 0,
+      "raw_audit_invalid_sample_rates": 682,
+      "raw_audit_invalid_channels": 1,
+      "raw_audit_extreme_clipping": 8169,
+      "raw_audit_exact_duplicates": 3,
+      "segmentation_order": "segments are created in audio_preprocess.py before create_splits.py assigns grouped splits"
+    }
+  },
+  "model": {
+    "keras": "ml/models/final/final.keras",
+    "fp32_tflite": "ml/models/final/forest_acoustic_fp32.tflite",
+    "int8_tflite": "ml/models/final/forest_acoustic_int8.tflite",
+    "architecture": "depthwise-separable CNN",
+    "parameters": 1315,
+    "weights_size_bytes": 5260,
+    "input_shape": [1, 40, 101, 1],
+    "input_dtype_int8": "int8",
+    "output_shape": [1, 3],
+    "output_dtype_int8": "int8",
+    "input_quantization": {"scale": 0.014805045910179615, "zero_point": 11},
+    "output_quantization": {"scale": 0.00390625, "zero_point": -128},
+    "operators": ["CONV_2D", "DEPTHWISE_CONV_2D", "FULLY_CONNECTED", "MAX_POOL_2D", "MEAN", "SOFTMAX"],
+    "unsupported_tflm_ops": [],
+    "feature_config": {
+      "sample_rate": 16000,
+      "window_seconds": 1.0,
+      "feature": "log-Mel spectrogram",
+      "n_mels": 40,
+      "n_fft": 512,
+      "hop_length": 160,
+      "training_feature_mean": -36.31850051879883,
+      "training_feature_std": 21.19044303894043
+    },
+    "training_config": {
+      "seed": 42,
+      "optimizer": "Adam",
+      "learning_rate": 0.001,
+      "batch_size": 32,
+      "epochs_requested": 15,
+      "epochs_ran": 15,
+      "class_weighting": "balanced",
+      "augmentation": "training-only; configs/augmentation.yaml"
+    }
+  },
+  "sha256": {
+    "ml/models/final/final.keras": "4ebad60f4de804cdf2659e34bed05e4b56dfc08bade8c1d3058657efaba430bd",
+    "ml/models/final/forest_acoustic_fp32.tflite": "890cf5cd74b28c3618ddbf64bdc9399a68f9048c5fe1117b45177056bded3811",
+    "ml/models/final/forest_acoustic_int8.tflite": "c9b3a391dc45b211587a5946ee15e357aef8c9c6baff6021866884b951972b9b",
+    "ml/models/final/final_metadata.json": "3af679ea2c1b7f4683f92dfd9d9fedf5619f7379d245a32ec5e4bf18835da38a",
+    "ml/models/final/model_metadata.json": "fbc870aa2a332d020310ee4a6198cb73e9d1b9b50545ce6a68122bb177490220",
+    "ml/models/final/labels.txt": "ce623174549129b8a296068701db124e74d9bb6256dc558a15a520ec3db4aa7a",
+    "ml/datasets/v1/master_v1.csv": "30924c6b38ddb6adc7b0dc66d9d15fcf313b581e2622aedbc10f000ce0014794",
+    "ml/datasets/v1/train_v1.csv": "95db880be030cc70dee4b2d76e9ed56e99eab9103faffdcebf92d21fbe7637dc",
+    "ml/datasets/v1/validation_v1.csv": "14b53fceb00cc4dd0e2fa8cf965ccedd458067fb4acae09aed20c2e7fbb2fa96",
+    "ml/datasets/v1/test_v1.csv": "efdb3aeffe986b0347af617575fc34734a12663557ec3ca755510f53ee9b2d28",
+    "ml/datasets/v1/external_test_v1.csv": "f4f8920bb75e7b2823334d9d0486033a2f5bf9c4707c7e9b147e1a22571ca2f",
+    "ml/configs/preprocessing.yaml": "58b6ed17aa1c39b8c9520d398e735687f0c209cc0721a5e81aad3fdfcf1a384b",
+    "ml/configs/augmentation.yaml": "b77a6ca1a05a4a993e9083268fcd0deb9e00a928a41d4ef1ef4dd3b2748ed043"
+  },
+  "evaluation": {
+    "commands": [
+      "python3 ml/scripts/validate_leakage.py",
+      "python3 ml/scripts/audit_dataset.py",
+      "cd ml && pytest -q"
+    ],
+    "robustness_definition": "Gaussian noise is added to cached log-Mel features at evaluation time; the original test cache is not modified",
+    "false_alarm_definition": "(true-background windows predicted as chainsaw or gunshot) / (all true-background windows); window-level only"
+  }
+}

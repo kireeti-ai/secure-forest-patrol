@@ -21,43 +21,6 @@ export interface Checkpoint {
   verificationState: "VERIFIED" | "PENDING" | "MISMATCH";
 }
 
-export interface PatrolRecord {
-  id: string;
-  eventId: string;
-  nodeId: string;
-  checkpointId: string;
-  officerId: string;
-  officerName: string;
-  rfid: string;
-  rfidStatus: "VALID" | "INVALID";
-  fingerprintStatus: "MATCH" | "NO_MATCH";
-  timestamp: string;
-  gatewayReceiveTime: string;
-  backendReceiveTime: string;
-  sequence: number;
-  previousHash: string;
-  currentHash: string;
-  signatureStatus: "VALID" | "INVALID" | "PENDING";
-  ledgerStatus: "VALID" | "BROKEN" | "PENDING";
-  syncStatus: "SYNCED" | "PENDING" | "FAILED";
-  recordStatus: "AUTHENTIC" | "TAMPERED" | "SUSPECTED";
-}
-
-export interface Officer {
-  id: string;
-  officerId: string;
-  name: string;
-  state: "ACTIVE" | "INACTIVE";
-  // lastVerifiedPatrol/patrolCount/mismatchCount are real aggregates.
-  // assignedCheckpoint is null -- officers have no checkpoint assignment
-  // in the domain model yet.
-  lastVerifiedPatrol: string | null;
-  patrolCount: number;
-  mismatchCount: number;
-  assignedCheckpoint: string | null;
-  badgeNumber: string;
-}
-
 export interface AcousticEvent {
   id: string;
   eventId: string;
@@ -74,18 +37,6 @@ export interface AcousticEvent {
   clipAvailable: boolean;
   modelVersion?: string;
   reviewedAt?: string | null;
-}
-
-export interface LedgerRecord {
-  sequence: number;
-  nodeId: string;
-  timestamp: string;
-  previousHash: string;
-  currentHash: string;
-  signature: string;
-  signatureStatus: "VALID" | "INVALID" | "PENDING";
-  chainStatus: "VALID" | "BROKEN" | "PENDING";
-  duplicateStatus: "UNIQUE" | "DUPLICATE";
 }
 
 export interface GatewayStatus {
@@ -164,28 +115,6 @@ function normalizeCheckpoint(r: any): Checkpoint {
   };
 }
 
-function normalizePatrol(r: any): PatrolRecord {
-  return {
-    id: r.id, eventId: r.eventId, nodeId: r.nodeId, checkpointId: r.checkpointId,
-    officerId: r.officerId, officerName: r.officerName ?? "—", rfid: r.rfid ?? "—",
-    rfidStatus: r.rfidResult, fingerprintStatus: r.fingerprintResult,
-    timestamp: r.eventCreatedAt, gatewayReceiveTime: r.gatewayReceivedAt,
-    backendReceiveTime: r.backendReceivedAt, sequence: r.sequence,
-    previousHash: r.previousHash, currentHash: r.recordHash,
-    signatureStatus: r.signatureStatus, ledgerStatus: r.chainStatus,
-    syncStatus: r.syncStatus, recordStatus: r.recordStatus ?? "SUSPECTED",
-  };
-}
-
-function normalizeOfficer(r: any): Officer {
-  return {
-    id: r.id, officerId: r.officerId, name: r.name, state: r.status,
-    lastVerifiedPatrol: r.lastVerifiedPatrol, patrolCount: r.patrolCount,
-    mismatchCount: r.mismatchCount, assignedCheckpoint: r.assignedCheckpoint,
-    badgeNumber: r.badgeNumber,
-  };
-}
-
 function normalizeAcoustic(r: any): AcousticEvent {
   return {
     id: r.id, eventId: r.eventId, nodeId: r.nodeId, checkpointId: r.checkpointId,
@@ -193,15 +122,6 @@ function normalizeAcoustic(r: any): AcousticEvent {
     confidence: r.confidence, reviewStatus: r.reviewStatus,
     signatureStatus: r.signatureStatus, syncStatus: r.syncStatus,
     clipAvailable: r.clipAvailable, modelVersion: r.modelVersion, reviewedAt: r.reviewedAt ?? null,
-  };
-}
-
-function normalizeLedger(r: any): LedgerRecord {
-  return {
-    sequence: r.sequence, nodeId: r.nodeId, timestamp: r.eventCreatedAt,
-    previousHash: r.previousHash, currentHash: r.recordHash,
-    signature: r.signature ?? "—", signatureStatus: r.signatureStatus,
-    chainStatus: r.chainStatus, duplicateStatus: r.duplicateStatus,
   };
 }
 
@@ -275,38 +195,6 @@ export async function fetchCheckpoints(): Promise<Checkpoint[]> {
   }
 }
 
-export async function fetchPatrols(): Promise<PatrolRecord[]> {
-  try {
-    const res = await fetch(`${API_BASE_URL}/api/forest/patrols`, { cache: "no-store", headers: authHeaders() });
-    if (!res.ok) return [];
-    return (await res.json()).map(normalizePatrol);
-  } catch {
-    return [];
-  }
-}
-
-export async function fetchPatrolById(id: string): Promise<PatrolRecord | null> {
-  try {
-    const res = await fetch(`${API_BASE_URL}/api/forest/patrols/${encodeURIComponent(id)}`, { cache: "no-store", headers: authHeaders() });
-    if (!res.ok) {
-      return null;
-    }
-    return normalizePatrol(await res.json());
-  } catch {
-    return null;
-  }
-}
-
-export async function fetchOfficers(): Promise<Officer[]> {
-  try {
-    const res = await fetch(`${API_BASE_URL}/api/forest/officers`, { cache: "no-store", headers: authHeaders() });
-    if (!res.ok) return [];
-    return (await res.json()).map(normalizeOfficer);
-  } catch {
-    return [];
-  }
-}
-
 export async function fetchAcousticEvents(): Promise<AcousticEvent[]> {
   try {
     const res = await fetch(`${API_BASE_URL}/api/forest/acoustic-events`, { cache: "no-store", headers: authHeaders() });
@@ -340,16 +228,6 @@ export async function reviewAcousticEvent(eventId: string, decision: ReviewDecis
   });
   if (!res.ok) throw new Error(`Review failed (${res.status})`);
   return normalizeAcoustic(await res.json());
-}
-
-export async function fetchLedger(): Promise<LedgerRecord[]> {
-  try {
-    const res = await fetch(`${API_BASE_URL}/api/forest/ledger`, { cache: "no-store", headers: authHeaders() });
-    if (!res.ok) return [];
-    return (await res.json()).map(normalizeLedger);
-  } catch {
-    return [];
-  }
 }
 
 export async function fetchGateways(): Promise<GatewayStatus[]> {

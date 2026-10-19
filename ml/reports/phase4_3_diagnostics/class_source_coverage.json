@@ -1,0 +1,23 @@
+{
+  "by_class": {
+    "background": 722,
+    "chainsaw": 35,
+    "gunshot": 20
+  },
+  "by_class_distinct_sources": {
+    "background": 722,
+    "chainsaw": 35,
+    "gunshot": 20
+  },
+  "by_class_distinct_parent_groups": {
+    "background": 722,
+    "chainsaw": 35,
+    "gunshot": 20
+  },
+  "training_eligible_by_class": {
+    "background": 0,
+    "chainsaw": 0,
+    "gunshot": 0
+  },
+  "pending_human_review": 777
+}

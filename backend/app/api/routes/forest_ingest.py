@@ -20,12 +20,17 @@ from app.schemas.forest_ingest import (
     GatewayStatusReport,
     IngestResult,
     RfidScanIngest,
+    VerificationIngest,
 )
 from app.services.forest_acoustic import ingest_acoustic_event, ingest_unsigned_acoustic_event
 from app.services.rfid import ingest_rfid_scan as persist_rfid_scan
+from app.services.verification import ingest_verification
 from app.services.forest_gateway_svc import report_gateway_status
 from app.services.forest_patrol import UnknownNodeError, ingest_patrol_event
-from app.services.ws_manager import broadcast_acoustic_outcome, broadcast_gateway_status, broadcast_patrol_outcome, broadcast_rfid_scan
+from app.services.ws_manager import (
+    broadcast_acoustic_outcome, broadcast_gateway_status, broadcast_patrol_outcome, broadcast_rfid_scan,
+    broadcast_verification,
+)
 
 router = APIRouter(prefix="/api/ingest/gateway", tags=["gateway-ingestion"])
 
@@ -95,4 +100,12 @@ def ingest_rfid_scan(payload: RfidScanIngest, db: Session = Depends(get_db)) -> 
     """Accept an RFID scan from a Gateway."""
     body, duplicate = persist_rfid_scan(db, payload)
     broadcast_rfid_scan(body)
+    return JSONResponse(status_code=200 if duplicate else 202, content=body)
+
+
+@router.post("/verification-scan", status_code=202)
+def ingest_verification_scan(payload: VerificationIngest, db: Session = Depends(get_db)) -> JSONResponse:
+    """Accept a two-factor (card + fingerprint) verification result from a Gateway."""
+    body, duplicate = ingest_verification(db, payload)
+    broadcast_verification(body)
     return JSONResponse(status_code=200 if duplicate else 202, content=body)

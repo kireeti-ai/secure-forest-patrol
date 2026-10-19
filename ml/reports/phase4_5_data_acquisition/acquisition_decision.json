@@ -1,0 +1,17 @@
+{
+  "decision": "NO_AUDIO_ACQUISITION",
+  "status": "BLOCKED_PENDING_SELECTIVE_ACCESS_AND_SOURCE_GROUP_VERIFICATION",
+  "audio_files_downloaded": 0,
+  "metadata_files_downloaded": 2,
+  "approved_for_training": [],
+  "kenya": {
+    "decision": "DEFER",
+    "reason": "Official metadata is accessible, but audio is one 716622014-byte archive and the publisher does not define parent/session relationships. The 129 chainsaw clips occur under five filename-prefix groups, so 20-30 independent chainsaw source recordings cannot be established."
+  },
+  "belize": {
+    "decision": "DEFER",
+    "reason": "Official page exposes no file-level listing or selective download mechanism; only a disabled Download All workflow was visible. Full archive acquisition would be speculative and was not performed."
+  },
+  "next_action": "Request publisher-provided file manifests or small source-grouped subsets for both sources. Repeat exact SHA-256, audio fingerprint, source-group, license, and frozen-split leakage checks before any audio is accepted.",
+  "phase5": "BLOCKED"
+}

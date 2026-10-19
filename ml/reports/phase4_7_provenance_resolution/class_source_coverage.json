@@ -1,0 +1,25 @@
+{
+  "extracted_clips": 175,
+  "label_counts": {
+    "background": 46,
+    "chainsaw": 129
+  },
+  "eligible_training_only_candidates": 0,
+  "quarantined_candidates": 175,
+  "quarantined_for_license_primary": 175,
+  "quarantined_for_provenance_blocker": 175,
+  "excluded_candidates": 0,
+  "verified_parent_sources": 0,
+  "verified_sessions": 0,
+  "provisional_groups": 33,
+  "unknown_parent_sources": 175,
+  "remaining_source_independence_uncertainty": "All selected files lack verified parent/session/site mapping; filename prefix is provisional only.",
+  "duration_seconds_total": 850.417687499998,
+  "duration_seconds_by_label": {
+    "background": 211.44487500000008,
+    "chainsaw": 638.9728124999987
+  },
+  "overlap_status_counts": {
+    "NO_PLAUSIBLE_MATCH_IN_COARSE_SCREEN": 175
+  }
+}

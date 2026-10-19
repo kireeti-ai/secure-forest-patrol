@@ -1,0 +1,92 @@
+{
+  "current_training_distinct_sources_by_dataset_class": {
+    "c3gd": {
+      "background": 0,
+      "chainsaw": 0,
+      "gunshot": 39
+    },
+    "esc50_hf": {
+      "background": 310,
+      "chainsaw": 29,
+      "gunshot": 0
+    },
+    "fsc22": {
+      "background": 570,
+      "chainsaw": 53,
+      "gunshot": 51
+    },
+    "rfcx_frugalai": {
+      "background": 168,
+      "chainsaw": 103,
+      "gunshot": 0
+    },
+    "rodopi": {
+      "background": 5,
+      "chainsaw": 5,
+      "gunshot": 0
+    }
+  },
+  "current_training_distinct_source_total": 1328,
+  "category_counts_are_source_label_or_manifest_category_only": true,
+  "hard_background_candidate_distinct_sources_by_category": {
+    "esc50_hf::animal_activity": 28,
+    "esc50_hf::bird_calls": 57,
+    "esc50_hf::engine_like": 24,
+    "esc50_hf::human_activity": 23,
+    "esc50_hf::insects": 53,
+    "esc50_hf::rain": 27,
+    "esc50_hf::storm": 31,
+    "esc50_hf::transient_environment": 22,
+    "esc50_hf::water_drops": 23,
+    "esc50_hf::wind": 22,
+    "fsc22::animal_activity": 107,
+    "fsc22::bird_calls": 45,
+    "fsc22::insects": 52,
+    "fsc22::rain": 62,
+    "fsc22::storm": 49,
+    "fsc22::water_drops": 41,
+    "fsc22::wind": 56
+  },
+  "low_energy_target_candidate_distinct_sources": {
+    "chainsaw": 35,
+    "gunshot": 20
+  },
+  "partial_or_intermittent_verified_sources": 0,
+  "low_energy_gunshot_with_verified_event_timing": 0,
+  "sensing_forest_training_sources": 0,
+  "microphone_or_device_metadata": {
+    "available_source_fields": [
+      "mic_id",
+      "platform_id",
+      "cartridge_id"
+    ],
+    "candidate_rows_with_mic_metadata": 39,
+    "independent_device_coverage_not_verified": true
+  },
+  "gaps": [
+    {
+      "gap": "sensing_forest/authentic forest background domain",
+      "current_distinct_sources": 0,
+      "matters_because": "Phase 1 errors are domain concentrated and current v1 has no sensing_forest rows",
+      "existing_data_can_address": "partially through RFCx/ESC/FSC backgrounds",
+      "new_data_necessary": "targeted provider-approved subset would be useful but was not accessible without a 24.4 GB archive",
+      "minimum_useful_target": "20 distinct CC0 forest source recordings after label/provenance review"
+    },
+    {
+      "gap": "independently verified hard negatives",
+      "current_distinct_sources": 722,
+      "matters_because": "536 frozen-test background FPs across bird/insect/wind/mechanical-like categories",
+      "existing_data_can_address": "yes for candidate coverage; no for independent acoustic verification",
+      "new_data_necessary": "not before human review",
+      "minimum_useful_target": "30 source recordings across at least three domains with five reviewed per priority subtype where available"
+    },
+    {
+      "gap": "low-energy/partial target labels and boundaries",
+      "current_distinct_sources": 55,
+      "matters_because": "45 frozen-test FN windows cluster in low-energy/partial hypotheses",
+      "existing_data_can_address": "partially; event timestamps are incomplete",
+      "new_data_necessary": "new data is secondary to manual review and interval annotation",
+      "minimum_useful_target": "20 chainsaw and 20 gunshot sources with independently reviewed occupancy/boundaries"
+    }
+  ]
+}

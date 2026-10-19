@@ -1,0 +1,16 @@
+{
+  "audit_date": "2026-10-19",
+  "audio_files_downloaded": 0,
+  "metadata_files_downloaded": 2,
+  "metadata_sha256": {
+    "ml/datasets/phase4_5_acquisition/original_metadata/Dataset_Description.xlsx": "f8819ec3f0a73fb522af0f26becf82368adaaca52cc3b61845b0755966f173e",
+    "ml/datasets/phase4_5_acquisition/original_metadata/KFSD_Datasheet.pdf": "48fc40f8151aeb8bd63ed796991d67390f6bc72deb200e5840d93eef8f593cec"
+  },
+  "frozen_artifacts_unchanged": true,
+  "frozen_hashes_source": "ml/reports/online_dataset_alternative_audit/online_dataset_audit_checks.json",
+  "model_training_started": false,
+  "model_inference_started": false,
+  "preprocessing_code_changed": false,
+  "firmware_changed": false,
+  "phase4_3_decisions_changed": false
+}

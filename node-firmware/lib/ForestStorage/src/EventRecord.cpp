@@ -42,7 +42,7 @@ DecodeResult decodeRecord(const uint8_t in[kRecordSize], EventRecord& out) {
     if (in[1] != kRecordVersion) return DecodeResult::BadVersion;
     const uint16_t crc = forest::utils::Crc16::computeCcitt(in, 46);
     if (in[46] != (crc & 0xFF) || in[47] != (crc >> 8)) return DecodeResult::BadCrc;
-    if (in[2] < 1 || in[2] > 3 || in[3] < 1 || in[3] > 2 || in[9] > kMaxPayload) return DecodeResult::BadField;
+    if (in[2] < 1 || in[2] > 5 || in[3] < 1 || in[3] > 2 || in[9] > kMaxPayload) return DecodeResult::BadField;
     out.type = static_cast<EventType>(in[2]);
     out.status = static_cast<SyncStatus>(in[3]);
     out.localId = get32(in + 4);
@@ -60,6 +60,8 @@ const char* typeName(EventType t) {
         case EventType::Rfid: return "RFID";
         case EventType::Acoustic: return "ACOUSTIC";
         case EventType::Test: return "TEST";
+        case EventType::Fingerprint: return "FINGERPRINT";
+        case EventType::Verification: return "VERIFICATION";
     }
     return "?";
 }

@@ -1,0 +1,24 @@
+{
+  "audit_date": "2026-10-19",
+  "archive_sha256": "2e270bf4918885f8f5fe35e204f9b1ccf2cae14ecff5623fe272be1ec7a5feae",
+  "archive_md5": "9789f781d9bec915bfb2e15f0c91a42a",
+  "metadata_sha256": {
+    "ml/datasets/phase4_5_acquisition/original_metadata/Dataset_Description.xlsx": "f8819ec3f0a73fb522af0f26becf82368adaaca52cc3b61845b0755966f173e7",
+    "ml/datasets/phase4_5_acquisition/original_metadata/KFSD_Datasheet.pdf": "48fc40f8151aeb8bd63ed796991d67390f6bc72deb200e5840d93eef8f593cec"
+  },
+  "frozen_hashes_unchanged": {
+    "ml/models/final/final.keras": true,
+    "ml/models/final/forest_acoustic_fp32.tflite": true,
+    "ml/models/final/forest_acoustic_int8.tflite": true,
+    "ml/datasets/v1/train_v1.csv": true,
+    "ml/datasets/v1/validation_v1.csv": true,
+    "ml/datasets/v1/test_v1.csv": true,
+    "ml/datasets/features_cache/train.npz": true,
+    "ml/datasets/features_cache/validation.npz": true,
+    "ml/datasets/features_cache/test.npz": true
+  },
+  "selected_audio_sha256_count": 175,
+  "model_training_started": false,
+  "model_inference_started": false,
+  "phase4_3_decisions_changed": false
+}
