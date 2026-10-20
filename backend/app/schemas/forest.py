@@ -101,6 +101,10 @@ class CheckpointResponse(ForestModel):
     # from recently (see checkpoint_states in forest_nodes.py).
     state: str = "OFFLINE"
     last_patrol_at: datetime | None = None
+    # Derived, never stored: record_status() (forest_nodes.py) of the checkpoint's most
+    # recent patrol event -- AUTHENTIC/MISMATCH/SUSPECTED/TAMPERED, or None if it has no
+    # patrol events yet.
+    verification_state: str | None = None
     created_at: datetime
     updated_at: datetime
 

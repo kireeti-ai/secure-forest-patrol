@@ -6,6 +6,19 @@ import { Card } from "../../../components/ui/Card";
 import { SectionHeader } from "../../../components/ui/SectionHeader";
 import { StatusBadge } from "../../../components/ui/StatusBadge";
 
+// AUTHENTIC is a real pass; MISMATCH/TAMPERED are real failures; SUSPECTED (broken hash
+// chain) is a real but less certain failure; null means no patrol event yet -- neutral,
+// not a failure, since there is nothing to have failed verification.
+function verificationBadge(state: Checkpoint["verificationState"]) {
+  switch (state) {
+    case "AUTHENTIC": return { label: "Authentic", tone: "healthy" as const };
+    case "SUSPECTED": return { label: "Suspected", tone: "warning" as const };
+    case "MISMATCH": return { label: "Mismatch", tone: "danger" as const };
+    case "TAMPERED": return { label: "Tampered", tone: "danger" as const };
+    default: return { label: "No patrols yet", tone: "neutral" as const };
+  }
+}
+
 export default function CheckpointsPage() {
   const [checkpoints, setCheckpoints] = useState<Checkpoint[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,7 +59,7 @@ export default function CheckpointsPage() {
                 <div><strong>Pending Queue:</strong> {cp.pendingRecords} records</div>
                 <div style={{ marginTop: "6px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <span style={{ fontSize: "0.75rem", color: "var(--color-muted)" }}>Verification State:</span>
-                  <StatusBadge label={cp.verificationState} tone={cp.verificationState === "VERIFIED" ? "healthy" : "danger"} />
+                  <StatusBadge label={verificationBadge(cp.verificationState).label} tone={verificationBadge(cp.verificationState).tone} />
                 </div>
               </div>
             </Card>
@@ -84,7 +97,7 @@ export default function CheckpointsPage() {
                   <td>{cp.lastPatrolTime}</td>
                   <td>{cp.pendingRecords}</td>
                   <td>
-                    <StatusBadge label={cp.verificationState} tone={cp.verificationState === "VERIFIED" ? "healthy" : "danger"} />
+                    <StatusBadge label={verificationBadge(cp.verificationState).label} tone={verificationBadge(cp.verificationState).tone} />
                   </td>
                 </tr>
               ))}

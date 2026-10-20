@@ -18,7 +18,7 @@ export interface Checkpoint {
   lastPatrolTime: string;
   lastSyncEvent: string;
   pendingRecords: number;
-  verificationState: "VERIFIED" | "PENDING" | "MISMATCH";
+  verificationState: "AUTHENTIC" | "MISMATCH" | "SUSPECTED" | "TAMPERED" | null;
 }
 
 export interface AcousticEvent {
@@ -108,10 +108,11 @@ function normalizeCheckpoint(r: any): Checkpoint {
     // state is derived by the backend from the attached node's recent activity.
     state: r.state === "ONLINE" ? "ONLINE" : "OFFLINE",
     lastPatrolTime: r.lastPatrolAt ? new Date(r.lastPatrolAt).toLocaleString() : "—",
-    // lastSyncEvent/pendingRecords/verificationState have no backend data
-    // source yet -- honest placeholders, not fabricated.
+    // lastSyncEvent/pendingRecords have no backend data source yet -- honest
+    // placeholders, not fabricated. verificationState is real: the backend's
+    // record_status() of the checkpoint's most recent patrol event (null if none yet).
     lastSyncEvent: "—", pendingRecords: 0,
-    verificationState: "PENDING",
+    verificationState: r.verificationState ?? null,
   };
 }
 

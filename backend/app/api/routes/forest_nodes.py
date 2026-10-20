@@ -17,6 +17,7 @@ from app.api.dependencies.database import get_db
 from app.core.security import require_roles
 from app.models.checkpoint import Checkpoint
 from app.models.forest_node import ForestNode
+from app.models.patrol_event import PatrolEvent
 from app.models.rfid import RfidEvent
 from app.schemas.forest import (
     CheckpointCreate,
@@ -28,6 +29,24 @@ from app.schemas.forest import (
 )
 
 router = APIRouter(prefix="/api/forest", tags=["forest"])
+
+
+def record_status(signature_status: str, chain_status: str, rfid_result: str, fingerprint_result: str) -> str | None:
+    """Shared crypto+identity verdict for one record -- used both per-patrol-event
+    (forest_patrol_api.py) and rolled up per-checkpoint (checkpoint_verification_states below)."""
+    if signature_status == "INVALID":
+        return "TAMPERED"
+    if chain_status == "BROKEN":
+        return "SUSPECTED"
+    # Crypto proof (signature/chain) being intact says the record wasn't forged in transit -- it
+    # says nothing about who presented the card/finger. A failed identity check must not be
+    # reported as AUTHENTIC just because the bytes are unforged; see forest_checkpoints.py's
+    # _officer_stats(), which already treats this combination as a mismatch for attendance stats.
+    if rfid_result == "INVALID" or fingerprint_result == "NO_MATCH":
+        return "MISMATCH"
+    if signature_status == "VALID" and chain_status == "VALID":
+        return "AUTHENTIC"
+    return None
 
 
 def node_out(n: ForestNode) -> NodeResponse:
@@ -67,12 +86,32 @@ def checkpoint_states(db: Session, checkpoints: list[Checkpoint]) -> dict[str, t
     return result
 
 
-def checkpoint_out(c: Checkpoint, state: str = "OFFLINE", last_patrol_at: datetime | None = None) -> CheckpointResponse:
+def checkpoint_verification_states(db: Session, checkpoints: list[Checkpoint]) -> dict[str, str | None]:
+    """Map checkpoint_id -> record_status() of that checkpoint's most recent patrol event.
+
+    No patrol events yet for a checkpoint -> None (honest "nothing to verify yet", not a
+    fabricated PENDING). Mirrors checkpoint_states()'s per-checkpoint latest-record pattern
+    and _officer_stats()'s (forest_checkpoints.py) use of the same signature/chain/rfid/
+    fingerprint fields, just rolled up per checkpoint instead of per officer.
+    """
+    result: dict[str, str | None] = {}
+    for c in checkpoints:
+        latest = db.scalar(select(PatrolEvent).where(PatrolEvent.checkpoint_id == c.checkpoint_id)
+                           .order_by(PatrolEvent.event_created_at.desc()).limit(1))
+        result[c.checkpoint_id] = (record_status(latest.signature_status, latest.chain_status,
+                                                 latest.rfid_result, latest.fingerprint_result)
+                                   if latest is not None else None)
+    return result
+
+
+def checkpoint_out(c: Checkpoint, state: str = "OFFLINE", last_patrol_at: datetime | None = None,
+                   verification_state: str | None = None) -> CheckpointResponse:
     return CheckpointResponse(
         id=str(c.id), checkpoint_id=c.checkpoint_id, name=c.name, zone_id=c.zone_id,
         latitude=float(c.latitude) if c.latitude is not None else None,
         longitude=float(c.longitude) if c.longitude is not None else None,
         node_id=c.node_id, active=c.active, state=state, last_patrol_at=last_patrol_at,
+        verification_state=verification_state,
         created_at=c.created_at, updated_at=c.updated_at)
 
 
@@ -132,4 +171,5 @@ def update_node(node_id: str, payload: NodeUpdate,
 def list_checkpoints(db: Session = Depends(get_db), _: object = Depends(require_roles("ADMIN", "OPERATOR"))) -> list[CheckpointResponse]:
     rows = list(db.scalars(select(Checkpoint).order_by(Checkpoint.checkpoint_id)))
     states = checkpoint_states(db, rows)
-    return [checkpoint_out(c, *states[c.checkpoint_id]) for c in rows]
+    verification_states = checkpoint_verification_states(db, rows)
+    return [checkpoint_out(c, *states[c.checkpoint_id], verification_states[c.checkpoint_id]) for c in rows]
