@@ -14,7 +14,6 @@
 #include <base64.h>
 #include "RFID_RC522.h"   // our own RC522 SPI driver (lib/ForestSensors), no MFRC522 library
 #include "R307Fingerprint.h"
-#include "Lcd1602.h"
 #include <LoRa.h>
 
 #include "Config.h"
@@ -92,33 +91,6 @@
 #endif
 constexpr std::uint8_t kLedLevel = 64;  // 0-255 brightness
 
-// RG1602A 16x2 LCD, 4-bit parallel (HD44780-compatible). DS3231 is not fitted on this
-// board, so its I2C pins (20/21) are free, but the LCD uses its own dedicated pins
-// below rather than taking those, in case the RTC is fitted later.
-#ifndef FOREST_LCD_RS_PIN
-#define FOREST_LCD_RS_PIN 2
-#endif
-#ifndef FOREST_LCD_EN_PIN
-#define FOREST_LCD_EN_PIN 15
-#endif
-#ifndef FOREST_LCD_D4_PIN
-#define FOREST_LCD_D4_PIN 41
-#endif
-#ifndef FOREST_LCD_D5_PIN
-// NOT GPIO19/20: those are hard-wired on the ESP32-S3 chip to the native USB D-/D+
-// lines used by this board's USB-Serial/JTAG port (the same port used to flash and
-// monitor it) -- driving them as a plain GPIO fights the USB PHY and never works
-// as a clean digital line while the board is connected over USB.
-#define FOREST_LCD_D5_PIN 42
-#endif
-#ifndef FOREST_LCD_D6_PIN
-#define FOREST_LCD_D6_PIN 47
-#endif
-#ifndef FOREST_LCD_D7_PIN
-// GPIO21 is the DS3231's I2C SDA pin, but no DS3231 is fitted on this board, so
-// it's free -- see the project README's "Known limits" / Status table.
-#define FOREST_LCD_D7_PIN 21
-#endif
 // RFID/fingerprint use red/green/amber; acoustic gets its own blue channel so a chainsaw/gunshot
 // flash can never be confused with (or stomp on) the "awaiting fingerprint" amber held by the
 // two-factor window -- see sendAcousticEvent(), which must restore amber afterward if still awaiting.
@@ -189,42 +161,6 @@ ForestSensors::RfidUid cardUid;
 HardwareSerial fingerprintSerial(2);
 ForestSensors::R307Fingerprint fingerprint(fingerprintSerial, FOREST_FINGER_RX_PIN,
                                             FOREST_FINGER_TX_PIN, FOREST_FINGER_BAUD);
-ForestSensors::Lcd1602 lcd;
-
-// Shows the checkpoint's current state on the LCD. Called only on a state transition
-// (card tap, verification resolved, back to idle) -- never every loop() pass, since
-// each line write blocks for tens of microseconds to ~1.5ms (see Lcd1602.h).
-void showLcdIdle() {
-  lcd.setLine(0, "Ready");
-  lcd.setLine(1, "Tap card");
-}
-
-void showLcdAwaitingFingerprint(const char* officerLabel, std::uint32_t secondsLeft) {
-  char line0[17];
-  snprintf(line0, sizeof(line0), "Card: %s", officerLabel);
-  char line1[17];
-  snprintf(line1, sizeof(line1), "Finger? %lus", (unsigned long)secondsLeft);
-  lcd.setLine(0, line0);
-  lcd.setLine(1, line1);
-}
-
-void showLcdResult(VerifyStatus status, const char* label) {
-  switch (status) {
-    case VerifyStatus::Match:
-      lcd.setLine(0, "Verified");
-      lcd.setLine(1, label);
-      break;
-    case VerifyStatus::Mismatch:
-      lcd.setLine(0, "NOT verified");
-      lcd.setLine(1, "Wrong finger");
-      break;
-    case VerifyStatus::Timeout:
-      lcd.setLine(0, "NOT verified");
-      lcd.setLine(1, "No finger");
-      break;
-  }
-}
-
 // Local event store on the internal flash (LittleFS). Every RFID / acoustic event is written here as
 // PENDING_SYNC BEFORE it is transmitted and marked SYNCED once the radio completes the transmission.
 forest::storage::LittleFsBackend flashBackend;
@@ -445,7 +381,6 @@ static void sendVerificationEvent(VerifyStatus status, const ForestSensors::Rfid
   forest::storage::EventRecord stored;
   const bool haveRec = storeEvent(forest::storage::EventType::Verification, payload.data(), off, stored);
   setStatusLed(status == VerifyStatus::Match ? 0 : kLedLevel, status == VerifyStatus::Match ? kLedLevel : 0);
-  showLcdResult(status, pendingOfficerLabel);
 
   // Phase 2 (docs/TAMPER_EVIDENCE_SECURITY_PLAN.md): the signed, hash-chained patrol event is a
   // strict superset of the legacy unsigned 'V' one (same rfid/fingerprint result, plus a
@@ -513,7 +448,6 @@ static void sendVerificationEvent(VerifyStatus status, const ForestSensors::Rfid
 
   delay(status == VerifyStatus::Match ? 200 : 500);  // mismatch/timeout gets a longer, visible red
   setStatusLed(0, 0);
-  showLcdIdle();
 }
 
 static void pollFingerprint() {
@@ -533,7 +467,6 @@ static void pollFingerprint() {
     if (remainingMs > 0) {
       const std::uint32_t secondsLeft = (remainingMs + 999) / 1000;
       Serial.printf(">>> PLACE FINGER NOW -- %lu s left <<<\n", (unsigned long)secondsLeft);
-      showLcdAwaitingFingerprint(pendingOfficerLabel, secondsLeft);
     }
   }
 
@@ -831,13 +764,6 @@ void setup() {
   const bool fingerprintOk = fingerprint.begin();
   Serial.println(fingerprintOk ? "R307S fingerprint: READY" : "R307S fingerprint: NOT FOUND (check UART wiring/power/password)");
 
-  lcd.begin(FOREST_LCD_RS_PIN, FOREST_LCD_EN_PIN, FOREST_LCD_D4_PIN, FOREST_LCD_D5_PIN,
-           FOREST_LCD_D6_PIN, FOREST_LCD_D7_PIN);
-  lcd.setLine(0, "Secure Patrol");
-  lcd.setLine(1, "Verification");
-  delay(2000);
-  showLcdIdle();
-
   // Node identity (ECDSA P-256, generated once / loaded from NVS). A failure here must never
   // stop the RFID node either - it only disables the 'k' bench-signing command for this boot.
   identityReady = nodeIdentity.begin();
@@ -927,18 +853,13 @@ void loop() {
     setStatusLed(kLedLevel, kLedLevel);  // amber: awaiting second factor
     Serial.printf("[CARD] %s VALID -> amber light, awaiting fingerprint (expects page %u)\n",
                   card->officerLabel, card->fingerprintPageId);
-    showLcdAwaitingFingerprint(card->officerLabel, kVerifyWindowMs / 1000U);
   } else {
     setStatusLed(kLedLevel, 0);
     const char* knownLabel = findKnownCardLabel(cardUid);
     if (knownLabel != nullptr) {
       Serial.printf("[CARD] %s known, but NOT assigned to this checkpoint -> red light\n", knownLabel);
-      lcd.setLine(0, "Not your post");
-      lcd.setLine(1, knownLabel);
     } else {
       Serial.println("[CARD] UNKNOWN card (not registered to any officer) -> red light");
-      lcd.setLine(0, "Unknown card");
-      lcd.setLine(1, "Not registered");
     }
   }
 
@@ -978,6 +899,5 @@ void loop() {
   } else {
     delay(1000);  // invalid card: brief red, then back to idle before allowing the next scan
     setStatusLed(0, 0);
-    showLcdIdle();
   }
 }
