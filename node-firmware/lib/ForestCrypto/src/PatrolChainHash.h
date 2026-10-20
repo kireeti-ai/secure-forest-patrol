@@ -20,4 +20,11 @@ void patrolPayloadDigestHex(const char* checkpointId, const char* officerId, con
 void computeRecordHashHex(const char* nodeId, uint32_t sequence, const char* eventCreatedAtIso,
                           const char* payloadDigestHex, const char* previousHashHex, char outHex[65]);
 
+// "|".join([classification, confidenceRepr, model_version or ""]) -> SHA-256 hex. Matches
+// backend/app/services/crypto.py::acoustic_payload_digest. confidenceRepr must already be
+// Python's exact repr(float(confidence)) string - see AcousticConfidenceTable.h for why that
+// can't just be "%.2f"-formatted here.
+void acousticPayloadDigestHex(const char* classification, const char* confidenceRepr,
+                              const char* modelVersion, char outHex[65]);
+
 }  // namespace forest::crypto

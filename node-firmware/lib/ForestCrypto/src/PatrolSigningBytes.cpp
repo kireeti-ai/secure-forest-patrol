@@ -26,4 +26,19 @@ size_t buildPatrolSigningBytes(const char* nodeId, uint32_t sequence, const char
     return static_cast<size_t>(n);
 }
 
+size_t buildAcousticSigningBytes(const char* nodeId, uint32_t sequence, const char* eventCreatedAtIso,
+                                 const char* checkpointId, const char* zoneId, const char* classification,
+                                 const char* confidenceRepr, const char* modelVersion,
+                                 const char* previousHash, const char* recordHash, char* out, size_t outLen) {
+    auto orEmpty = [](const char* s) { return s ? s : ""; };
+    const char* prevHash = (previousHash && previousHash[0]) ? previousHash : "GENESIS";
+    const int n = std::snprintf(out, outLen, "%s|%lu|%s|%s|%s|%s|%s|%s|%s|%s",
+                                orEmpty(nodeId), static_cast<unsigned long>(sequence),
+                                orEmpty(eventCreatedAtIso), orEmpty(checkpointId), orEmpty(zoneId),
+                                orEmpty(classification), orEmpty(confidenceRepr), orEmpty(modelVersion),
+                                prevHash, orEmpty(recordHash));
+    if (n < 0 || static_cast<size_t>(n) >= outLen) return 0;
+    return static_cast<size_t>(n);
+}
+
 }  // namespace forest::crypto

@@ -16,11 +16,14 @@ def _register_key(db_session, pem=None):
 
 
 def test_invalid_signature_recorded(client, db_session, seeded_data):
+    # Phase 3 (docs/TAMPER_EVIDENCE_SECURITY_PLAN.md): a registered key makes a bad signature
+    # a hard rejection (401), not a 202 "flagged but accepted anyway" - still stored (see
+    # forest_patrol.py::ingest_patrol_event, which adds the row regardless of outcome).
     _register_key(db_session)
     body, _, _ = patrol_payload()
     body["signature"] = body["signature"][::-1]
     r = client.post("/api/ingest/gateway/forest-event", json=body)
-    assert r.status_code == 202
+    assert r.status_code == 401
     assert r.json()["outcome"] == "INVALID_SIGNATURE"
 
 
@@ -28,7 +31,7 @@ def test_wrong_public_key_invalid(client, db_session, seeded_data):
     _register_key(db_session, wrong_public_pem())
     body, _, _ = patrol_payload()
     r = client.post("/api/ingest/gateway/forest-event", json=body)
-    assert r.status_code == 202
+    assert r.status_code == 401
     assert r.json()["outcome"] == "INVALID_SIGNATURE"
 
 
@@ -37,15 +40,17 @@ def test_modified_payload_rejected(client, db_session, seeded_data):
     body, _, _ = patrol_payload()
     body["rfid_result"] = "INVALID"
     r = client.post("/api/ingest/gateway/forest-event", json=body)
-    assert r.status_code == 202
+    assert r.status_code in (401, 409)
     assert r.json()["outcome"] in ("INVALID_SIGNATURE", "BROKEN_CHAIN")
 
 
 def test_broken_chain_recorded(client, db_session, seeded_data):
+    # Broken chain is a 409 Conflict (resource state conflict), not 401 - the signature itself
+    # is fine, it's the claimed history that doesn't match.
     _register_key(db_session)
     body, _, _ = patrol_payload(sequence=2, previous_hash="WRONG-HASH")
     r = client.post("/api/ingest/gateway/forest-event", json=body)
-    assert r.status_code == 202
+    assert r.status_code == 409
     assert r.json()["outcome"] == "BROKEN_CHAIN"
 
 

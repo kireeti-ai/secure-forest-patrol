@@ -24,7 +24,7 @@ namespace forest::config
 // backend's checkpoint records, and is a build-time constant since officer identity (the RFID
 // scan) is per-event but which physical checkpoint this node sits at is not.
 #ifndef FOREST_CHECKPOINT_ID
-#define FOREST_CHECKPOINT_ID "CP1"
+#define FOREST_CHECKPOINT_ID "CP-01"
 #endif
 
     struct RadioConfig

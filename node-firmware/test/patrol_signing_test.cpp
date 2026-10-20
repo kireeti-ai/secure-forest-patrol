@@ -34,6 +34,15 @@ int main() {
     n = buildPatrolSigningBytes("N03", 2, iso, "", "", "", "", "abc123", "def456", out, sizeof out);
     CHECK(!!strstr(out, "|abc123|def456"), "non-empty previous_hash is not replaced with GENESIS");
 
+    // acoustic: captured by running backend/app/services/crypto.py::acoustic_signing_bytes directly
+    n = buildAcousticSigningBytes("N01", 1, iso, "CP-01", "", "Chainsaw", "0.6509803921568628",
+                                  "forest-acoustic-v1", "",
+                                  "ff676a1b9c73a4b0ac56b6c5ec659e39792faaf727cb6a4e3b182ebb500474d7", out, sizeof out);
+    const char* expectedAcoustic = "N01|1|2026-01-15T10:30:00+00:00|CP-01||Chainsaw|0.6509803921568628|"
+                                   "forest-acoustic-v1|GENESIS|ff676a1b9c73a4b0ac56b6c5ec659e39792faaf727cb6a4e3b182ebb500474d7";
+    CHECK(n == strlen(expectedAcoustic) && !strcmp(out, expectedAcoustic),
+          "acoustic signing bytes match real backend crypto.py output");
+
     printf(failures ? "\nPATROL SIGNING TESTS FAIL (%d)\n" : "\nPATROL SIGNING TESTS PASS\n", failures);
     return failures ? 1 : 0;
 }

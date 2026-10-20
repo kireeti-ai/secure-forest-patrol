@@ -22,10 +22,17 @@ class UnknownNodeError(ResourceNotFoundError):
 
 
 def _outcome(sig: str, chain: str) -> tuple[str, int, str]:
+    # Phase 3 (docs/TAMPER_EVIDENCE_SECURITY_PLAN.md): once a node HAS a registered public key,
+    # a bad signature or a broken hash chain is a hard rejection (4xx), not a 202 "flagged but
+    # stored anyway". A node with NO key yet (PENDING) has nothing to verify against - that is
+    # not tampering, so it is still accepted and stored, but marked UNVERIFIABLE rather than
+    # silently conflated with a cryptographically ACCEPTED event.
+    if sig == SignatureStatus.PENDING.value:
+        return IngestOutcome.UNVERIFIABLE.value, 202, EventSyncStatus.PENDING.value
     if sig == SignatureStatus.INVALID.value:
-        return IngestOutcome.INVALID_SIGNATURE.value, 202, EventSyncStatus.FAILED.value
+        return IngestOutcome.INVALID_SIGNATURE.value, 401, EventSyncStatus.FAILED.value
     if chain == ChainStatus.BROKEN.value:
-        return IngestOutcome.BROKEN_CHAIN.value, 202, EventSyncStatus.FAILED.value
+        return IngestOutcome.BROKEN_CHAIN.value, 409, EventSyncStatus.FAILED.value
     return IngestOutcome.ACCEPTED.value, 201, EventSyncStatus.SYNCED.value
 
 

@@ -41,4 +41,12 @@ void computeRecordHashHex(const char* nodeId, uint32_t sequence, const char* eve
     sha256Hex(buf, static_cast<size_t>(n), outHex);
 }
 
+void acousticPayloadDigestHex(const char* classification, const char* confidenceRepr,
+                              const char* modelVersion, char outHex[65]) {
+    char buf[256];
+    const int n = std::snprintf(buf, sizeof buf, "%s|%s|%s", orEmpty(classification),
+                                orEmpty(confidenceRepr), orEmpty(modelVersion));
+    sha256Hex(buf, static_cast<size_t>(n), outHex);
+}
+
 }  // namespace forest::crypto

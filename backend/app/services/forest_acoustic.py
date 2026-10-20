@@ -47,11 +47,17 @@ def ingest_acoustic_event(db: Session, payload: ForestAcousticIngest) -> tuple[d
     event_id = payload.event_id or f"{payload.node_id}-A{payload.sequence:06d}"
     sig = acoustic_sig_status(node, payload)
     chain = acoustic_chain_status(db, payload)
-    if sig == SignatureStatus.INVALID.value:
-        outcome, http_status = IngestOutcome.INVALID_SIGNATURE.value, 202
+    # Phase 3 (docs/TAMPER_EVIDENCE_SECURITY_PLAN.md): mirrors forest_patrol.py's _outcome() -
+    # a registered key makes a bad signature/broken chain a hard rejection, not a 202; no key
+    # yet is UNVERIFIABLE (accepted, stored, but never conflated with ACCEPTED).
+    if sig == SignatureStatus.PENDING.value:
+        outcome, http_status = IngestOutcome.UNVERIFIABLE.value, 202
+        sync_status = EventSyncStatus.PENDING.value
+    elif sig == SignatureStatus.INVALID.value:
+        outcome, http_status = IngestOutcome.INVALID_SIGNATURE.value, 401
         sync_status = EventSyncStatus.FAILED.value
     elif chain == ChainStatus.BROKEN.value:
-        outcome, http_status = IngestOutcome.BROKEN_CHAIN.value, 202
+        outcome, http_status = IngestOutcome.BROKEN_CHAIN.value, 409
         sync_status = EventSyncStatus.FAILED.value
     else:
         outcome, http_status = IngestOutcome.ACCEPTED.value, 201

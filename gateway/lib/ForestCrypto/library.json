@@ -1,0 +1,7 @@
+{
+  "name": "ForestCrypto",
+  "version": "1.0.0",
+  "description": "Shared (by copy) verified confidence-repr lookup table with node-firmware's ForestCrypto - see AcousticConfidenceTable.h.",
+  "frameworks": "arduino",
+  "platforms": "espressif32"
+}

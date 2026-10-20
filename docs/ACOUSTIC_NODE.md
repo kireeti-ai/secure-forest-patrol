@@ -154,21 +154,27 @@ through a queue. Background predictions create no event. Nothing is allocated pe
 
 ## LoRa event and backend path
 
-Compact 6-byte payload inside the existing DATA packet (existing header, sequence and CRC; no raw audio):
-`'A'(0x41), version 0x01, class (1 chainsaw / 2 gunshot), confidence u8 (p*255), trigger RMS u16 LE`.
+As of the tamper-evidence work (`docs/TAMPER_EVIDENCE_SECURITY_PLAN.md`), the node signs acoustic events the
+same way it signs patrol events, whenever its identity (ECDSA keypair) and soft clock are ready:
 
-Gateway -> MQTT topic `forest/events/acoustic` (JSON: node_id, sequence, classification, confidence,
-model_version, trigger_rms, gateway meta) -> backend `POST /api/ingest/gateway/acoustic-node-event`.
+`'A'(0x41), version 0x02, sequence u32 LE, epoch u32 LE, class (1 chainsaw / 2 gunshot), confidence byte
+(table index into `AcousticConfidenceTable.h`, NOT `p*255` directly), checkpoint_id, zone_id, previous_hash
+(32 B), record_hash (32 B), ECDSA signature` -- see `node-firmware/lib/ForestCrypto/src/SignedAcousticPayload.h`
+for the exact wire layout. The gateway decodes this in `GatewayService.cpp` and publishes the signed JSON (with
+`previous_hash`/`record_hash`/`signature`) to MQTT topic `forest/events/acoustic` -> backend
+`POST /api/ingest/gateway/acoustic-event` (`ForestAcousticIngest`, `ingest_acoustic_event`), which hard-gates on
+signature/chain status exactly like patrol events (Phase 3 outcomes: `ACCEPTED`/`INVALID_SIGNATURE`/
+`BROKEN_CHAIN`/`UNVERIFIABLE`).
 
-**These events are UNSIGNED.** The node has no RTC, signing key or hash chain (the "existing signature
-mechanism" is not implemented on the node; see `GATEWAY_BACKEND_CONTRACT.md`). The backend stamps the receive
-time, stores `signature_status = chain_status = PENDING`, and the event enters the normal human-review queue
-(`PENDING_REVIEW`); the dashboard labels it "UNSIGNED (pending review)". Retries are recognised by
-(node, node-sequence, class) within 120 s; the node's sequence restarts at 0 on reboot, so the backend assigns its
-own per-node sequence and the existing unique (node_id, sequence) constraint of the signed path is untouched.
-The node must be registered (`NODE_01`, ACTIVE). Because the backend runs on Vercel (no persistent MQTT
-subscriber), add an EMQX rule: `forest/events/acoustic` -> POST
-`https://<backend>/api/ingest/gateway/acoustic-node-event` (body `${payload}`).
+**Fallback (legacy unsigned):** if the node's identity or clock isn't ready yet (e.g. just booted, before the
+first gateway ACK carries a time sync), it falls back to the old 6-byte unsigned payload (`'A'(0x41), version
+0x01, class, confidence u8 (p*255), trigger RMS u16 LE`). The gateway publishes this to a *different* topic,
+`forest/events/acoustic-unsigned`, to avoid colliding with the signed topic's EMQX rule. **No EMQX rule is
+configured for `forest/events/acoustic-unsigned` today** (the free-tier rule quota is already used by
+node-status/rfid/patrol/acoustic-signed), so unsigned fallback events never reach the backend -- they are
+silently dropped. This is treated as acceptable degradation during the brief post-boot window before the
+clock syncs, not a steady-state path; if it needs to reach the backend too, repurposing a rule or upgrading the
+EMQX plan is required first (see `docs/MQTT.md`).
 
 ## Test modes (`-D FOREST_ACOUSTIC_TEST_MODE=n`)
 
@@ -218,8 +224,10 @@ The parity test compares the device preprocessing with librosa on real windows: 
 | One full trigger -> capture -> inference -> cooldown cycle on the board | **PHYSICALLY VERIFIED** as a state machine only (fired on noise; result background 0.47); not a detection test |
 | Relative-dB trigger + sensor-health guard | IMPLEMENTED, host-tested. **Guard physically verified once**: it flagged a stuck-at-rail input (DC 4095, floor 0) and disabled ML. Good-signal behaviour on hardware **NOT verified** |
 | Trigger/ring logic | TESTED (host unit tests) |
-| Backend unsigned ingest, gateway 'A' branch, MQTT dispatch | TESTED (backend tests, real Postgres concurrency); gateway BUILT only |
+| Backend signed ingest, gateway 'A' v2 decode branch, MQTT dispatch | Node-firmware side host-tested against real Python reference values (digest/signing-bytes/wire payload); gateway BUILT only |
+| Backend unsigned (fallback) ingest, gateway 'A' v1 branch | TESTED (backend tests, real Postgres concurrency); gateway BUILT only; **no EMQX rule wired, so unreachable from real hardware today** |
 | Acoustic event over real LoRa -> gateway -> backend | NOT verified end-to-end |
+| EMQX rule action URL on `forest/events/acoustic` repointed from `/acoustic-node-event` to `/acoustic-event` | **NOT DONE** -- console change still needed before signed acoustic events can reach the backend in production |
 | Classification accuracy on real microphone / forest audio | **UNVERIFIED.** The model has never seen INMP441 audio |
 
 **Model quality caveat (from `ml/reports`):** test macro-F1 is about 0.57 and chainsaw/gunshot precision only

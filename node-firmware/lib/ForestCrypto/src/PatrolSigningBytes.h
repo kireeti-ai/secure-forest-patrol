@@ -31,4 +31,13 @@ size_t buildPatrolSigningBytes(const char* nodeId, uint32_t sequence, const char
                                const char* fingerprintResult, const char* previousHash,
                                const char* recordHash, char* out, size_t outLen);
 
+// Matches backend/app/services/crypto.py::acoustic_signing_bytes exactly:
+//   node_id | sequence | event_created_at(iso) | checkpoint_id | zone_id | classification |
+//   confidenceRepr | model_version | previous_hash | record_hash
+// confidenceRepr must be Python's exact repr(float(confidence)) string (AcousticConfidenceTable.h).
+size_t buildAcousticSigningBytes(const char* nodeId, uint32_t sequence, const char* eventCreatedAtIso,
+                                 const char* checkpointId, const char* zoneId, const char* classification,
+                                 const char* confidenceRepr, const char* modelVersion,
+                                 const char* previousHash, const char* recordHash, char* out, size_t outLen);
+
 }  // namespace forest::crypto

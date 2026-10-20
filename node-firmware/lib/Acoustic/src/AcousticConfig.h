@@ -7,7 +7,11 @@
 // ---- Pins -------------------------------------------------------------------
 // MAX4466 analog mic OUT -> ADC1 (works while radios are on; ADC2 would not).
 #ifndef FOREST_MAX4466_PIN
-#define FOREST_MAX4466_PIN 1  // GPIO1 = ADC1_CH0
+// GPIO1 (ADC1_CH0) was the original pin but failed hard: it read a dead-flat 4095 (pinned to
+// the ADC rail) even with the MAX4466's OUT wire fully disconnected from it, meaning the fault
+// is the ESP32-S3 pin itself, not the mic or its wiring. Moved to GPIO2 (ADC1_CH1, unused
+// elsewhere in this firmware) instead of continuing to debug a damaged/shorted pin.
+#define FOREST_MAX4466_PIN 2  // GPIO2 = ADC1_CH1
 #endif
 // INMP441 I2S microphone (L/R tied to GND -> left channel).
 #ifndef FOREST_I2S_BCLK_PIN

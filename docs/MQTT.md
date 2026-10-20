@@ -53,8 +53,9 @@ Never commit broker credentials, tokens, or TLS private keys to the repo.
 
 | Topic | Publisher | Payload schema | Backend handler |
 |---|---|---|---|
-| `forest/events/patrol` | Gateway (once node-firmware signs events) / simulator | `ForestPatrolIngest` | `ingest_patrol_event` |
-| `forest/events/acoustic` | Gateway (once node-firmware signs events) / simulator | `ForestAcousticIngest` | `ingest_acoustic_event` |
+| `forest/events/patrol` | Gateway (signed patrol events, node-firmware ECDSA) / simulator | `ForestPatrolIngest` | `ingest_patrol_event` |
+| `forest/events/acoustic` | Gateway (signed acoustic events, node-firmware ECDSA) / simulator | `ForestAcousticIngest` | `ingest_acoustic_event` |
+| `forest/events/acoustic-unsigned` | Gateway (fallback only: node has no identity/clock yet) | ad hoc (class/confidence, no `record_hash`/`signature`) | none configured today -- dropped; see `docs/ACOUSTIC_NODE.md` |
 | `forest/events/node-status` | Gateway (today: diagnostic RTC/temp data) | `GatewayStatusReport` (loosely -- see note below) | `report_gateway_status` |
 | `forest/events/sync` | Gateway (future) | free-form | relayed live as `SYNC_UPDATED`; **not persisted** — sync records are written today as a side effect of patrol/acoustic ingestion, not from this topic |
 
@@ -135,8 +136,11 @@ for the equivalent in-process assertions.
 
 ## Topics published by the real gateway today
 
-`forest/events/rfid`, `forest/events/gateway-status`, `forest/events/node-status` and
-`forest/events/acoustic` (unsigned node detections, see `docs/ACOUSTIC_NODE.md`). A backend deployed as
+`forest/events/rfid`, `forest/events/gateway-status`, `forest/events/node-status`, `forest/events/patrol`
+and `forest/events/acoustic` (signed node detections, see `docs/ACOUSTIC_NODE.md`). A backend deployed as
 serverless functions (Vercel) cannot hold a subscription, so each topic that must reach it needs an EMQX rule
 that POSTs the payload to the matching `/api/ingest/gateway/*` route
-(`forest/events/acoustic` -> `/api/ingest/gateway/acoustic-node-event`).
+(`forest/events/acoustic` -> `/api/ingest/gateway/acoustic-event`). The node's unsigned fallback (no
+identity/clock yet) publishes to `forest/events/acoustic-unsigned` instead, which has no EMQX rule
+configured and is dropped -- intentional, since forwarding it to `/acoustic-node-event` would also require
+a 5th rule slot the EMQX Cloud free tier doesn't have (see `docs/ACOUSTIC_NODE.md`).

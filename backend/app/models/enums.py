@@ -88,6 +88,10 @@ class IngestOutcome(str, Enum):
     BROKEN_CHAIN = "BROKEN_CHAIN"
     INVALID_REQUEST = "INVALID_REQUEST"
     UNKNOWN_NODE = "UNKNOWN_NODE"
+    # Node has no registered public key yet (SignatureStatus.PENDING): there is nothing to verify
+    # against, so the event is still accepted and stored, but must never be conflated with a
+    # cryptographically ACCEPTED one - see docs/TAMPER_EVIDENCE_SECURITY_PLAN.md Phase 3.
+    UNVERIFIABLE = "UNVERIFIABLE"
 
 
 class SystemStatus(str, Enum):

@@ -131,6 +131,72 @@ void GatewayService::handleReceivedPacket(const lora::RawRadioPacket& packet, lo
                 Serial.printf("RMS   : %u\n", envelope.acousticTriggerRms);
                 Serial.printf("SEQ   : %u\n", parsed.sequenceNumber);
                 Serial.printf("RSSI  : %d dBm  SNR: %.1f dB\n", packet.rssiDbm, static_cast<double>(packet.snrDb));
+            } else if (parsed.payloadSize >= 16 && parsed.payload[0] == 0x41U && parsed.payload[1] == 0x02U) {
+                // Signed acoustic event ['A', v2, sequence u32 LE, epoch u32 LE, classIndex,
+                // confidenceByte, checkpointIdLen, checkpointId[len], zoneIdLen, zoneId[len],
+                // previousHash[32], recordHash[32], sigLen, sig[sigLen]]. Must match
+                // node-firmware/lib/ForestCrypto/src/SignedAcousticPayload.h exactly.
+                std::size_t off = 2U;
+                const std::uint32_t acSeq = static_cast<std::uint32_t>(parsed.payload[off]) |
+                    (static_cast<std::uint32_t>(parsed.payload[off + 1]) << 8) |
+                    (static_cast<std::uint32_t>(parsed.payload[off + 2]) << 16) |
+                    (static_cast<std::uint32_t>(parsed.payload[off + 3]) << 24);
+                off += 4U;
+                const std::uint32_t acEpochVal = static_cast<std::uint32_t>(parsed.payload[off]) |
+                    (static_cast<std::uint32_t>(parsed.payload[off + 1]) << 8) |
+                    (static_cast<std::uint32_t>(parsed.payload[off + 2]) << 16) |
+                    (static_cast<std::uint32_t>(parsed.payload[off + 3]) << 24);
+                off += 4U;
+                const std::uint8_t acClass = parsed.payload[off++];
+                const std::uint8_t acConf = parsed.payload[off++];
+                const std::uint8_t cpLen = parsed.payload[off++];
+                const bool cpOk = cpLen <= backend::ForestEventEnvelope::kMaxCheckpointIdLen &&
+                                  parsed.payloadSize > off + cpLen;
+                if (cpOk) {
+                    char cpBuf[backend::ForestEventEnvelope::kMaxCheckpointIdLen + 1]{};
+                    std::memcpy(cpBuf, &parsed.payload[off], cpLen);
+                    off += cpLen;
+                    const std::uint8_t zoneLen = parsed.payload[off++];
+                    const bool zoneOk = zoneLen <= backend::ForestEventEnvelope::kMaxZoneIdLen &&
+                        parsed.payloadSize >= off + zoneLen + backend::ForestEventEnvelope::kPatrolHashBytes * 2U + 1U;
+                    if (zoneOk) {
+                        char zoneBuf[backend::ForestEventEnvelope::kMaxZoneIdLen + 1]{};
+                        std::memcpy(zoneBuf, &parsed.payload[off], zoneLen);
+                        off += zoneLen;
+                        std::uint8_t prevHashBuf[backend::ForestEventEnvelope::kPatrolHashBytes];
+                        std::memcpy(prevHashBuf, &parsed.payload[off], backend::ForestEventEnvelope::kPatrolHashBytes);
+                        off += backend::ForestEventEnvelope::kPatrolHashBytes;
+                        std::uint8_t recHashBuf[backend::ForestEventEnvelope::kPatrolHashBytes];
+                        std::memcpy(recHashBuf, &parsed.payload[off], backend::ForestEventEnvelope::kPatrolHashBytes);
+                        off += backend::ForestEventEnvelope::kPatrolHashBytes;
+                        const std::uint8_t sigLen = parsed.payload[off++];
+                        if (sigLen <= backend::ForestEventEnvelope::kMaxSignatureBytes && parsed.payloadSize >= off + sigLen) {
+                            envelope.hasAcousticSigned = true;
+                            envelope.acSequence = acSeq;
+                            envelope.acEpoch = acEpochVal;
+                            envelope.acClassIndex = acClass;
+                            envelope.acConfidenceByte = acConf;
+                            std::memcpy(envelope.acCheckpointId, cpBuf, cpLen);
+                            std::memcpy(envelope.acZoneId, zoneBuf, zoneLen);
+                            std::memcpy(envelope.acPreviousHash, prevHashBuf, backend::ForestEventEnvelope::kPatrolHashBytes);
+                            std::memcpy(envelope.acRecordHash, recHashBuf, backend::ForestEventEnvelope::kPatrolHashBytes);
+                            envelope.acSignatureLength = sigLen;
+                            std::memcpy(envelope.acSignature, &parsed.payload[off], sigLen);
+                            Serial.println("================================");
+                            Serial.println("SIGNED ACOUSTIC EVENT RECEIVED");
+                            Serial.println("================================");
+                            Serial.printf("Node  : NODE_%02X\n", parsed.sourceId);
+                            Serial.printf("Seq   : %lu  Class: %s\n", static_cast<unsigned long>(acSeq),
+                                          acClass == 2U ? "Gunshot" : "Chainsaw");
+                        } else {
+                            Serial.println("[SIGNED ACOUSTIC] signature length out of range - dropped");
+                        }
+                    } else {
+                        Serial.println("[SIGNED ACOUSTIC] zone_id length out of range - dropped");
+                    }
+                } else {
+                    Serial.println("[SIGNED ACOUSTIC] checkpoint_id length out of range - dropped");
+                }
             } else if (parsed.payloadSize >= 14 &&
                        parsed.payload[0] == 0x56U &&
                        parsed.payload[1] == 0x01U &&

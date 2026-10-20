@@ -92,6 +92,21 @@ struct ForestEventEnvelope {
     std::uint8_t patrolRecordHash[kPatrolHashBytes]{};
     std::uint8_t patrolSignature[kMaxSignatureBytes]{};
     std::uint8_t patrolSignatureLength{0};
+
+    // Signed acoustic event ('A' v2, distinct from the existing unsigned 'A' v1). See
+    // node-firmware/lib/ForestCrypto/src/SignedAcousticPayload.h for the wire layout.
+    static constexpr std::size_t kMaxZoneIdLen = 16U;
+    bool hasAcousticSigned{false};
+    std::uint32_t acSequence{0};
+    std::uint32_t acEpoch{0};
+    std::uint8_t acClassIndex{0};       // 1=chainsaw, 2=gunshot
+    std::uint8_t acConfidenceByte{0};   // table index - the gateway must look this up, not reformat it
+    char acCheckpointId[kMaxCheckpointIdLen + 1]{};
+    char acZoneId[kMaxZoneIdLen + 1]{};
+    std::uint8_t acPreviousHash[kPatrolHashBytes]{};
+    std::uint8_t acRecordHash[kPatrolHashBytes]{};
+    std::uint8_t acSignature[kMaxSignatureBytes]{};
+    std::uint8_t acSignatureLength{0};
 };
 
 enum class LinkState { Disconnected, Connecting, Connected };
@@ -137,6 +152,7 @@ private:
     bool publishAcoustic(const ForestEventEnvelope& envelope);
     bool publishVerification(const ForestEventEnvelope& envelope);
     bool publishPatrol(const ForestEventEnvelope& envelope);
+    bool publishAcousticSigned(const ForestEventEnvelope& envelope);
     void logLine(const char* line);
     static void networkTask(void* self);
 
@@ -160,6 +176,16 @@ private:
     std::size_t outboxHead_{0};
     std::size_t outboxCount_{0};
     std::uint32_t outboxHeadSerial_{0};  // bumps whenever the head advances (pop or drop-oldest)
+    // Counts consecutive publish() failures for the current head item specifically (while truly
+    // connected - drainOutbox only runs when wifiState_/mqttState_ are both Connected, so this
+    // is never inflated by a down link). A message that keeps failing this many times in a row
+    // while genuinely connected is undeliverable for a reason a reconnect won't fix (e.g. too
+    // large for the MQTT buffer, as happened once already), not a transient hiccup - see
+    // docs/TAMPER_EVIDENCE_SECURITY_PLAN.md. Without this, one bad message blocks the entire
+    // outbox (every other queued RFID/acoustic/status event) forever.
+    static constexpr std::uint32_t kMaxPublishAttempts = 50U;
+    std::uint32_t outboxFailSerial_{0};
+    std::uint32_t outboxFailCount_{0};
     SemaphoreHandle_t outboxMutex_{nullptr};  // outbox is shared: main loop enqueues, network task drains
     TaskHandle_t networkTask_{nullptr};
 };

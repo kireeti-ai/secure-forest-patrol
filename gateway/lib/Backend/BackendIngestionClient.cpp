@@ -5,13 +5,21 @@
 #include <cstring>
 
 #include "CivilTime.h"
+#include "AcousticConfidenceTable.h"
 
 namespace forest::backend {
 
 namespace {
 constexpr const char* kTopicNodeStatus = "forest/events/node-status";
 constexpr const char* kTopicRfid = "forest/events/rfid";
+// forest/events/acoustic is the SIGNED acoustic topic (docs/MQTT.md:57 - ForestAcousticIngest /
+// acoustic-event), not the legacy unsigned one: the deployed EMQX rule on it forwards to
+// /acoustic-node-event today and MUST be repointed to /acoustic-event when this ships (it
+// silently ignores record_hash/signature otherwise, defeating signing). The unsigned fallback
+// (node has no identity/clock yet) goes to its own topic with no rule configured, so it is
+// dropped rather than mis-verified - see docs/ACOUSTIC_NODE.md.
 constexpr const char* kTopicAcoustic = "forest/events/acoustic";
+constexpr const char* kTopicAcousticUnsigned = "forest/events/acoustic-unsigned";
 constexpr const char* kTopicVerification = "forest/events/verification";
 constexpr const char* kTopicPatrol = "forest/events/patrol";   // backend/app/services/mqtt_consumer.py::TOPIC_PATROL
 constexpr const char* kTopicGatewayStatus = "forest/events/gateway-status";
@@ -49,7 +57,13 @@ BackendIngestionClient::BackendIngestionClient(const BackendConfig& config)
     mqttClient_.setServer(config_.mqttBrokerHost, config_.mqttBrokerPort);
     // PubSubClient's default 256-byte packet limit is too small for the
     // gateway-status JSON plus its topic; oversized publishes fail silently.
-    mqttClient_.setBufferSize(512);
+    // The signed patrol event JSON (node_id, sequence, checkpoint_id, officer_id, both hash-chain
+    // hex hashes, and a ~96-char base64 DER signature) runs to ~520 bytes on its own, right at/over
+    // the old 512-byte limit - that caused publish() to fail silently every time for that message,
+    // forever (PubSubClient returns false on an oversized payload without disconnecting, so the
+    // connection-gated retry loop in drainOutbox() just kept retrying the same undeliverable
+    // message every 10ms). 1024 leaves real headroom instead of being sized to exactly one message.
+    mqttClient_.setBufferSize(1024);
     // Bound every blocking socket operation so a dead broker/DNS cannot hold the
     // network task for long either.
     mqttClient_.setSocketTimeout(4);
@@ -228,7 +242,29 @@ void BackendIngestionClient::drainOutbox() {
         serial = outboxHeadSerial_;
         xSemaphoreGive(outboxMutex_);
 
-        if (!publishEnvelope(envelope)) return;  // leave it queued, retry next tick
+        if (!publishEnvelope(envelope)) {
+            if (serial == outboxFailSerial_) {
+                ++outboxFailCount_;
+            } else {
+                outboxFailSerial_ = serial;
+                outboxFailCount_ = 1;
+            }
+            if (outboxFailCount_ < kMaxPublishAttempts) return;  // leave it queued, retry next tick
+
+            // Failed this many times in a row while genuinely connected: not a transient link
+            // issue, drop it so it cannot block every other queued event forever.
+            logLine("[MQTT] OUTBOX ITEM UNDELIVERABLE AFTER MAX ATTEMPTS, DROPPED");
+            outboxFailCount_ = 0;
+            if (xSemaphoreTake(outboxMutex_, pdMS_TO_TICKS(50)) != pdTRUE) return;
+            if (serial == outboxHeadSerial_ && outboxCount_ > 0) {
+                outboxHead_ = (outboxHead_ + 1) % kOutboxCapacity;
+                outboxCount_--;
+                outboxHeadSerial_++;
+            }
+            xSemaphoreGive(outboxMutex_);
+            continue;  // move on to whatever is now at the head
+        }
+        outboxFailCount_ = 0;
 
         if (xSemaphoreTake(outboxMutex_, pdMS_TO_TICKS(50)) != pdTRUE) return;
         // If enqueue() dropped this event as "oldest" meanwhile, it is already gone.
@@ -246,6 +282,9 @@ bool BackendIngestionClient::publishEnvelope(const ForestEventEnvelope& envelope
     if (mqttState_ != LinkState::Connected) return false;
     if (envelope.hasRfid) {
         return publishRfid(envelope);
+    }
+    if (envelope.hasAcousticSigned) {
+        return publishAcousticSigned(envelope);
     }
     if (envelope.hasAcoustic) {
         return publishAcoustic(envelope);
@@ -335,6 +374,60 @@ bool BackendIngestionClient::publishPatrol(const ForestEventEnvelope& envelope) 
     return ok;
 }
 
+bool BackendIngestionClient::publishAcousticSigned(const ForestEventEnvelope& envelope) {
+    char nodeIdStr[16];
+    snprintf(nodeIdStr, sizeof(nodeIdStr), "NODE_%02X", envelope.sourceId);
+
+    char previousHashHex[ForestEventEnvelope::kPatrolHashBytes * 2 + 1]{};
+    char recordHashHex[ForestEventEnvelope::kPatrolHashBytes * 2 + 1]{};
+    bool previousIsGenesis = true;
+    for (std::size_t i = 0; i < ForestEventEnvelope::kPatrolHashBytes; ++i) {
+        if (envelope.acPreviousHash[i] != 0) previousIsGenesis = false;
+        snprintf(previousHashHex + i * 2, 3, "%02x", envelope.acPreviousHash[i]);
+        snprintf(recordHashHex + i * 2, 3, "%02x", envelope.acRecordHash[i]);
+    }
+
+    const forest::time::CivilUtc c = forest::time::epochToCivilUtc(static_cast<int64_t>(envelope.acEpoch));
+    char iso[32];
+    snprintf(iso, sizeof(iso), "%04lld-%02u-%02uT%02u:%02u:%02u+00:00", static_cast<long long>(c.year), c.month,
+             c.day, c.hour, c.minute, c.second);
+
+    // The confidence byte is a table index, not a value to reformat - the JSON number must be
+    // Python's exact repr(float(confidence)) text or the backend's signature re-verification
+    // will compute a different payload_digest/record_hash and reject a genuinely valid
+    // signature. serializeJson writes this verbatim since it is assigned as a raw JSON literal,
+    // not a quoted string - see the kConfidenceReprTable is Python-repr comment for why.
+    JsonDocument doc;
+    doc["node_id"] = nodeIdStr;
+    doc["sequence"] = envelope.acSequence;
+    doc["event_created_at"] = iso;
+    doc["checkpoint_id"] = envelope.acCheckpointId;
+    if (envelope.acZoneId[0] != '\0') doc["zone_id"] = envelope.acZoneId;
+    doc["classification"] = envelope.acClassIndex == 2 ? "Gunshot" : "Chainsaw";
+    // serialized(): embed this exact text as a raw JSON number, not a quoted string - assigning
+    // a plain const char* here would wrap it in quotes, and a quoted "0.65" is a different JSON
+    // value (and Pydantic coercion target) than the bare number 0.65 the schema expects.
+    doc["confidence"] = ArduinoJson::serialized(forest::crypto::kConfidenceReprTable[envelope.acConfidenceByte]);
+    doc["model_version"] = "forest-acoustic-v1";
+    doc["previous_hash"] = previousIsGenesis ? "GENESIS" : previousHashHex;
+    doc["record_hash"] = recordHashHex;
+    doc["signature"] = base64::encode(envelope.acSignature, envelope.acSignatureLength);
+    char gatewayIdStr[8];
+    snprintf(gatewayIdStr, sizeof(gatewayIdStr), "GW-%02X", config_.gatewayId);
+    JsonObject gw = doc["gateway"].to<JsonObject>();
+    gw["gateway_id"] = gatewayIdStr;
+    gw["rssi"] = envelope.rssiDbm;
+    gw["snr"] = envelope.snrDb;
+
+    char payload[640];
+    const size_t len = serializeJson(doc, payload, sizeof(payload));
+    const bool ok = mqttClient_.publish(kTopicAcoustic, reinterpret_cast<const uint8_t*>(payload), len, false);
+    Serial.printf("[MQTT PUBLISH] topic=%s node=%s seq=%lu class=%s (signed) -> %s\n", kTopicAcoustic, nodeIdStr,
+                  static_cast<unsigned long>(envelope.acSequence), envelope.acClassIndex == 2 ? "Gunshot" : "Chainsaw",
+                  ok ? "PUBLISHED" : "FAILED");
+    return ok;
+}
+
 void BackendIngestionClient::dispatchMessages(lora::ILoRaDriver& /*radioDriver*/) {
     // Reserved for a future downlink (backend/broker -> node) acknowledgement
     // path. Nothing to do today: the outbox is drained from tick() above.
@@ -387,9 +480,9 @@ bool BackendIngestionClient::publishAcoustic(const ForestEventEnvelope& envelope
 
     char payload[384];
     const size_t len = serializeJson(doc, payload, sizeof(payload));
-    const bool ok = mqttClient_.publish(kTopicAcoustic, reinterpret_cast<const uint8_t*>(payload), len, false);
-    Serial.printf("[MQTT PUBLISH] topic=%s node=%s class=%s conf=%u/255 seq=%u -> %s\n", kTopicAcoustic, nodeIdStr,
-                  envelope.acousticClass == 2 ? "Gunshot" : "Chainsaw", envelope.acousticConfidenceU8,
+    const bool ok = mqttClient_.publish(kTopicAcousticUnsigned, reinterpret_cast<const uint8_t*>(payload), len, false);
+    Serial.printf("[MQTT PUBLISH] topic=%s node=%s class=%s conf=%u/255 seq=%u -> %s\n", kTopicAcousticUnsigned,
+                  nodeIdStr, envelope.acousticClass == 2 ? "Gunshot" : "Chainsaw", envelope.acousticConfidenceU8,
                   static_cast<unsigned>(envelope.sequenceNumber), ok ? "PUBLISHED" : "FAILED");
     return ok;
 }

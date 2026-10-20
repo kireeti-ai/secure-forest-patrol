@@ -25,6 +25,10 @@
 
 #if FOREST_ACOUSTIC
 #include "AcousticPipeline.h"
+#include "AcousticConfig.h"
+#include "AcousticChainState.h"
+#include "AcousticConfidenceTable.h"
+#include "SignedAcousticPayload.h"
 #endif
 
 // 1 = normal verbose local-store logging (boot replay dump, per-retry chatter).
@@ -240,6 +244,11 @@ forest::time::SoftClock softClock;
 // Hash-chain state for the backend-verified signed patrol event stream (distinct from Phase 1's
 // local tamper-evidence chain in LocalEventStore - see PatrolChainState.h for why there are two).
 forest::crypto::PatrolChainState patrolChain;
+#if FOREST_ACOUSTIC
+// Separate hash-chain state for signed acoustic events - see AcousticChainState.h for why this
+// is not the same counter/chain as patrolChain.
+forest::crypto::AcousticChainState acousticChain;
+#endif
 forest::node::NodeManager nodeManager(forest::config::kDefaultFirmwareConfig.node, forest::node::DeviceRole::CheckpointNode);
 forest::protocol::PacketFactory packetFactory(nodeManager, forest::config::kDefaultFirmwareConfig.network);
 
@@ -415,14 +424,17 @@ static void sendVerificationEvent(VerifyStatus status, const ForestSensors::Rfid
   const bool haveRec = storeEvent(forest::storage::EventType::Verification, payload.data(), off, stored);
   setStatusLed(status == VerifyStatus::Match ? 0 : kLedLevel, status == VerifyStatus::Match ? kLedLevel : 0);
   showLcdResult(status, pendingOfficerLabel);
-  const TxResult sent = transmitPayload(payload.data(), off, "VERIFY TX", true);
-  if (haveRec) finishStoredEvent(stored, sent);
 
-  // Phase 2 (docs/TAMPER_EVIDENCE_SECURITY_PLAN.md): also send a signed, hash-chained patrol
-  // event alongside the legacy unsigned 'V' one above, once identity + a real timestamp are
-  // both available. Best-effort only for now - unlike the legacy path, this is not persisted
-  // to LocalEventStore (EventRecord's 24-byte payload cap is far smaller than a signed record)
-  // so a failed send here is not retried; the legacy path remains the reliable one.
+  // Phase 2 (docs/TAMPER_EVIDENCE_SECURITY_PLAN.md): the signed, hash-chained patrol event is a
+  // strict superset of the legacy unsigned 'V' one (same rfid/fingerprint result, plus a
+  // signature and chain link) and nothing forwards the legacy topic on the backend side
+  // anymore (the EMQX rule that used to was repurposed to the signed one) - sending both wastes
+  // airtime for no reason. So: try the signed send first; only fall back to the legacy
+  // transmission if identity/clock aren't ready yet (e.g. this boot hasn't synced time with the
+  // gateway). LocalEventStore's sync marking follows whichever one actually went out, since
+  // that's the real transmission attempt for this event now.
+  bool signedPathUsed = false;
+  TxResult sentResult = TxResult::Failed;
   char eventIso[32];
   if (identityReady && softClock.nowIso8601Utc(eventIso, sizeof eventIso)) {
     char nodeIdStr[16];
@@ -459,9 +471,10 @@ static void sendVerificationEvent(VerifyStatus status, const ForestSensors::Rfid
           uid.bytes, uid.size, prevHashRaw, recHashRaw, sig, sigLen, signedPayload.data(), signedPayload.size());
       if (len > 0) {
         patrolChain.commit(recordHashHex);
-        const TxResult signedSent = transmitPayload(signedPayload.data(), len, "SIGNED PATROL TX", false);
+        sentResult = transmitPayload(signedPayload.data(), len, "SIGNED PATROL TX", false);
+        signedPathUsed = true;
         Serial.printf("[SIGNED PATROL] seq=%lu record_hash=%s tx=%s\n", static_cast<unsigned long>(seq),
-                      recordHashHex, signedSent == TxResult::Failed ? "FAILED" : "SENT");
+                      recordHashHex, sentResult == TxResult::Failed ? "FAILED" : "SENT");
       } else {
         Serial.println("[SIGNED PATROL] encode FAILED (payload too large?) - not sent, sequence not advanced");
       }
@@ -469,6 +482,12 @@ static void sendVerificationEvent(VerifyStatus status, const ForestSensors::Rfid
       Serial.println("[SIGNED PATROL] sign FAILED - not sent");
     }
   }
+  if (!signedPathUsed) {
+    // Fallback: no identity/synced clock yet, so there is no signed event to send - use the
+    // legacy unsigned payload instead rather than transmitting nothing at all.
+    sentResult = transmitPayload(payload.data(), off, "VERIFY TX", true);
+  }
+  if (haveRec) finishStoredEvent(stored, sentResult);
 
   delay(status == VerifyStatus::Match ? 200 : 500);  // mismatch/timeout gets a longer, visible red
   setStatusLed(0, 0);
@@ -631,7 +650,60 @@ static void sendAcousticEvent(const forest::acoustic::AcousticEvent& ev) {
     return;
   }
   setStatusLed(0, 0, kLedLevel);  // blue flash: acoustic event (distinct from RFID red/green/amber)
-  const TxResult sent = transmitPayload(payload.data(), 6, "ACOUSTIC TX", false);
+
+  // Phase 2 extension: prefer the signed, hash-chained acoustic event (same rationale as
+  // sendVerificationEvent - it's a strict superset of the unsigned one), falling back to the
+  // legacy unsigned payload only when identity/clock aren't ready yet.
+  bool signedPathUsed = false;
+  TxResult sent = TxResult::Failed;
+  char acEventIso[32];
+  if (identityReady && softClock.nowIso8601Utc(acEventIso, sizeof acEventIso)) {
+    char nodeIdStr[16];
+    snprintf(nodeIdStr, sizeof nodeIdStr, "NODE_%02X", static_cast<unsigned>(FOREST_NODE_ID));
+    const uint8_t confidenceByte = payload[3];
+    const char* classification = ev.classIndex == 2 ? "Gunshot" : "Chainsaw";
+    const char* confidenceRepr = forest::crypto::kConfidenceReprTable[confidenceByte];
+
+    char payloadDigest[65];
+    forest::crypto::acousticPayloadDigestHex(classification, confidenceRepr, ACOUSTIC_MODEL_VERSION, payloadDigest);
+    const uint32_t seq = acousticChain.nextSequence();
+    char recordHashHex[65];
+    forest::crypto::computeRecordHashHex(nodeIdStr, seq, acEventIso, payloadDigest,
+                                         acousticChain.previousHashHex(), recordHashHex);
+
+    uint8_t prevHashRaw[32] = {0}, recHashRaw[32];
+    if (acousticChain.previousHashHex()[0]) forest::utils::hexToBytes(acousticChain.previousHashHex(), 32, prevHashRaw);
+    forest::utils::hexToBytes(recordHashHex, 32, recHashRaw);
+
+    char canonical[512];
+    forest::crypto::buildAcousticSigningBytes(nodeIdStr, seq, acEventIso, FOREST_CHECKPOINT_ID, "",
+                                              classification, confidenceRepr, ACOUSTIC_MODEL_VERSION,
+                                              acousticChain.previousHashHex(), recordHashHex, canonical, sizeof canonical);
+    uint8_t sig[forest::crypto::kMaxSignatureBytes];
+    size_t sigLen = 0;
+    if (nodeIdentity.signSha256(reinterpret_cast<const uint8_t*>(canonical), strlen(canonical), sig, sigLen)) {
+      uint32_t epoch = 0;
+      softClock.nowEpoch(epoch);
+      std::array<std::uint8_t, forest::constants::kMaxPayloadSize> signedPayload{};
+      const size_t len = forest::crypto::encodeSignedAcousticPayload(
+          seq, epoch, ev.classIndex, confidenceByte, FOREST_CHECKPOINT_ID, strlen(FOREST_CHECKPOINT_ID),
+          "", 0, prevHashRaw, recHashRaw, sig, sigLen, signedPayload.data(), signedPayload.size());
+      if (len > 0) {
+        acousticChain.commit(recordHashHex);
+        sent = transmitPayload(signedPayload.data(), len, "SIGNED ACOUSTIC TX", false);
+        signedPathUsed = true;
+        Serial.printf("[SIGNED ACOUSTIC] seq=%lu record_hash=%s tx=%s\n", static_cast<unsigned long>(seq),
+                      recordHashHex, sent == TxResult::Failed ? "FAILED" : "SENT");
+      } else {
+        Serial.println("[SIGNED ACOUSTIC] encode FAILED - not sent, sequence not advanced");
+      }
+    } else {
+      Serial.println("[SIGNED ACOUSTIC] sign FAILED - not sent");
+    }
+  }
+  if (!signedPathUsed) {
+    sent = transmitPayload(payload.data(), 6, "ACOUSTIC TX", false);
+  }
   if (haveRec) finishStoredEvent(stored, sent);
   delay(200);
   setStatusLed(0, 0);
@@ -702,6 +774,9 @@ void setup() {
   Serial.println(softClock.hasSynced() ? "[CLOCK] loaded last known UTC time from NVS (not yet re-synced this boot)"
                                        : "[CLOCK] no time yet - waiting for a gateway ACK to sync");
   patrolChain.begin();
+#if FOREST_ACOUSTIC
+  acousticChain.begin();
+#endif
 
   // Local event store (internal flash). A failure here must never stop the RFID node.
   storeReady = eventStore.begin();
