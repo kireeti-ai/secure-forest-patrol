@@ -341,10 +341,20 @@ static void finishStoredEvent(const forest::storage::EventRecord& rec, TxResult 
   }
 }
 
-// A pending event whose transmission failed (or was cut short by a reset) is retried here, oldest first.
+// A pending event whose transmission failed (or was cut short by a reset) is retried here, oldest
+// first -- strictly head-of-line: the oldest PENDING_SYNC record is retried every call until it is
+// ACKed, before anything newer behind it gets a turn. On a marginal radio link, RFID/verification/
+// signed-patrol payloads (carry an ECDSA signature + hash-chain data, far more airtime than the
+// acoustic pipeline's tiny 6-byte payload) are the ones statistically most likely to fail their
+// first send and land in this queue, so this interval directly bounds how fast that backlog -- and
+// every officer's event behind its head -- can drain. Was 15000ms (1 record per 15s); that paced a
+// handful of occasional failures fine but made any real backlog take minutes to clear and starved
+// newer events behind it. 3000ms keeps the same per-call blocking bound (one retry, up to the same
+// ~1500ms ACK wait as transmitPayload's normal immediate-send path) while draining 5x faster.
 static void retryPendingEvent() {
+  static constexpr std::uint32_t kRetryIntervalMs = 3000U;
   static std::uint32_t lastTryMs = 0;
-  if (!storeReady || millis() - lastTryMs < 15000) return;
+  if (!storeReady || millis() - lastTryMs < kRetryIntervalMs) return;
   lastTryMs = millis();
   forest::storage::EventRecord rec;
   if (!eventStore.oldestPending(rec)) return;   // TEST events are never transmitted
