@@ -24,7 +24,7 @@ from sqlalchemy.orm import Session
 from app.models.rfid import Attendance
 
 # A second card tap this soon after entry is a double tap, not a check-out.
-MIN_SECONDS_BEFORE_EXIT = 120
+MIN_SECONDS_BEFORE_EXIT = 10
 
 
 def attendance_timezone() -> ZoneInfo:
