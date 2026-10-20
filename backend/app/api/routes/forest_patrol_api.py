@@ -16,11 +16,17 @@ from app.schemas.forest import PatrolResponse
 router = APIRouter(prefix="/api/forest", tags=["forest"])
 
 
-def _record_status(signature_status: str, chain_status: str) -> str | None:
+def _record_status(signature_status: str, chain_status: str, rfid_result: str, fingerprint_result: str) -> str | None:
     if signature_status == "INVALID":
         return "TAMPERED"
     if chain_status == "BROKEN":
         return "SUSPECTED"
+    # Crypto proof (signature/chain) being intact says the record wasn't forged in transit -- it
+    # says nothing about who presented the card/finger. A failed identity check must not be
+    # reported as AUTHENTIC just because the bytes are unforged; see forest_checkpoints.py's
+    # _officer_stats(), which already treats this combination as a mismatch for attendance stats.
+    if rfid_result == "INVALID" or fingerprint_result == "NO_MATCH":
+        return "MISMATCH"
     if signature_status == "VALID" and chain_status == "VALID":
         return "AUTHENTIC"
     return None
@@ -38,7 +44,7 @@ def patrol_out(e: PatrolEvent, officer_name: str | None = None) -> PatrolRespons
         chain_status=e.chain_status, sync_status=e.sync_status,
         created_at=e.created_at, verified_at=e.verified_at,
         officer_name=officer_name,
-        record_status=_record_status(e.signature_status, e.chain_status))
+        record_status=_record_status(e.signature_status, e.chain_status, e.rfid_result, e.fingerprint_result))
 
 
 def _officer_names(db: Session, officer_ids: set[str]) -> dict[str, str]:
