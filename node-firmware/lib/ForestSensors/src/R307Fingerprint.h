@@ -32,6 +32,17 @@ public:
     // new attempt should start regardless of whatever is currently resting on the sensor.
     void rearm() { armed_ = true; }
 
+    // --- Enrollment (operator-triggered bench flow only -- never called from poll()'s
+    // normal match path). A template needs two scans of the same finger merged together
+    // (the sensor's own reliability measure): capture into buffer 1, lift, capture into
+    // buffer 2, createModel() merges them, storeModel() writes the result to flash at
+    // pageId. Blocks (polling the sensor) until a finger is presented or timeoutMs elapses.
+    bool waitForFinger(std::uint32_t timeoutMs = 10000U);
+    bool waitForFingerLifted(std::uint32_t timeoutMs = 5000U);
+    bool captureToBuffer(std::uint8_t bufferSlot);
+    bool createModel();
+    bool storeModel(std::uint16_t pageId);
+
 private:
     bool sendCommand_(const std::uint8_t* content, std::size_t contentLength,
                       std::uint8_t* response, std::size_t& responseLength,

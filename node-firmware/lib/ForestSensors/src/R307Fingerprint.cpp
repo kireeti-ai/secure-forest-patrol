@@ -12,6 +12,8 @@ constexpr std::uint8_t kAckPacket = 0x07U;
 constexpr std::uint8_t kVerifyPassword = 0x13U;
 constexpr std::uint8_t kGenImage = 0x01U;
 constexpr std::uint8_t kImageToTz = 0x02U;
+constexpr std::uint8_t kRegModel = 0x05U;
+constexpr std::uint8_t kStore = 0x06U;
 constexpr std::uint8_t kSearch = 0x04U;
 constexpr std::uint8_t kNoFinger = 0x02U;
 constexpr std::size_t kMaxPacket = 32U;
@@ -149,6 +151,69 @@ FingerprintScanResult R307Fingerprint::poll(FingerprintMatch& match) {
     match.score = get16(response.data() + 12U);
     armed_ = false;
     return FingerprintScanResult::Matched;
+}
+
+bool R307Fingerprint::waitForFinger(std::uint32_t timeoutMs) {
+    if (!ready_) return false;
+    const std::uint32_t start = millis();
+    std::array<std::uint8_t, kMaxPacket> response{};
+    const std::uint8_t imageCommand[] = {kGenImage};
+    while (millis() - start < timeoutMs) {
+        std::size_t responseLength = response.size();
+        if (sendCommand_(imageCommand, sizeof(imageCommand), response.data(), responseLength, 500U)) {
+            std::uint8_t code = 0xFFU;
+            if (confirmation_(response.data(), responseLength, code) && code == 0x00U) return true;
+        }
+        delay(100);
+    }
+    return false;
+}
+
+bool R307Fingerprint::waitForFingerLifted(std::uint32_t timeoutMs) {
+    if (!ready_) return false;
+    const std::uint32_t start = millis();
+    std::array<std::uint8_t, kMaxPacket> response{};
+    const std::uint8_t imageCommand[] = {kGenImage};
+    while (millis() - start < timeoutMs) {
+        std::size_t responseLength = response.size();
+        if (sendCommand_(imageCommand, sizeof(imageCommand), response.data(), responseLength, 500U)) {
+            std::uint8_t code = 0xFFU;
+            if (confirmation_(response.data(), responseLength, code) && code == kNoFinger) return true;
+        }
+        delay(100);
+    }
+    return false;
+}
+
+bool R307Fingerprint::captureToBuffer(std::uint8_t bufferSlot) {
+    if (!ready_) return false;
+    std::array<std::uint8_t, kMaxPacket> response{};
+    std::size_t responseLength = response.size();
+    const std::uint8_t charCommand[] = {kImageToTz, bufferSlot};
+    if (!sendCommand_(charCommand, sizeof(charCommand), response.data(), responseLength, 600U)) return false;
+    std::uint8_t code = 0xFFU;
+    return confirmation_(response.data(), responseLength, code) && code == 0x00U;
+}
+
+bool R307Fingerprint::createModel() {
+    if (!ready_) return false;
+    std::array<std::uint8_t, kMaxPacket> response{};
+    std::size_t responseLength = response.size();
+    const std::uint8_t content[] = {kRegModel};
+    if (!sendCommand_(content, sizeof(content), response.data(), responseLength, 600U)) return false;
+    std::uint8_t code = 0xFFU;
+    return confirmation_(response.data(), responseLength, code) && code == 0x00U;
+}
+
+bool R307Fingerprint::storeModel(std::uint16_t pageId) {
+    if (!ready_) return false;
+    std::array<std::uint8_t, kMaxPacket> response{};
+    std::size_t responseLength = response.size();
+    const std::uint8_t content[] = {kStore, 0x01U, static_cast<std::uint8_t>(pageId >> 8U),
+                                    static_cast<std::uint8_t>(pageId)};
+    if (!sendCommand_(content, sizeof(content), response.data(), responseLength, 600U)) return false;
+    std::uint8_t code = 0xFFU;
+    return confirmation_(response.data(), responseLength, code) && code == 0x00U;
 }
 
 }  // namespace ForestSensors

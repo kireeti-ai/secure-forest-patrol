@@ -624,8 +624,36 @@ static void handleSerialCommand() {
         Serial.printf("[LORA CIPHER] tampered ciphertext correctly rejected: %s\n", tamperRejected ? "PASS" : "FAIL");
         break;
       }
+      case 'e': {   // enroll a fingerprint onto the R307 at an operator-given page id (bench only;
+                    // never runs during a live card scan -- see the verifyState guard below).
+        if (verifyState != VerifyState::Idle) {
+          Serial.println("[ENROLL] refused: a card verification window is in progress");
+          break;
+        }
+        Serial.print("[ENROLL] page id (match kAllowedCards/kKnownCards, e.g. 2 for OFF002), then Enter: ");
+        Serial.setTimeout(15000);
+        const long pageIdLong = Serial.parseInt();
+        if (pageIdLong <= 0 || pageIdLong > 0xFFFF) {
+          Serial.println("\n[ENROLL] FAILED (invalid or no page id entered)");
+          break;
+        }
+        const uint16_t pageId = static_cast<uint16_t>(pageIdLong);
+        Serial.printf("\n[ENROLL] page=%u -- place finger on the sensor (scan 1 of 2)...\n", static_cast<unsigned>(pageId));
+        if (!fingerprint.waitForFinger(15000)) { Serial.println("[ENROLL] FAILED (no finger presented)"); break; }
+        if (!fingerprint.captureToBuffer(1)) { Serial.println("[ENROLL] FAILED (capture 1)"); break; }
+        Serial.println("[ENROLL] lift finger...");
+        fingerprint.waitForFingerLifted(5000);
+        Serial.println("[ENROLL] place the SAME finger again (scan 2 of 2)...");
+        if (!fingerprint.waitForFinger(15000)) { Serial.println("[ENROLL] FAILED (no finger presented)"); break; }
+        if (!fingerprint.captureToBuffer(2)) { Serial.println("[ENROLL] FAILED (capture 2 -- lift and try again)"); break; }
+        if (!fingerprint.createModel()) { Serial.println("[ENROLL] FAILED (createModel -- the two scans did not match well enough)"); break; }
+        if (!fingerprint.storeModel(pageId)) { Serial.println("[ENROLL] FAILED (store)"); break; }
+        Serial.printf("[ENROLL] OK page=%u\n", static_cast<unsigned>(pageId));
+        fingerprint.rearm();
+        break;
+      }
       default:
-        Serial.println("[LOCAL STORE] commands: w=write TEST event  l=list  m=mark oldest pending synced  r=reboot  x=erase  t=driver check (RC522/RTC)  y=LoRaCipher self-test");
+        Serial.println("[LOCAL STORE] commands: w=write TEST event  l=list  m=mark oldest pending synced  r=reboot  x=erase  t=driver check (RC522/RTC)  y=LoRaCipher self-test  e=enroll fingerprint");
     }
   }
 }
