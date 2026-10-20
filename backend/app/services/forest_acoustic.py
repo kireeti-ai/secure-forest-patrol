@@ -101,6 +101,15 @@ UNSIGNED = "UNSIGNED"
 # A retry repeats node, node-sequence and class within moments; the same node sequence much later is a
 # rebooted node whose counter restarted at 0 and is a genuinely new event.
 DUPLICATE_WINDOW = timedelta(seconds=120)
+# The backend-assigned sequence for unsigned events and the node firmware's own hardware sequence
+# counter (for signed events) both start low and both land in the same `sequence` column under the
+# same (node_id, sequence) unique constraint. Without a disjoint range they collide: a signed event
+# whose node-assigned sequence happens to match an old unsigned row's backend-assigned sequence gets
+# rejected by the DB as a duplicate of that unrelated row (and `ingest_acoustic_event`'s duplicate
+# check then returns that old unsigned row instead of ever inserting the new signed one) - found by
+# tracing a real signed detection all the way through LoRa/gateway/EMQX with no code or transport bug
+# anywhere, only to land on an old Sept-2026 unsigned test row sharing the same sequence number.
+UNSIGNED_SEQUENCE_OFFSET = 900_000_000
 
 
 def ingest_unsigned_acoustic_event(db: Session, payload: AcousticNodeReport) -> tuple[dict, int]:
@@ -108,8 +117,9 @@ def ingest_unsigned_acoustic_event(db: Session, payload: AcousticNodeReport) -> 
 
     Time is stamped here (the node has no RTC). ``signature_status`` and ``chain_status`` are PENDING and
     the row enters human review like any other detection. The row's own ``sequence`` is backend-assigned
-    (per-node monotonic) so the existing unique (node_id, sequence) constraint - and the signed path that
-    relies on it - stays untouched; the node's sequence is kept in ``event_id`` for retry detection.
+    (per-node monotonic, offset by ``UNSIGNED_SEQUENCE_OFFSET`` to stay disjoint from the node firmware's
+    own hardware sequence counter used by signed events); the node's sequence is kept in ``event_id`` for
+    retry detection.
     """
     now = datetime.now(timezone.utc)
     node = db.scalar(select(ForestNode).where(ForestNode.node_id == payload.node_id))
@@ -139,7 +149,9 @@ def ingest_unsigned_acoustic_event(db: Session, payload: AcousticNodeReport) -> 
         return ({"outcome": IngestOutcome.DUPLICATE.value, "event_id": duplicate.event_id, "duplicate": True,
                  "signature_status": duplicate.signature_status, "chain_status": duplicate.chain_status}, 200)
 
-    sequence = (db.scalar(select(func.max(AcousticEvent.sequence)).where(AcousticEvent.node_id == payload.node_id)) or 0) + 1
+    sequence = (db.scalar(select(func.max(AcousticEvent.sequence)).where(
+        AcousticEvent.node_id == payload.node_id,
+        AcousticEvent.sequence >= UNSIGNED_SEQUENCE_OFFSET)) or UNSIGNED_SEQUENCE_OFFSET) + 1
     event_id = f"{prefix}{sequence}"   # unique: the backend sequence is unique per node
     row = AcousticEvent(
         event_id=event_id, node_id=payload.node_id, checkpoint_id=node.checkpoint_id, zone_id=node.zone_id,

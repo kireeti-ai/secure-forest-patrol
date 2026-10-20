@@ -79,8 +79,9 @@ def test_unsigned_node_acoustic_event_is_stored_pending_and_deduped(client, db_s
     db_session.commit()
     again = client.post("/api/ingest/gateway/acoustic-node-event", json=body)
     assert again.json()["outcome"] == "ACCEPTED"
+    from app.services.forest_acoustic import UNSIGNED_SEQUENCE_OFFSET
     seqs = sorted(r.sequence for r in db_session.scalars(select(AcousticEvent).where(AcousticEvent.node_id == "NODE_01")))
-    assert seqs == [1, 2]
+    assert seqs == [UNSIGNED_SEQUENCE_OFFSET + 1, UNSIGNED_SEQUENCE_OFFSET + 2]
 
     shown = client.get("/api/forest/acoustic-events").json()
     assert {e["classification"] for e in shown if e["nodeId"] == "NODE_01"} == {"Gunshot"}
