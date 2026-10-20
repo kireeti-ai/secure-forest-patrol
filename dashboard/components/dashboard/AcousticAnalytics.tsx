@@ -186,8 +186,8 @@ function OutcomeBars({ rows }: { rows: { label: string; value: number; color: st
 }
 
 const BINS = [
-  { label: "<50%", lo: 0, hi: 0.5 }, { label: "50s", lo: 0.5, hi: 0.6 }, { label: "60s", lo: 0.6, hi: 0.7 },
-  { label: "70s", lo: 0.7, hi: 0.8 }, { label: "80s", lo: 0.8, hi: 0.9 }, { label: "90%+", lo: 0.9, hi: 1.01 },
+  { label: "<50%", lo: 0, hi: 0.5 }, { label: "50-59%", lo: 0.5, hi: 0.6 }, { label: "60-69%", lo: 0.6, hi: 0.7 },
+  { label: "70-79%", lo: 0.7, hi: 0.8 }, { label: "80-89%", lo: 0.8, hi: 0.9 }, { label: "90%+", lo: 0.9, hi: 1.01 },
 ];
 
 function ConfidenceChart({ events }: { events: AcousticEvent[] }) {
