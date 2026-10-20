@@ -164,11 +164,17 @@ ForestSensors::RfidUid cardUid;
 // same "light/wobbly RF coupling" effect noted where the fingerprint verify-window guard was
 // added. That guard stops a resting card from restarting an in-progress window; this stops one
 // from starting a brand new card->fingerprint->attendance cycle every time it re-answers.
-// Gated on actual removal (isCardPresent() going false at least once), not a fixed timer: a
-// timer can't tell "never left the field" apart from "genuinely lifted and tapped again" --
-// both just look like the UID reappearing. Removal-gating blocks the former indefinitely (until
-// really lifted) while never delaying a real re-tap, however soon after.
+// Gated on actual removal (isCardPresent() reading false), not a fixed timer: a timer can't
+// tell "never left the field" apart from "genuinely lifted and tapped again" -- both just look
+// like the UID reappearing. Removal-gating blocks the former indefinitely (until really lifted)
+// while never delaying a real re-tap, however soon after. Requires kAbsentStreakToConfirm
+// consecutive "not present" reads, not just one -- a single isCardPresent() read can come back
+// a false negative (e.g. right after the SPI bus switches back from the LoRa TX that sent the
+// just-resolved verification result), which would otherwise clear the gate on a card that never
+// actually moved.
 bool awaitingCardRemoval = false;
+std::uint8_t cardAbsentStreak = 0;
+constexpr std::uint8_t kAbsentStreakToConfirm = 3;
 HardwareSerial fingerprintSerial(2);
 ForestSensors::R307Fingerprint fingerprint(fingerprintSerial, FOREST_FINGER_RX_PIN,
                                             FOREST_FINGER_TX_PIN, FOREST_FINGER_BAUD);
@@ -881,10 +887,12 @@ void loop() {
 
   // Wait for new card
   if (!rfid.isCardPresent()) {
-    awaitingCardRemoval = false;  // field is clear -- the next detection is a genuinely new tap
+    if (cardAbsentStreak < kAbsentStreakToConfirm) ++cardAbsentStreak;
+    else awaitingCardRemoval = false;  // confirmed clear -- the next detection is a genuinely new tap
     delay(50);
     return;
   }
+  cardAbsentStreak = 0;
   if (awaitingCardRemoval) {
     // Something is still answering REQA from the last tap and was never confirmed removed --
     // halt it again (insurance against the chip having un-halted itself) and keep ignoring it.
