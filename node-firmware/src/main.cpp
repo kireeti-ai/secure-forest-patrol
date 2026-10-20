@@ -642,7 +642,7 @@ static void handleSerialCommand() {
         break;
       }
       case 'y': {   // self-test LoRaCipher (Phase 4 AES-GCM) against a known-good reference vector
-        uint8_t key[16], nonce[12], aad[5], pt[22], expectCt[22], expectTag[16];
+        uint8_t key[16], nonce[12], aad[5], pt[21], expectCt[21], expectTag[16];
         auto fromHex = [](const char* hex, uint8_t* out) {
           for (size_t i = 0; hex[i] && hex[i + 1]; i += 2) {
             unsigned v;
@@ -653,16 +653,16 @@ static void handleSerialCommand() {
         fromHex("000102030405060708090a0b0c0d0e0f", key);
         fromHex("101112131415161718191a1b", nonce);
         fromHex("0102fe0900", aad);
-        fromHex("48656c6c6f2c20466f726573742050617472616c21", pt);
-        fromHex("8c4b6fc3606396a978af3886b307bb5f4ece15eb17", expectCt);
-        fromHex("dacf5952c6d6736b2c26279aa620e984", expectTag);
+        fromHex("48656c6c6f2c20466f7265737420506174726f6c21", pt);           // "Hello, Forest Patrol!"
+        fromHex("8c4b6fc3606396a978af3886b307bb5f4ece1beb17", expectCt);
+        fromHex("f08d27cf3229f991dc83126c126c2629", expectTag);
 
         forest::crypto::PacketAad aadStruct{0x01, 0x02, 0xFE, 0x0009};
-        uint8_t wrapped[12 + 22 + 16];
+        uint8_t wrapped[12 + sizeof(pt) + 16];
         memcpy(wrapped, nonce, 12);
-        memcpy(wrapped + 12, expectCt, 22);
-        memcpy(wrapped + 12 + 22, expectTag, 16);
-        uint8_t decrypted[22];
+        memcpy(wrapped + 12, expectCt, sizeof(expectCt));
+        memcpy(wrapped + 12 + sizeof(expectCt), expectTag, 16);
+        uint8_t decrypted[sizeof(pt)];
         size_t decryptedLen = 0;
         const bool refOk = forest::crypto::loRaDecrypt(key, aadStruct, wrapped, sizeof(wrapped), decrypted,
                                                         sizeof(decrypted), decryptedLen) &&
@@ -684,7 +684,7 @@ static void handleSerialCommand() {
         uint8_t tampered[sizeof(wrapped)];
         memcpy(tampered, wrapped, sizeof(wrapped));
         tampered[12] ^= 0x01U;
-        uint8_t tamperOut[22];
+        uint8_t tamperOut[sizeof(pt)];
         size_t tamperOutLen = 0;
         const bool tamperRejected = !forest::crypto::loRaDecrypt(key, aadStruct, tampered, sizeof(tampered),
                                                                   tamperOut, sizeof(tamperOut), tamperOutLen);
