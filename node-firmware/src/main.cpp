@@ -855,6 +855,19 @@ void loop() {
   if (verifyState == VerifyState::Idle) retryPendingEvent();
   pollFingerprint();
 
+  // A card re-detected while a fingerprint window is already running for a previous tap
+  // must never restart that window -- pollFingerprint() above is what resolves it
+  // (MATCH/MISMATCH/TIMEOUT). Without this guard, a card that keeps re-triggering REQA
+  // while just resting near the reader (light/wobbly RF coupling needs no physical re-tap)
+  // would perpetually push verifyDeadlineMs forward before it can ever expire, starving the
+  // whole pipeline of any resolution: RFID taps alone would still reach the backend
+  // (queued, retried once Idle) but no MATCH/MISMATCH/TIMEOUT verification/patrol event
+  // ever would.
+  if (verifyState != VerifyState::Idle) {
+    delay(50);
+    return;
+  }
+
   // Wait for new card
   if (!rfid.isCardPresent()) {
     delay(50);
