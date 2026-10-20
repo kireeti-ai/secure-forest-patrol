@@ -4,10 +4,10 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.models.forest_node import ForestNode
-from app.models.rfid import Attendance, VerificationEvent
+from app.models.rfid import VerificationEvent
 from app.models.user import User
 from app.schemas.forest_ingest import VerificationIngest
-from app.services.attendance_state import MIN_SECONDS_BEFORE_EXIT, attendance_day
+from app.services.attendance_state import record_attendance_match
 
 
 DUPLICATE_WINDOW = timedelta(seconds=120)
@@ -51,18 +51,7 @@ def ingest_verification(db: Session, payload: VerificationIngest) -> tuple[dict,
 
     attendance_action = None
     if payload.status == "MATCH" and claimed and claimed.employee_id:
-        today = attendance_day(now)
-        row = db.scalar(select(Attendance).where(Attendance.employee_id == claimed.employee_id,
-                                                 Attendance.attendance_date == today))
-        if row is None:
-            row = Attendance(employee_id=claimed.employee_id, attendance_date=today, entry_at=now)
-            db.add(row)
-            attendance_action = "ENTRY"
-        elif row.exit_at is None:
-            entry_at = row.entry_at if row.entry_at.tzinfo else row.entry_at.replace(tzinfo=timezone.utc)
-            if (now - entry_at).total_seconds() >= MIN_SECONDS_BEFORE_EXIT:
-                row.exit_at = now
-                attendance_action = "EXIT"
+        attendance_action = record_attendance_match(db, claimed.employee_id, now)
 
     db.commit()
     db.refresh(event)

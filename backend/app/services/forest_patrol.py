@@ -8,10 +8,12 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.models.enums import ChainStatus, EventSyncStatus, IngestOutcome, SignatureStatus, SyncState
+from app.models.enums import ChainStatus, EventSyncStatus, FingerprintResult, IngestOutcome, RfidResult, SignatureStatus, SyncState
 from app.models.forest_node import ForestNode
 from app.models.patrol_event import PatrolEvent
+from app.models.user import User
 from app.schemas.forest_ingest import ForestPatrolIngest
+from app.services.attendance_state import hex_uid_key, record_attendance_match
 from app.services.errors import ResourceNotFoundError
 from app.services.forest_chain import patrol_chain_status
 from app.services.forest_verify import gateway_id_of, patrol_sig_status, record_sync, touch_gateway
@@ -85,6 +87,22 @@ def ingest_patrol_event(db: Session, payload: ForestPatrolIngest) -> tuple[dict,
                      "chain_status": dupe.chain_status}, 200)
         raise
     node.last_seen_at = now
+
+    # A signed patrol event is this node's normal path once it has identity/clock (see
+    # node-firmware's sendVerificationEvent) -- the legacy unsigned 'V' path in
+    # app/services/verification.py is the only other place attendance gets marked, and a
+    # node past Phase 2 never sends that anymore. Mirror it here: a real two-factor match
+    # (valid card + matching finger) on an accepted (non-tampered, chain-intact) event marks
+    # today's entry/exit, same as the legacy path.
+    if (outcome == IngestOutcome.ACCEPTED.value and payload.officer_id
+            and payload.rfid_result == RfidResult.VALID.value
+            and payload.fingerprint_result == FingerprintResult.MATCH.value):
+        officer_key = hex_uid_key(payload.officer_id)
+        claimed = next((u for u in db.scalars(select(User).where(User.is_active.is_(True), User.rfid_uid.is_not(None)))
+                        if hex_uid_key(u.rfid_uid) == officer_key), None)
+        if claimed and claimed.employee_id:
+            record_attendance_match(db, claimed.employee_id, now)
+
     touch_gateway(db, gid, now=now)
     record_sync(db, event_id=event_id, node_id=payload.node_id, gateway_id=gid, now=now,
                 status=SyncState.VERIFIED.value if outcome == IngestOutcome.ACCEPTED.value else SyncState.FAILED.value,
