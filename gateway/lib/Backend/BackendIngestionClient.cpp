@@ -104,17 +104,23 @@ void BackendIngestionClient::logLine(const char* line) {
 void BackendIngestionClient::tick(std::uint32_t currentMs) {
     tickWifi(currentMs);
     tickMqtt(currentMs);
-    if (wifiState_ == LinkState::Connected && mqttState_ == LinkState::Connected) {
+    const bool fullyConnected = (wifiState_ == LinkState::Connected && mqttState_ == LinkState::Connected);
+    if (fullyConnected) {
         mqttClient_.loop();
         // Every gateway -> backend message (RFID scans, node telemetry and
         // the gateway heartbeat) goes over MQTT; see docs/MQTT.md.
         drainOutbox();
-        tickGatewayStatus(currentMs);
+        // drainOutbox() above already flushes queued events the instant the link comes back,
+        // but the periodic heartbeat below is gated on its own 30s timer that a reconnect does
+        // not reset -- without forcing one here, the dashboard can keep showing the gateway as
+        // offline for up to 30s after it is genuinely back and already forwarding data.
+        tickGatewayStatus(currentMs, /*force=*/!backendWasConnected_);
     }
+    backendWasConnected_ = fullyConnected;
 }
 
-void BackendIngestionClient::tickGatewayStatus(std::uint32_t currentMs) {
-    if ((currentMs - lastStatusReportMs_) < kStatusReportIntervalMs) return;
+void BackendIngestionClient::tickGatewayStatus(std::uint32_t currentMs, bool force) {
+    if (!force && (currentMs - lastStatusReportMs_) < kStatusReportIntervalMs) return;
     lastStatusReportMs_ = currentMs;
 
     JsonDocument doc;

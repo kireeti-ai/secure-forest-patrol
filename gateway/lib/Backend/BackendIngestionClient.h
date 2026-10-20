@@ -145,7 +145,7 @@ public:
 private:
     void tickWifi(std::uint32_t currentMs);
     void tickMqtt(std::uint32_t currentMs);
-    void tickGatewayStatus(std::uint32_t currentMs);
+    void tickGatewayStatus(std::uint32_t currentMs, bool force);
     void drainOutbox();
     bool publishEnvelope(const ForestEventEnvelope& envelope);
     bool publishRfid(const ForestEventEnvelope& envelope);
@@ -164,6 +164,10 @@ private:
 
     LinkState wifiState_{LinkState::Disconnected};
     LinkState mqttState_{LinkState::Disconnected};
+    // Tracks the previous tick's combined Wi-Fi+MQTT state so tick() can detect the edge into
+    // fully connected and force one immediate gateway-status report instead of waiting out
+    // whatever is left of the periodic kStatusReportIntervalMs window -- see tick().
+    bool backendWasConnected_{false};
     std::uint32_t lastWifiAttemptMs_{0};
     std::uint32_t lastMqttAttemptMs_{0};
     std::uint32_t lastStatusReportMs_{0};
