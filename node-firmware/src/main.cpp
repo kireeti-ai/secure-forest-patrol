@@ -158,6 +158,22 @@ const char* pendingOfficerLabel = "";
 
 ForestSensors::RFID_RC522 rfid(SS_PIN, RST_PIN);
 ForestSensors::RfidUid cardUid;
+// rfid.halt() (HLTA) is supposed to make a card ignore REQA until it physically leaves the
+// field, but a card only resting near the reader (not held firmly) can lose/regain power from
+// weak RF coupling, reset, and start answering REQA again without ever being removed -- the
+// same "light/wobbly RF coupling" effect noted where the fingerprint verify-window guard was
+// added. That guard stops a resting card from restarting an in-progress window; this stops one
+// from starting a brand new card->fingerprint->attendance cycle every time it re-answers, which
+// would otherwise look like the officer re-tapping every ~10-15s without ever touching the card.
+ForestSensors::RfidUid lastProcessedUid;
+std::uint32_t lastProcessedAtMs = 0;
+// Measured from the original tap, not from when the fingerprint window resolves -- a window
+// can take up to kVerifyWindowMs (10s) to time out, so this needs real margin beyond that to
+// guarantee a meaningful quiet period once verifyState is back to Idle, not just a few seconds.
+constexpr std::uint32_t kRetapCooldownMs = kVerifyWindowMs + 10000U;
+bool sameUid(const ForestSensors::RfidUid& a, const ForestSensors::RfidUid& b) {
+  return a.size == b.size && memcmp(a.bytes, b.bytes, a.size) == 0;
+}
 HardwareSerial fingerprintSerial(2);
 ForestSensors::R307Fingerprint fingerprint(fingerprintSerial, FOREST_FINGER_RX_PIN,
                                             FOREST_FINGER_TX_PIN, FOREST_FINGER_BAUD);
@@ -878,6 +894,13 @@ void loop() {
     delay(500);
     return;
   }
+  if (sameUid(cardUid, lastProcessedUid) && millis() - lastProcessedAtMs < kRetapCooldownMs) {
+    // Same card re-answering REQA without having left the field -- halt it again and ignore,
+    // rather than starting a whole new processing cycle for a card nobody re-tapped.
+    rfid.halt();
+    delay(50);
+    return;
+  }
 
   Serial.println();
   Serial.println(">>> CARD DETECTED <<<");
@@ -929,6 +952,8 @@ void loop() {
   const std::size_t payloadLen = 3 + cardUid.size;
   const bool haveRec = storeEvent(forest::storage::EventType::Rfid, payload.data(), payloadLen, stored);
   rfid.halt();
+  lastProcessedUid = cardUid;
+  lastProcessedAtMs = millis();
   if (verifyState == VerifyState::AwaitingFingerprint) {
     // A valid card just armed the fingerprint window -- the blocking LoRa TX + up-to-1500ms
     // ACK wait would eat into that window. Leave this event PENDING_SYNC; retryPendingEvent()
