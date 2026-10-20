@@ -158,30 +158,6 @@ const char* pendingOfficerLabel = "";
 
 ForestSensors::RFID_RC522 rfid(SS_PIN, RST_PIN);
 ForestSensors::RfidUid cardUid;
-// rfid.halt() (HLTA) is supposed to make a card ignore REQA until it physically leaves the
-// field, but a card only resting near the reader (not held firmly) can lose/regain power from
-// weak RF coupling, reset, and start answering REQA again without ever being removed -- the
-// same "light/wobbly RF coupling" effect noted where the fingerprint verify-window guard was
-// added. That guard stops a resting card from restarting an in-progress window; this stops one
-// from starting a brand new card->fingerprint->attendance cycle every time it re-answers.
-// Gated on actual removal (isCardPresent() reading false), not a fixed timer: a timer can't
-// tell "never left the field" apart from "genuinely lifted and tapped again" -- both just look
-// like the UID reappearing. Removal-gating blocks the former indefinitely (until really lifted)
-// while never delaying a real re-tap, however soon after. Requires kAbsentStreakToConfirm
-// consecutive "not present" reads, not just one -- a single isCardPresent() read can come back
-// a false negative (e.g. right after the SPI bus switches back from the LoRa TX that sent the
-// just-resolved verification result), which would otherwise clear the gate on a card that never
-// actually moved.
-bool awaitingCardRemoval = false;
-std::uint8_t cardAbsentStreak = 0;
-constexpr std::uint8_t kAbsentStreakToConfirm = 3;
-// Safety valve: if the field never achieves 3 clean consecutive absent reads in a row (a card
-// flickering present/absent on weak coupling can keep resetting the streak to 0 forever), the
-// gate would otherwise stay stuck blocking every card -- including a completely different one
-// placed down afterward -- indefinitely. Force-clear it after a generous timeout so the reader
-// always recovers on its own rather than needing a reboot.
-std::uint32_t awaitingRemovalSinceMs = 0;
-constexpr std::uint32_t kMaxAwaitingRemovalMs = 30000U;
 HardwareSerial fingerprintSerial(2);
 ForestSensors::R307Fingerprint fingerprint(fingerprintSerial, FOREST_FINGER_RX_PIN,
                                             FOREST_FINGER_TX_PIN, FOREST_FINGER_BAUD);
@@ -894,20 +870,6 @@ void loop() {
 
   // Wait for new card
   if (!rfid.isCardPresent()) {
-    if (cardAbsentStreak < kAbsentStreakToConfirm) ++cardAbsentStreak;
-    else awaitingCardRemoval = false;  // confirmed clear -- the next detection is a genuinely new tap
-    delay(50);
-    return;
-  }
-  cardAbsentStreak = 0;
-  if (awaitingCardRemoval && millis() - awaitingRemovalSinceMs > kMaxAwaitingRemovalMs) {
-    Serial.println("[CARD] Removal never cleanly confirmed after 30s -- clearing the gate anyway");
-    awaitingCardRemoval = false;
-  }
-  if (awaitingCardRemoval) {
-    // Something is still answering REQA from the last tap and was never confirmed removed --
-    // halt it again (insurance against the chip having un-halted itself) and keep ignoring it.
-    rfid.halt();
     delay(50);
     return;
   }
@@ -967,8 +929,6 @@ void loop() {
   const std::size_t payloadLen = 3 + cardUid.size;
   const bool haveRec = storeEvent(forest::storage::EventType::Rfid, payload.data(), payloadLen, stored);
   rfid.halt();
-  awaitingCardRemoval = true;
-  awaitingRemovalSinceMs = millis();
   if (verifyState == VerifyState::AwaitingFingerprint) {
     // A valid card just armed the fingerprint window -- the blocking LoRa TX + up-to-1500ms
     // ACK wait would eat into that window. Leave this event PENDING_SYNC; retryPendingEvent()
