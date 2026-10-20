@@ -8,6 +8,7 @@
 #include "PatrolChainHash.h"
 #include "PatrolChainState.h"
 #include "SignedPatrolPayload.h"
+#include "LoRaCipher.h"
 #include "SoftClock.h"
 #include "Hex.h"
 #include <base64.h>
@@ -304,9 +305,30 @@ static TxResult transmitPayload(const std::uint8_t* payload, std::size_t len, co
   forest::protocol::Packet packet;
   std::array<std::uint8_t, forest::constants::kMaxPacketSize> buffer{};
   std::size_t encodedSize = 0;
-  if (!packetFactory.createData(0xFEU, payload, len, packet) ||
-      !forest::protocol::Serializer::serialize(packet, buffer, encodedSize)) {
-    Serial.printf("[%s] packet creation/serialization FAILED\n", tag);
+  if (!packetFactory.createData(0xFEU, payload, len, packet)) {
+    Serial.printf("[%s] packet creation FAILED\n", tag);
+    return TxResult::Failed;
+  }
+
+  // Phase 4 (docs/TAMPER_EVIDENCE_SECURITY_PLAN.md): encrypt the application payload in place
+  // before serialization. The outer header (type/source/dest/sequence) packetFactory just
+  // assigned stays in clear - the gateway needs it to route/ACK/CRC-check before it can even
+  // attempt a decrypt - and is bound into the ciphertext as AAD, so a captured ciphertext can't
+  // be replayed under a different header.
+  static const std::uint8_t kLoRaAesKey[forest::crypto::kGcmKeyBytes] = FOREST_LORA_AES_KEY;
+  const forest::crypto::PacketAad aad{static_cast<std::uint8_t>(packet.type), packet.sourceId,
+                                      packet.destinationId, packet.sequenceNumber};
+  std::array<std::uint8_t, forest::constants::kMaxPayloadSize> encrypted{};
+  std::size_t encryptedLen = 0;
+  if (!forest::crypto::loRaEncrypt(kLoRaAesKey, aad, packet.payload.data(), packet.payloadSize, encrypted.data(),
+                                   encrypted.size(), encryptedLen) ||
+      !packet.setPayload(encrypted.data(), encryptedLen)) {
+    Serial.printf("[%s] LoRa payload encryption FAILED\n", tag);
+    return TxResult::Failed;
+  }
+
+  if (!forest::protocol::Serializer::serialize(packet, buffer, encodedSize)) {
+    Serial.printf("[%s] packet serialization FAILED\n", tag);
     return TxResult::Failed;
   }
   Serial.printf("[%s] DATA source=0x%02X destination=0x%02X sequence=%u bytes=%u payload=%u\n", tag, packet.sourceId,
@@ -619,8 +641,58 @@ static void handleSerialCommand() {
         }
         break;
       }
+      case 'y': {   // self-test LoRaCipher (Phase 4 AES-GCM) against a known-good reference vector
+        uint8_t key[16], nonce[12], aad[5], pt[22], expectCt[22], expectTag[16];
+        auto fromHex = [](const char* hex, uint8_t* out) {
+          for (size_t i = 0; hex[i] && hex[i + 1]; i += 2) {
+            unsigned v;
+            sscanf(hex + i, "%2hhx", &out[i / 2]);
+            (void)v;
+          }
+        };
+        fromHex("000102030405060708090a0b0c0d0e0f", key);
+        fromHex("101112131415161718191a1b", nonce);
+        fromHex("0102fe0900", aad);
+        fromHex("48656c6c6f2c20466f726573742050617472616c21", pt);
+        fromHex("8c4b6fc3606396a978af3886b307bb5f4ece15eb17", expectCt);
+        fromHex("dacf5952c6d6736b2c26279aa620e984", expectTag);
+
+        forest::crypto::PacketAad aadStruct{0x01, 0x02, 0xFE, 0x0009};
+        uint8_t wrapped[12 + 22 + 16];
+        memcpy(wrapped, nonce, 12);
+        memcpy(wrapped + 12, expectCt, 22);
+        memcpy(wrapped + 12 + 22, expectTag, 16);
+        uint8_t decrypted[22];
+        size_t decryptedLen = 0;
+        const bool refOk = forest::crypto::loRaDecrypt(key, aadStruct, wrapped, sizeof(wrapped), decrypted,
+                                                        sizeof(decrypted), decryptedLen) &&
+                           decryptedLen == sizeof(pt) && memcmp(decrypted, pt, sizeof(pt)) == 0;
+        Serial.printf("[LORA CIPHER] decrypt known-good reference vector: %s\n", refOk ? "PASS" : "FAIL");
+
+        uint8_t encrypted[sizeof(pt) + forest::crypto::kGcmOverheadBytes];
+        size_t encryptedLen = 0;
+        const bool encOk = forest::crypto::loRaEncrypt(key, aadStruct, pt, sizeof(pt), encrypted,
+                                                        sizeof(encrypted), encryptedLen);
+        uint8_t roundTrip[sizeof(pt)];
+        size_t roundTripLen = 0;
+        const bool rtOk = encOk &&
+                         forest::crypto::loRaDecrypt(key, aadStruct, encrypted, encryptedLen, roundTrip,
+                                                      sizeof(roundTrip), roundTripLen) &&
+                         roundTripLen == sizeof(pt) && memcmp(roundTrip, pt, sizeof(pt)) == 0;
+        Serial.printf("[LORA CIPHER] random-nonce encrypt/decrypt round-trip: %s\n", rtOk ? "PASS" : "FAIL");
+
+        uint8_t tampered[sizeof(wrapped)];
+        memcpy(tampered, wrapped, sizeof(wrapped));
+        tampered[12] ^= 0x01U;
+        uint8_t tamperOut[22];
+        size_t tamperOutLen = 0;
+        const bool tamperRejected = !forest::crypto::loRaDecrypt(key, aadStruct, tampered, sizeof(tampered),
+                                                                  tamperOut, sizeof(tamperOut), tamperOutLen);
+        Serial.printf("[LORA CIPHER] tampered ciphertext correctly rejected: %s\n", tamperRejected ? "PASS" : "FAIL");
+        break;
+      }
       default:
-        Serial.println("[LOCAL STORE] commands: w=write TEST event  l=list  m=mark oldest pending synced  r=reboot  x=erase  t=driver check (RC522/RTC)");
+        Serial.println("[LOCAL STORE] commands: w=write TEST event  l=list  m=mark oldest pending synced  r=reboot  x=erase  t=driver check (RC522/RTC)  y=LoRaCipher self-test");
     }
   }
 }

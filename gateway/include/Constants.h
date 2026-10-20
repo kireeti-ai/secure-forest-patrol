@@ -10,7 +10,8 @@ namespace forest::constants
     // Must match node-firmware/include/Constants.h exactly (180: fits the signed patrol event
     // payload, type 'P' - see node-firmware's ForestCrypto/SignedPatrolPayload.h for the layout
     // this gateway's GatewayService.cpp decoder must match in lockstep).
-    constexpr std::size_t kMaxPayloadSize = 180;
+    // Must stay in lockstep with node-firmware/include/Constants.h - see the comment there.
+    constexpr std::size_t kMaxPayloadSize = 224;
     constexpr std::size_t kMaxPacketSize = kPacketHeaderSize + kMaxPayloadSize + kPacketCrcSize;
     constexpr std::size_t kMaxRadioBufferSize = 255;
     constexpr std::size_t kPacketQueueCapacity = 8;

@@ -11,7 +11,11 @@ namespace forest::constants
     // up to 13 + 10-byte officer UID + 2*32-byte hashes + 1 + up to 72-byte DER signature = 160
     // bytes), with headroom. Was 48 before Phase 2 (docs/TAMPER_EVIDENCE_SECURITY_PLAN.md) added
     // signed events; legacy 'R'/'A'/'V' payloads are far smaller and unaffected.
-    constexpr std::size_t kMaxPayloadSize = 180;
+    // 180 (pre-Phase-4 cap) + 28 (Phase 4 LoRa encryption overhead: 12-byte random GCM nonce +
+    // 16-byte GCM auth tag wrapped around the application payload) with margin. Worst case today
+    // is a signed patrol payload at ~177 bytes before encryption; see
+    // docs/TAMPER_EVIDENCE_SECURITY_PLAN.md Phase 4 and ForestCrypto/src/LoRaCipher.h.
+    constexpr std::size_t kMaxPayloadSize = 224;
     constexpr std::size_t kMaxPacketSize = kPacketHeaderSize + kMaxPayloadSize + kPacketCrcSize;
     constexpr std::size_t kMaxRadioBufferSize = 255;
     constexpr std::size_t kPacketQueueCapacity = 8;

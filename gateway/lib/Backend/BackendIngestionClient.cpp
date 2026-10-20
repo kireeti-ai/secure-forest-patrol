@@ -421,7 +421,6 @@ bool BackendIngestionClient::publishAcousticSigned(const ForestEventEnvelope& en
 
     char payload[640];
     const size_t len = serializeJson(doc, payload, sizeof(payload));
-    Serial.printf("[MQTT PUBLISH DEBUG] acoustic len=%u bytes: %s\n", static_cast<unsigned>(len), payload);
     const bool ok = mqttClient_.publish(kTopicAcoustic, reinterpret_cast<const uint8_t*>(payload), len, false);
     Serial.printf("[MQTT PUBLISH] topic=%s node=%s seq=%lu class=%s (signed) -> %s\n", kTopicAcoustic, nodeIdStr,
                   static_cast<unsigned long>(envelope.acSequence), envelope.acClassIndex == 2 ? "Gunshot" : "Chainsaw",

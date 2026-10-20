@@ -26,6 +26,16 @@ namespace forest::config
 #ifndef FOREST_CHECKPOINT_ID
 #define FOREST_CHECKPOINT_ID "CP-01"
 #endif
+// Phase 4 (docs/TAMPER_EVIDENCE_SECURITY_PLAN.md): AES-128-GCM confidentiality key for the LoRa
+// uplink, wrapped around the already-signed application payload (ForestCrypto/src/LoRaCipher.h).
+// Must be byte-identical to gateway/include/Config.h's copy - this is a pre-shared symmetric key
+// for the node<->gateway link, not derived from or related to the node's ECDSA signing identity.
+// Demo/single-deployment scope: one key shared network-wide, not rotated or per-node; a real
+// fleet deployment should provision this per-node (e.g. alongside the node's NVS-stored ECDSA
+// key) rather than compiling it into every node's firmware image identically.
+#ifndef FOREST_LORA_AES_KEY
+#define FOREST_LORA_AES_KEY {0x2AU,0x2EU,0x9CU,0xBEU,0xF7U,0xEEU,0x59U,0xD6U,0x2BU,0x5BU,0xE1U,0xB0U,0x08U,0x89U,0x66U,0x72U}
+#endif
 
     struct RadioConfig
     {

@@ -50,6 +50,16 @@
 #define FOREST_MQTT_PASSWORD ""
 #endif
 
+// Phase 4 (docs/TAMPER_EVIDENCE_SECURITY_PLAN.md): AES-128-GCM pre-shared key for the LoRa
+// uplink - must come from Secrets.h (gitignored) and be byte-identical to node-firmware's
+// FOREST_LORA_AES_KEY. The all-zero default here is deliberately an obviously-insecure
+// placeholder (so a build missing Secrets.h still compiles, but every encrypted packet it
+// produces fails decryption against any node using a real key - a loud failure, not a silent
+// one) rather than a working-but-undocumented default key.
+#ifndef FOREST_LORA_AES_KEY
+#define FOREST_LORA_AES_KEY {0U,0U,0U,0U,0U,0U,0U,0U,0U,0U,0U,0U,0U,0U,0U,0U}
+#endif
+
 namespace forest {
 
 struct BackendBuildConfig {

@@ -227,14 +227,47 @@ merely flag it. Keep a distinct, dashboard-visible "unverifiable" state for
 nodes that have not yet been commissioned with a key, so operators can tell
 "verified" apart from "nothing to check yet."
 
-### Phase 4 — Optional: LoRa confidentiality
+### Phase 4 — LoRa confidentiality: IMPLEMENTED (uplink only)
 
-Signing gives authenticity and integrity, not secrecy — LoRa traffic is
-still broadcast in the clear today. If checkpoint/patrol timing is sensitive
-(someone listening to LoRa traffic could infer patrol schedules), add a
-separate pre-shared AES-GCM or ChaCha20-Poly1305 key per node to encrypt the
-payload. This is independent of tamper-evidence and lower priority than
-Phases 1–3.
+Signing gives authenticity and integrity, not secrecy. The application
+payload on every uplink DATA packet (patrol, acoustic, RFID, verification)
+is now wrapped in AES-128-GCM before transmission
+(`ForestCrypto/src/LoRaCipher.h/.cpp`, identical copies in node-firmware and
+gateway): `nonce(12) || ciphertext || tag(16)`. The outer packet header
+(type/source/destination/sequence) stays in clear — the gateway needs it to
+route and ACK before it can even attempt a decrypt — and is bound into the
+ciphertext as AAD, so a captured ciphertext cannot be replayed under a
+different header.
+
+Key management: one pre-shared AES-128 key, shared network-wide (not yet
+per-node), in `Secrets.h`/`Config.h` (`FOREST_LORA_AES_KEY`, gitignored,
+never committed). A real fleet deployment should provision this per-node
+instead of baking one shared key into every node's firmware image — tracked
+as a known simplification, not done here.
+
+Nonce: fresh random 96 bits from the hardware RNG on every encryption, not
+derived from the sequence counter or persisted anywhere. GCM's one
+unforgivable failure mode is reusing a (key, nonce) pair; a random nonce
+avoids needing any counter/NVS bookkeeping that could get that wrong, at the
+cost of 12 extra wire bytes per packet (`kMaxPayloadSize` bumped
+180 → 224 to absorb the 28-byte nonce+tag overhead with margin).
+
+**Scope**: uplink (node → gateway) DATA payloads only. The downlink ACK
+(2 or 6 bytes, just an echoed sequence number and optional time sync) is
+**not** encrypted — deliberately out of scope for now, since it carries no
+operational secrets, documented here rather than left as a silent gap.
+
+**Verification status**: `LoRaCipher`'s AES-GCM wrapper is checked against a
+real reference vector captured from Python's `cryptography` library
+(round-trip, tamper-detection, and AAD-binding all covered) via the node's
+serial `'y'` command — no host-level C++ test exists for this one, because
+ESP-IDF's bundled mbedtls isn't reliably host-compilable (same limitation
+that applies to `NodeIdentity`/ECDSA, verified the same way via
+`tools/verify_node_signature.py`). Both firmwares build clean with
+encryption fully wired into the real transmit/receive path. End-to-end
+hardware verification (flash both boards, confirm a real patrol/acoustic
+event round-trips through encryption) is pending — boards were offline when
+this was implemented.
 
 ## Why this order
 

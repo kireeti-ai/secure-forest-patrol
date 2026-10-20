@@ -2,6 +2,9 @@
 #include <Arduino.h>
 #include <cstring>
 
+#include "BuildConfig.h"
+#include "LoRaCipher.h"
+
 namespace forest::gateway {
 
 GatewayService::GatewayService(logging::ILogger& logger,
@@ -43,13 +46,35 @@ void GatewayService::handleReceivedPacket(const lora::RawRadioPacket& packet, lo
 
     // Process valid Forest Event
     bool isDuplicate = false;
-    
+
     // We expect DATA packets for forest events
     if (parsed.type == forest::protocol::PacketType::Data) {
         if (parsed.destinationId != 0xFEU && parsed.destinationId != 0xFFU) {
             return; // Not for gateway
         }
-        
+
+        // Phase 4 (docs/TAMPER_EVIDENCE_SECURITY_PLAN.md): decrypt the application payload in
+        // place before any of the type-byte decode branches below see it - they stay completely
+        // unchanged, since from their point of view this is just the plaintext payload node
+        // firmware used to send directly. The AAD binds this decrypt to the exact header this
+        // packet carries (type/source/dest/sequence), so a captured ciphertext from one packet
+        // cannot be replayed under a different header even if the key leaked.
+        {
+            static const std::uint8_t kLoRaAesKey[forest::crypto::kGcmKeyBytes] = FOREST_LORA_AES_KEY;
+            const forest::crypto::PacketAad aad{static_cast<std::uint8_t>(parsed.type), parsed.sourceId,
+                                                parsed.destinationId, parsed.sequenceNumber};
+            std::array<std::uint8_t, forest::constants::kMaxPayloadSize> decrypted{};
+            std::size_t decryptedLen = 0;
+            if (!forest::crypto::loRaDecrypt(kLoRaAesKey, aad, parsed.payload.data(), parsed.payloadSize,
+                                             decrypted.data(), decrypted.size(), decryptedLen)) {
+                Serial.println("[SECURITY] LoRa payload decryption FAILED (wrong key, corrupted, or "
+                               "tampered) - packet dropped");
+                logger_.logRxError({"DecryptFailed", packet.rssiDbm, packet.snrDb, packet.length});
+                return;
+            }
+            parsed.setPayload(decrypted.data(), decryptedLen);
+        }
+
         deviceRegistry_.registerPacket(
             parsed.sourceId,
             "DATA",
