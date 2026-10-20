@@ -1,0 +1,43 @@
+{
+  "audit_timestamp_utc": "2026-10-19T21:47:14.994416+00:00",
+  "script": "run_source_first_discovery.py",
+  "python": "3.10.13",
+  "downloads_performed": 0,
+  "model_inference_started": false,
+  "model_training_started": false,
+  "threshold_tuning_started": false,
+  "frozen_manifests_changed": false,
+  "phase4_3_decisions_changed": false,
+  "protected_frozen_hashes": {
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/final.keras": "4ebad60f4de804cdf2659e34bed05e4b56dfc08bade8c1d3058657efaba430bd",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/forest_acoustic_fp32.tflite": "890cf5cd74b28c3618ddbf64bdc9399a68f9048c5fe1117b45177056bded3811",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/forest_acoustic_int8.tflite": "c9b3a391dc45b211587a5946ee15e357aef8c9c6baff6021866884b951972b9b",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/train_v1.csv": "95db880be030cc70dee4b2d76e9ed56e99eab9103faffdcebf92d21fbe7637dc",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/validation_v1.csv": "14b53fceb00cc4dd0e2fa8cf965ccedd458067fb4acae09aed20c2e7fbb2fa96",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/test_v1.csv": "efdb3aeffe986b0347af617575fc34734a12663557ec3ca755510f53ee9b2d28",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/train.npz": "9d98485170affd5891acac8d16658f8d9c642f9d9f76f4e3b43df1ccb676f6e1",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/validation.npz": "a356443e424f5903514130093f02ed4c5a6aa49f81f056ff06422a52dbd9c3b1",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/test.npz": "649a4a3dce19ff470ac773ea99e3d09459ef9b3d98b5a8c2c80f5c43f20743b9"
+  },
+  "protected_hash_matches": {
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/final.keras": true,
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/forest_acoustic_fp32.tflite": true,
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/forest_acoustic_int8.tflite": true,
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/train_v1.csv": true,
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/validation_v1.csv": true,
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/test_v1.csv": true,
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/train.npz": true,
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/validation.npz": true,
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/test.npz": true
+  },
+  "all_protected_hashes_match": true,
+  "source_count": 11,
+  "qualified_source_count": 0,
+  "qualification_status_counts": {
+    "DEFERRED_PROVENANCE": 1,
+    "REJECTED_DUPLICATE_SOURCE": 4,
+    "ACCESS_UNAVAILABLE": 2,
+    "DEFERRED_LABELS": 2,
+    "DEFERRED_LICENSE": 2
+  }
+}

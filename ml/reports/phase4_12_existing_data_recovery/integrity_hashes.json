@@ -1,0 +1,46 @@
+{
+  "audit_timestamp_utc": "2026-10-19T22:02:13.490284+00:00",
+  "script": "run_existing_data_recovery.py",
+  "python": "3.10.13",
+  "protected_frozen_hashes": {
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/final.keras": "4ebad60f4de804cdf2659e34bed05e4b56dfc08bade8c1d3058657efaba430bd",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/forest_acoustic_fp32.tflite": "890cf5cd74b28c3618ddbf64bdc9399a68f9048c5fe1117b45177056bded3811",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/forest_acoustic_int8.tflite": "c9b3a391dc45b211587a5946ee15e357aef8c9c6baff6021866884b951972b9b",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/train_v1.csv": "95db880be030cc70dee4b2d76e9ed56e99eab9103faffdcebf92d21fbe7637dc",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/validation_v1.csv": "14b53fceb00cc4dd0e2fa8cf965ccedd458067fb4acae09aed20c2e7fbb2fa96",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/test_v1.csv": "efdb3aeffe986b0347af617575fc34734a12663557ec3ca755510f53ee9b2d28",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/train.npz": "9d98485170affd5891acac8d16658f8d9c642f9d9f76f4e3b43df1ccb676f6e1",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/validation.npz": "a356443e424f5903514130093f02ed4c5a6aa49f81f056ff06422a52dbd9c3b1",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/test.npz": "649a4a3dce19ff470ac773ea99e3d09459ef9b3d98b5a8c2c80f5c43f20743b9"
+  },
+  "protected_hash_matches": {
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/final.keras": true,
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/forest_acoustic_fp32.tflite": true,
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/forest_acoustic_int8.tflite": true,
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/train_v1.csv": true,
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/validation_v1.csv": true,
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/test_v1.csv": true,
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/train.npz": true,
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/validation.npz": true,
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/test.npz": true
+  },
+  "all_protected_hashes_match": true,
+  "generated_artifact_sha256": {
+    "ml/reports/phase4_12_existing_data_recovery/EXISTING_DATA_RECOVERY_REPORT.md": "43ddb7e876576c86698182664af168d2b3f1b1ce20fbce8d13d9bbc6c93ffbb8",
+    "ml/reports/phase4_12_existing_data_recovery/source_inventory.csv": "225bee1ca8d0cd14984b320e94c62d6bffb3044d36d5995c172ca3d09081c39b",
+    "ml/reports/phase4_12_existing_data_recovery/recording_provenance_audit.csv": "6859ba5b86f5d0acef08a6cce9eea692e37b61ca2ba974203eb6452739ca8216",
+    "ml/reports/phase4_12_existing_data_recovery/license_audit.csv": "58a852a9a2ff0c3e5bf41bb614c1dfa0fe1508dbe3338a9df955a4e0ff7225b1",
+    "ml/reports/phase4_12_existing_data_recovery/label_quality_audit.csv": "02b52baaf724cc12c019fe7e71791a3809bdb04b74b35c87bc399f4850fd33e7",
+    "ml/reports/phase4_12_existing_data_recovery/split_integrity_audit.csv": "f4062b43374b74da1f75c17208b0520d4d0104d8828bb67e188beaa81d16e0a6",
+    "ml/reports/phase4_12_existing_data_recovery/class_source_coverage.json": "3560f3410bd8079a719c449237aae0d48380f0dc0a1d247d0e1df30b93136215",
+    "ml/reports/phase4_12_existing_data_recovery/admission_candidate_ranking.csv": "20481145fd4d71728e845e7181e46ecd3f12fa04c092387cb592d402b60a8a1e"
+  },
+  "audio_downloads": 0,
+  "model_inference_started": false,
+  "model_training_started": false,
+  "threshold_tuning_started": false,
+  "frozen_manifests_changed": false,
+  "production_manifests_changed": false,
+  "firmware_changed": false,
+  "phase4_3_decisions_changed": false
+}

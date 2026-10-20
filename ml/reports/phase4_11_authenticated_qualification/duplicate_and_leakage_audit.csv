@@ -1,0 +1,4 @@
+source_id,audio_downloaded,exact_hash_check,decoded_hash_check,near_duplicate_check,source_group_leakage_check,status,reason
+fsd50k_official_zenodo,NO,NOT_RUN: no new audio,NOT_RUN: no new audio,NOT_RUN: no new audio,UNRESOLVED from public metadata,NO_AUDIO_AUDIT,not hashed; possible semantic/source overlap with existing Freesound-derived or public clips
+arca23k_official_zenodo,NO,NOT_RUN: no new audio,NOT_RUN: no new audio,NOT_RUN: no new audio,UNRESOLVED from public metadata,NO_AUDIO_AUDIT,FSD/Freesound relationship; no new hash audit because no audio download
+audioset_official,NO,NOT_RUN: no new audio,NOT_RUN: no new audio,NOT_RUN: no new audio,UNRESOLVED from public metadata,NO_AUDIO_AUDIT,not hashable without raw audio

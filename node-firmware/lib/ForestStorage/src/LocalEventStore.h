@@ -26,6 +26,15 @@ struct StoreStats {
     uint32_t bootCount = 0;
 };
 
+// Result of walking the currently-stored log and recomputing each record's chain hash.
+// See LocalEventStore::verifyChain() for what this can and cannot detect.
+struct ChainVerifyResult {
+    bool ok = true;
+    size_t recordsChecked = 0;
+    size_t breakAtSlot = static_cast<size_t>(-1);   // first slot whose stored hash didn't match, if !ok
+    uint32_t breakAtLocalId = 0;
+};
+
 class LocalEventStore {
 public:
     static constexpr const char* kLogFile = "/events.log";
@@ -51,6 +60,21 @@ public:
     const StoreStats& stats() const { return stats_; }
     size_t capacity() const { return maxRecords_; }
 
+    // Recomputes each currently-stored record's chain hash from the previous one and compares
+    // against what's on flash. Detects reordering, deletion of a record from the middle, or a
+    // forged record inserted by someone with physical flash access (the Phase 1 tamper-evidence
+    // primitive from docs/TAMPER_EVIDENCE_SECURITY_PLAN.md).
+    // Known limitations (by design, not a bug):
+    //  - Does not detect truncation of the newest record(s) - nothing comes after them to break.
+    //    Closing this gap needs an external anchor (e.g. the gateway/backend remembering the
+    //    last hash it accepted), which is Phase 2/3 territory, not on-device.
+    //  - This call verifies the log as currently stored. compact()/dropOldest() legitimately
+    //    remove old records and will make the *first* remaining record's declared previous-hash
+    //    unverifiable against history that's gone on purpose; that first record is treated as
+    //    the trusted root of what's currently on flash, not a break. Anything after it must
+    //    still chain correctly.
+    ChainVerifyResult verifyChain();
+
 private:
     bool scan(bool rebuildStats);
     bool writeSlot(size_t index, const EventRecord& r);
@@ -63,6 +87,7 @@ private:
     size_t maxRecords_;
     StoreStats stats_;
     uint32_t nextId_ = 1;
+    uint8_t lastChainHash_[kChainHashSize] = {0};   // chain hash of the last record written/recovered
     bool ready_ = false;
 };
 

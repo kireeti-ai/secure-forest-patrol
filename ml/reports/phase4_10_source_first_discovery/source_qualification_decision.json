@@ -1,0 +1,26 @@
+{
+  "decision": "NO_QUALIFIED_SOURCE_NO_DOWNLOAD",
+  "audit_scope": "Phase 4.10 source-first discovery and admission gate",
+  "source_count": 11,
+  "qualified_for_download": [],
+  "downloads_performed": 0,
+  "acquisition_manifest": "header-only; no source passed all three mandatory gates",
+  "blocked_sources": [
+    "kenya_zenodo_21443074",
+    "ioai_hf_2026",
+    "vietnam_zenodo_13893977",
+    "belize_mendeley_x48cwz364j",
+    "sensing_forest_zenodo_18909809",
+    "rodopi_zenodo_5824433",
+    "outdoor_gunfire_zenodo_7004819",
+    "illinois_idb_5664241",
+    "fsd50k_zenodo_5117901",
+    "arca23k_zenodo_5117901",
+    "audioset_google"
+  ],
+  "next_action": "Do not download or admit data. Resolve file-level rights/provenance and labels only if new primary evidence becomes available.",
+  "frozen_artifacts_changed": false,
+  "training_started": false,
+  "model_inference_started": false,
+  "phase5_started": false
+}

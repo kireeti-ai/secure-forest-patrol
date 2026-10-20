@@ -1,0 +1,5 @@
+claim,evidence,finding,basis,uncertainty,gate
+Rodopi source IDs,datasets/raw/rodopi/download_metadata.json; raw WAV/TextGrid filenames; frozen master_v1.csv,9 raw WAVs and 9 TextGrids; 9 source recording IDs in frozen manifest,DIRECT_OBSERVATION,TextGrid/source identity is documented; session identity is not separately defined,PASS for source grouping; UNRESOLVED for sessions
+Rodopi RP3/RP6 relationship,reports/phase4_diagnostics/frozen_exact_duplicate_groups.csv,2504 exact duplicate hash groups contain RP3_0h30_to1h20 and RP6_0h30_to1h20,DERIVED_FROM_HASH_AUDIT,"Exact content proves duplication, not why it occurred",PASS for duplicate preservation
+Rodopi license,datasets/raw/rodopi/download_metadata.json; https://zenodo.org/records/5824433,Local download metadata records CC BY 4.0,DIRECT_OBSERVATION,attribution text must be preserved,PASS
+Rodopi admission scope,frozen manifests and class coverage,Already represented in frozen data; no new independent source is available in this phase,DERIVED_CONCLUSION,not a candidate for additional admission,FAIL as new data

@@ -1,0 +1,4 @@
+source_id,recording_id,session_id,device_id,location,grouping_method,ancestry,gate_status
+fsd50k_official_zenodo,yes: Freesound ID filename,no,no,not supplied,Freesound clip ID only; no parent/session grouping,"Freesound uploader-owned recordings; metadata includes uploader, title, description, tags, and license",DEFERRED_LICENSE
+arca23k_official_zenodo,yes: Freesound ID,no,no,not supplied,Freesound ID only,Freesound IDs and URLs in metadata,DEFERRED_LABELS
+audioset_official,YouTube video ID,no,no,not supplied,video ID,YouTube video IDs,DEFERRED_LICENSE

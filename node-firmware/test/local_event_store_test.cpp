@@ -1,6 +1,7 @@
 // Host tests for the local event store (record codec, recovery, sync state, corruption, capacity)
 // and the portable ForestSensors helpers. An in-memory backend stands in for LittleFS; "restart" is simulated
 // by building a new LocalEventStore on the same backend (the backend keeps the "flash" contents).
+#include <algorithm>
 #include <cstdio>
 #include <cstring>
 #include <map>
@@ -75,8 +76,8 @@ int main() {
     // --- corrupted record + duplicate + torn tail ---
     {
         auto& log = flash.files["/events.log"];
-        log[48 * 1 + 30] ^= 0xFF;                                     // corrupt record #2
-        std::vector<uint8_t> dup(log.begin(), log.begin() + 48);      // duplicate of record #1 appended
+        log[kRecordSize * 1 + 30] ^= 0xFF;                                     // corrupt record #2
+        std::vector<uint8_t> dup(log.begin(), log.begin() + kRecordSize);      // duplicate of record #1 appended
         log.insert(log.end(), dup.begin(), dup.end());
         log.push_back(0xAB); log.push_back(0xCD);                     // half-written append
         LocalEventStore s(flash, 16);
@@ -107,6 +108,58 @@ int main() {
         CHECK(p.localId == 4, "oldest pending is now #4 (#3 dropped)");
         LocalEventStore r2(f2, 4); r2.begin();
         CHECK(r2.stats().overflowDropped == 1, "overflow counter persisted");
+    }
+    // --- chain hash (tamper evidence, Phase 1) ---
+    {
+        MemBackend f3;
+        LocalEventStore s(f3, 16);
+        s.begin();
+        EventRecord r1, r2, r3;
+        s.append(EventType::Rfid, 1, kRfid, 7, 10, &r1);
+        s.append(EventType::Acoustic, 1, kAc, 6, 20, &r2);
+        s.append(EventType::Test, 1, nullptr, 0, 30, &r3);
+        uint8_t zero[kChainHashSize] = {0};
+        CHECK(memcmp(r1.chainHash, zero, kChainHashSize) != 0, "first record gets a non-zero chain hash");
+        CHECK(memcmp(r1.chainHash, r2.chainHash, kChainHashSize) != 0, "consecutive records chain to different hashes");
+        auto ok = s.verifyChain();
+        CHECK(ok.ok && ok.recordsChecked == 3, "clean chain verifies, 3 records checked");
+
+        // tamper: flip a byte inside record #2's payload directly on "flash", bypassing append()/writeSlot()
+        auto& log = f3.files["/events.log"];
+        log[kRecordSize * 1 + 20] ^= 0x01;   // byte inside record #2's payload region
+        LocalEventStore s2(f3, 16);
+        s2.begin();   // CRC catches this on recovery (same as any payload corruption) - rewritten out
+        CHECK(s2.stats().corruptSkipped == 1, "payload tamper caught by existing CRC during recovery");
+
+        // tamper that CRC alone can't catch: swap two still-valid records' slot order on "flash"
+        MemBackend f4;
+        LocalEventStore s3(f4, 16);
+        s3.begin();
+        EventRecord a, b, c;
+        s3.append(EventType::Rfid, 1, kRfid, 7, 1, &a);
+        s3.append(EventType::Rfid, 1, kRfid, 7, 2, &b);
+        s3.append(EventType::Rfid, 1, kRfid, 7, 3, &c);
+        auto& log2 = f4.files["/events.log"];
+        std::vector<uint8_t> slot1(log2.begin() + kRecordSize, log2.begin() + 2 * kRecordSize);
+        std::vector<uint8_t> slot2(log2.begin() + 2 * kRecordSize, log2.begin() + 3 * kRecordSize);
+        std::copy(slot2.begin(), slot2.end(), log2.begin() + kRecordSize);       // reordering swaps CRC-valid
+        std::copy(slot1.begin(), slot1.end(), log2.begin() + 2 * kRecordSize);   // records, so CRC alone misses it
+        auto broken = s3.verifyChain();
+        CHECK(!broken.ok, "reordering two valid records breaks the chain, caught by verifyChain");
+
+        // legitimate compaction (not tampering) must NOT be flagged as a break
+        MemBackend f5;
+        LocalEventStore s4(f5, 16);
+        s4.begin();
+        EventRecord d, e, g;
+        s4.append(EventType::Rfid, 1, kRfid, 7, 1, &d);
+        s4.append(EventType::Rfid, 1, kRfid, 7, 2, &e);
+        s4.markSynced(d.localId);
+        s4.markSynced(e.localId);
+        s4.append(EventType::Rfid, 1, kRfid, 7, 3, &g);   // still PENDING
+        CHECK(s4.compact(), "compact drops the two now-SYNCED records");
+        CHECK(s4.stats().records == 1, "only the pending record remains");
+        CHECK(s4.verifyChain().ok, "compaction alone is not reported as a chain break");
     }
     // --- sensor helpers ---
     {

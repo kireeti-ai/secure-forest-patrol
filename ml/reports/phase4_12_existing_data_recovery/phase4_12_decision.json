@@ -1,0 +1,20 @@
+{
+  "decision": "BLOCKED_ON_UNRESOLVED_PROVENANCE_OR_LICENSE",
+  "qualified_candidates_for_separate_admission_review": [],
+  "best_research_candidate": "C3GD gunshot subset for provenance-quality study only; not a three-class admission candidate",
+  "reasons": [
+    "C3GD has the strongest verified recording/session/device metadata but is gunshot-only and has no verified background/chainsaw data.",
+    "FSC22 has the strongest forest/target class relevance but source-level licensing, attribution, parent/session identity, and verified-negative semantics remain unresolved.",
+    "No source satisfies every mandatory gate; staged Phase 4.5/4.8 data remains quarantined."
+  ],
+  "unresolved_gates": [
+    "file-level licensing/attribution for FSC22 and staged sources",
+    "verified parent/session identity for most sources",
+    "verified background-negative semantics",
+    "near-duplicate/source ancestry beyond existing exact duplicate audit"
+  ],
+  "recommended_next_step": "Do not modify or admit data. Resolve FSC22 file-level rights/source grouping or conduct a separately authorized human/provenance review of a narrowly scoped existing subset. Keep Phase 5 blocked.",
+  "downloads_performed": 0,
+  "training_started": false,
+  "inference_started": false
+}

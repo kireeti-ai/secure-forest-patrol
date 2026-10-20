@@ -15,7 +15,8 @@ namespace forest::protocol
         case PacketType::Data:
             return true;
         case PacketType::Acknowledgement:
-            return packet.payloadSize == constants::kAcknowledgementPayloadSize;
+            return packet.payloadSize == constants::kAcknowledgementPayloadSize ||
+                   packet.payloadSize == constants::kAcknowledgementPayloadSizeWithTime;
         case PacketType::Unknown:
         default:
             return false;

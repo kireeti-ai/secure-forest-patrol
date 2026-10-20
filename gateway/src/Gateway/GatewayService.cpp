@@ -1,5 +1,6 @@
 #include "GatewayService.h"
 #include <Arduino.h>
+#include <cstring>
 
 namespace forest::gateway {
 
@@ -161,6 +162,66 @@ void GatewayService::handleReceivedPacket(const lora::RawRadioPacket& packet, lo
                 Serial.printf("Claimed page : %u  Actual page : %u  Score : %u\n",
                               envelope.verifyClaimedPageId, envelope.verifyActualPageId, envelope.verifyScore);
                 Serial.printf("SEQ    : %u\n", parsed.sequenceNumber);
+            } else if (parsed.payloadSize >= 15 && parsed.payload[0] == 0x50U && parsed.payload[1] == 0x01U) {
+                // Signed patrol event ['P', v1, sequence u32 LE, epoch u32 LE, rfidResult,
+                // fingerprintResult, checkpointIdLen, checkpointId[len], officerUidLen,
+                // officerUid[len], previousHash[32], recordHash[32], sigLen, sig[sigLen]].
+                // Must match node-firmware/lib/ForestCrypto/src/SignedPatrolPayload.h exactly.
+                std::size_t off = 2U;
+                const std::uint32_t sequence = static_cast<std::uint32_t>(parsed.payload[off]) |
+                    (static_cast<std::uint32_t>(parsed.payload[off + 1]) << 8) |
+                    (static_cast<std::uint32_t>(parsed.payload[off + 2]) << 16) |
+                    (static_cast<std::uint32_t>(parsed.payload[off + 3]) << 24);
+                off += 4U;
+                const std::uint32_t epoch = static_cast<std::uint32_t>(parsed.payload[off]) |
+                    (static_cast<std::uint32_t>(parsed.payload[off + 1]) << 8) |
+                    (static_cast<std::uint32_t>(parsed.payload[off + 2]) << 16) |
+                    (static_cast<std::uint32_t>(parsed.payload[off + 3]) << 24);
+                off += 4U;
+                const std::uint8_t rfidResult = parsed.payload[off++];
+                const std::uint8_t fpResult = parsed.payload[off++];
+                const std::uint8_t cpLen = parsed.payload[off++];
+                const bool cpOk = cpLen <= backend::ForestEventEnvelope::kMaxCheckpointIdLen &&
+                                  parsed.payloadSize > off + cpLen;
+                if (cpOk) {
+                    envelope.hasPatrol = true;
+                    envelope.patrolSequence = sequence;
+                    envelope.patrolEpoch = epoch;
+                    envelope.patrolRfidResult = rfidResult;
+                    envelope.patrolFingerprintResult = fpResult;
+                    std::memcpy(envelope.patrolCheckpointId, &parsed.payload[off], cpLen);
+                    envelope.patrolCheckpointId[cpLen] = '\0';
+                    off += cpLen;
+                    const std::uint8_t uidLen = parsed.payload[off++];
+                    if (uidLen <= backend::ForestEventEnvelope::kMaxUidLength &&
+                        parsed.payloadSize >= off + uidLen + backend::ForestEventEnvelope::kPatrolHashBytes * 2U + 1U) {
+                        envelope.patrolOfficerUidLength = uidLen;
+                        std::memcpy(envelope.patrolOfficerUid, &parsed.payload[off], uidLen);
+                        off += uidLen;
+                        std::memcpy(envelope.patrolPreviousHash, &parsed.payload[off], backend::ForestEventEnvelope::kPatrolHashBytes);
+                        off += backend::ForestEventEnvelope::kPatrolHashBytes;
+                        std::memcpy(envelope.patrolRecordHash, &parsed.payload[off], backend::ForestEventEnvelope::kPatrolHashBytes);
+                        off += backend::ForestEventEnvelope::kPatrolHashBytes;
+                        const std::uint8_t sigLen = parsed.payload[off++];
+                        if (sigLen <= backend::ForestEventEnvelope::kMaxSignatureBytes && parsed.payloadSize >= off + sigLen) {
+                            envelope.patrolSignatureLength = sigLen;
+                            std::memcpy(envelope.patrolSignature, &parsed.payload[off], sigLen);
+                            Serial.println("================================");
+                            Serial.println("SIGNED PATROL EVENT RECEIVED");
+                            Serial.println("================================");
+                            Serial.printf("Node  : NODE_%02X\n", parsed.sourceId);
+                            Serial.printf("Seq   : %lu  Checkpoint: %s\n", static_cast<unsigned long>(sequence), envelope.patrolCheckpointId);
+                        } else {
+                            envelope.hasPatrol = false;
+                            Serial.println("[SIGNED PATROL] signature length out of range - dropped");
+                        }
+                    } else {
+                        envelope.hasPatrol = false;
+                        Serial.println("[SIGNED PATROL] officer UID length out of range - dropped");
+                    }
+                } else {
+                    Serial.println("[SIGNED PATROL] checkpoint_id length out of range - dropped");
+                }
             } else if (parsed.payloadSize == 9) {
                 envelope.hasRtc = true;
                 envelope.rtcYear = 2000 + parsed.payload[0];

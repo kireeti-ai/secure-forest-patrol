@@ -32,16 +32,17 @@ void encodeRecord(const EventRecord& r, uint8_t out[kRecordSize]) {
     put32(out + 12, r.bootCount);
     put32(out + 16, r.uptimeMs);
     std::memcpy(out + 20, r.payload, kMaxPayload);
-    const uint16_t crc = forest::utils::Crc16::computeCcitt(out, 46);
-    out[46] = static_cast<uint8_t>(crc & 0xFF);
-    out[47] = static_cast<uint8_t>(crc >> 8);
+    std::memcpy(out + 44, r.chainHash, kChainHashSize);
+    const uint16_t crc = forest::utils::Crc16::computeCcitt(out, 78);
+    out[78] = static_cast<uint8_t>(crc & 0xFF);
+    out[79] = static_cast<uint8_t>(crc >> 8);
 }
 
 DecodeResult decodeRecord(const uint8_t in[kRecordSize], EventRecord& out) {
     if (in[0] != kRecordMagic) return DecodeResult::BadMagic;
     if (in[1] != kRecordVersion) return DecodeResult::BadVersion;
-    const uint16_t crc = forest::utils::Crc16::computeCcitt(in, 46);
-    if (in[46] != (crc & 0xFF) || in[47] != (crc >> 8)) return DecodeResult::BadCrc;
+    const uint16_t crc = forest::utils::Crc16::computeCcitt(in, 78);
+    if (in[78] != (crc & 0xFF) || in[79] != (crc >> 8)) return DecodeResult::BadCrc;
     if (in[2] < 1 || in[2] > 5 || in[3] < 1 || in[3] > 2 || in[9] > kMaxPayload) return DecodeResult::BadField;
     out.type = static_cast<EventType>(in[2]);
     out.status = static_cast<SyncStatus>(in[3]);
@@ -52,7 +53,20 @@ DecodeResult decodeRecord(const uint8_t in[kRecordSize], EventRecord& out) {
     out.bootCount = get32(in + 12);
     out.uptimeMs = get32(in + 16);
     std::memcpy(out.payload, in + 20, kMaxPayload);
+    std::memcpy(out.chainHash, in + 44, kChainHashSize);
     return DecodeResult::Ok;
+}
+
+void chainHashInput(const EventRecord& r, const uint8_t prevHash[kChainHashSize], uint8_t out[kChainInputSize]) {
+    size_t off = 0;
+    std::memcpy(out + off, prevHash, kChainHashSize); off += kChainHashSize;
+    put32(out + off, r.localId); off += 4;
+    out[off++] = static_cast<uint8_t>(r.type);
+    out[off++] = r.nodeId;
+    out[off++] = r.payloadLen;
+    put32(out + off, r.bootCount); off += 4;
+    put32(out + off, r.uptimeMs); off += 4;
+    std::memcpy(out + off, r.payload, kMaxPayload); off += kMaxPayload;
 }
 
 const char* typeName(EventType t) {

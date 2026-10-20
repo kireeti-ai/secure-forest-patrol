@@ -1,0 +1,47 @@
+{
+  "audit_timestamp_utc": "2026-10-19T22:10:11.963846+00:00",
+  "script": "run_targeted_provenance_audit.py",
+  "python": "3.10.13",
+  "generated_artifact_sha256": {
+    "ml/reports/phase4_13_targeted_provenance_resolution/TARGETED_PROVENANCE_RESOLUTION_REPORT.md": "57b87e04033bcd872ac7851a00df5711c4ec84665484d3073fa6170451790a94",
+    "ml/reports/phase4_13_targeted_provenance_resolution/fsc22_provenance_audit.csv": "0b7e7a9296ca31d45a32cf8456dd8a0457ef234a3de617822bcd6ac97e777b68",
+    "ml/reports/phase4_13_targeted_provenance_resolution/fsc22_license_audit.csv": "c93302b11ebfc790c82641307d2f25fa15fd320093a96f9d57000e1fbf6d6e50",
+    "ml/reports/phase4_13_targeted_provenance_resolution/fsc22_label_semantics_audit.csv": "cc9f73090e0c79702a6a33b96e6bace034d6ef68658b51b92312487a752bd3ed",
+    "ml/reports/phase4_13_targeted_provenance_resolution/c3gd_provenance_audit.csv": "cab75603dca6e7974a247bcafd552b0536d8350dbb6c57e706812ff7701fccc2",
+    "ml/reports/phase4_13_targeted_provenance_resolution/rodopi_provenance_audit.csv": "e9a5900ca2f578ec40bc5848e2355d1416607cc1a636acab8c19a328fa76b6a6",
+    "ml/reports/phase4_13_targeted_provenance_resolution/sensing_forest_provenance_audit.csv": "8d395eb442d386e0e4c2d7f9cd3f874ee18863de5ff8f31e33da471673861ada",
+    "ml/reports/phase4_13_targeted_provenance_resolution/candidate_admission_decisions.csv": "f9b85f9acd8d95d3e38a27fd974f8281b08dc49c432986569d7799d3f182830d",
+    "ml/reports/phase4_13_targeted_provenance_resolution/phase4_13_decision.json": "a35ae6b0e8f618e9ec6e4988fb464934711c03435d8b0888fb35a1edb5ebe10f"
+  },
+  "protected_frozen_hashes": {
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/final.keras": "4ebad60f4de804cdf2659e34bed05e4b56dfc08bade8c1d3058657efaba430bd",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/forest_acoustic_fp32.tflite": "890cf5cd74b28c3618ddbf64bdc9399a68f9048c5fe1117b45177056bded3811",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/forest_acoustic_int8.tflite": "c9b3a391dc45b211587a5946ee15e357aef8c9c6baff6021866884b951972b9b",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/train_v1.csv": "95db880be030cc70dee4b2d76e9ed56e99eab9103faffdcebf92d21fbe7637dc",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/validation_v1.csv": "14b53fceb00cc4dd0e2fa8cf965ccedd458067fb4acae09aed20c2e7fbb2fa96",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/test_v1.csv": "efdb3aeffe986b0347af617575fc34734a12663557ec3ca755510f53ee9b2d28",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/train.npz": "9d98485170affd5891acac8d16658f8d9c642f9d9f76f4e3b43df1ccb676f6e1",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/validation.npz": "a356443e424f5903514130093f02ed4c5a6aa49f81f056ff06422a52dbd9c3b1",
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/test.npz": "649a4a3dce19ff470ac773ea99e3d09459ef9b3d98b5a8c2c80f5c43f20743b9"
+  },
+  "protected_hash_matches": {
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/final.keras": true,
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/forest_acoustic_fp32.tflite": true,
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/models/final/forest_acoustic_int8.tflite": true,
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/train_v1.csv": true,
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/validation_v1.csv": true,
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/v1/test_v1.csv": true,
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/train.npz": true,
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/validation.npz": true,
+    "/Users/kireeti/Desktop/Projects/SECURE-FOREST-PATROL/ml/datasets/features_cache/test.npz": true
+  },
+  "all_protected_hashes_match": true,
+  "audio_downloads": 0,
+  "model_inference_started": false,
+  "model_training_started": false,
+  "relabeling_started": false,
+  "threshold_tuning_started": false,
+  "frozen_manifests_changed": false,
+  "production_manifests_changed": false,
+  "firmware_changed": false
+}

@@ -111,3 +111,4 @@ See [IMPLEMENTATION_STATUS.md](./IMPLEMENTATION_STATUS.md) for current status.
 - [`docs/CUSTOM_SENSOR_LIBRARIES.md`](CUSTOM_SENSOR_LIBRARIES.md): the `ForestSensors` driver library (RC522 SPI, DS3231 I2C, MAX4466 ADC, INMP441 I2S), written without third-party sensor libraries.
 - [`docs/LOCAL_DATABASE.md`](LOCAL_DATABASE.md): the on-node persistent event store (LittleFS on internal flash), persistence demo and test evidence.
 - [`docs/ACOUSTIC_NODE.md`](ACOUSTIC_NODE.md): the MAX4466 + INMP441 + TinyML acoustic pipeline.
+- [`docs/TAMPER_EVIDENCE_SECURITY_PLAN.md`](TAMPER_EVIDENCE_SECURITY_PLAN.md): plan to close the gap between the backend's existing (unused) ECDSA P-256 signing/hash-chain scheme and the live RFID/fingerprint/acoustic paths, which have no cryptographic authentication today.

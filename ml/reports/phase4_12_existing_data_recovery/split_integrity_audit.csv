@@ -1,0 +1,7 @@
+partition_a,partition_b,recording_id_intersection,session_intersection,exact_duplicate_cross_partition,segmentation_risk,status
+train_v1,validation_v1,0,UNRESOLVED except C3GD metadata,0 according to frozen exact duplicate audit for train/validation/test,50% overlapping windows are correlated within each recording,PASS for recorded IDs; UNRESOLVED for sessions
+train_v1,test_v1,0,UNRESOLVED except C3GD metadata,0 according to frozen exact duplicate audit for train/validation/test,50% overlapping windows are correlated within each recording,PASS for recorded IDs; UNRESOLVED for sessions
+train_v1,external_test_v1,0,UNRESOLVED except C3GD metadata,0 according to frozen exact duplicate audit for train/validation/test,50% overlapping windows are correlated within each recording,PASS for recorded IDs; UNRESOLVED for sessions
+validation_v1,test_v1,0,UNRESOLVED except C3GD metadata,0 according to frozen exact duplicate audit for train/validation/test,50% overlapping windows are correlated within each recording,PASS for recorded IDs; UNRESOLVED for sessions
+validation_v1,external_test_v1,0,UNRESOLVED except C3GD metadata,0 according to frozen exact duplicate audit for train/validation/test,50% overlapping windows are correlated within each recording,PASS for recorded IDs; UNRESOLVED for sessions
+test_v1,external_test_v1,0,UNRESOLVED except C3GD metadata,0 according to frozen exact duplicate audit for train/validation/test,50% overlapping windows are correlated within each recording,PASS for recorded IDs; UNRESOLVED for sessions

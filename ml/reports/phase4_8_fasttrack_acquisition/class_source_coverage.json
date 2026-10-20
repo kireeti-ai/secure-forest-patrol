@@ -1,0 +1,37 @@
+{
+  "acquired_files": 4485,
+  "acquired_archives": 1,
+  "datasets_acquired": 2,
+  "class_counts": {
+    "gunshot": 750,
+    "chainsaw": 60,
+    "noise_unverified": 3675
+  },
+  "publisher_labelled_target_counts": {
+    "chainsaw": 60,
+    "gunshot": 750,
+    "background_verified": 0
+  },
+  "training_eligible_counts": {
+    "chainsaw": 0,
+    "gunshot": 0,
+    "background": 0
+  },
+  "weakly_labelled_noise": 3675,
+  "files_by_dataset": {
+    "ioai": 120,
+    "vietnam": 4365
+  },
+  "files_by_disposition": {
+    "DUPLICATE_OR_OVERLAP": 1329,
+    "QUARANTINED_PROVENANCE": 3156
+  },
+  "verified_original_recordings": 0,
+  "verified_parent_groups": 0,
+  "verified_sessions": 0,
+  "derived_clips": 4485,
+  "total_duration_seconds": 21580.060687498706,
+  "crop_plausible_matches": 90,
+  "local_raw_files_searched": 15103,
+  "ancestry_note": "Vietnam archive explicitly contains a Vietnam+Belize branch; IOAI and Vietnam parent/session/device identities are not supplied at file level."
+}

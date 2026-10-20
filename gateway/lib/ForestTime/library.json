@@ -1,0 +1,7 @@
+{
+  "name": "ForestTime",
+  "version": "1.0.0",
+  "description": "Epoch<->UTC-civil-date conversion, shared (by copy) with node-firmware's ForestTime. Used to turn a signed patrol event's epoch field into an ISO-8601 string for the backend JSON.",
+  "frameworks": "arduino",
+  "platforms": "espressif32"
+}

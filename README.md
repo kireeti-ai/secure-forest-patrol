@@ -92,6 +92,7 @@ Set `NEXT_PUBLIC_API_BASE_URL` for the dashboard and `DATABASE_URL` for the back
 - [Acoustic node](docs/ACOUSTIC_NODE.md)
 - [Gateway and backend contract](docs/GATEWAY_BACKEND_CONTRACT.md), [MQTT](docs/MQTT.md)
 - [Implementation status](docs/IMPLEMENTATION_STATUS.md), [docs index](docs/README.md)
+- [Tamper-evidence & security plan](docs/TAMPER_EVIDENCE_SECURITY_PLAN.md)
 
 ## Known limits
 

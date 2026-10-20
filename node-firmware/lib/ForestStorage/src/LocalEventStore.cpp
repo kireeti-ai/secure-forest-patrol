@@ -3,6 +3,7 @@
 #include <cstring>
 
 #include "Crc16.h"
+#include "Sha256.h"
 
 namespace forest::storage {
 namespace {
@@ -48,10 +49,13 @@ size_t LocalEventStore::slotCount() {
     return sz <= 0 ? 0 : static_cast<size_t>(sz) / kRecordSize;
 }
 
-// Walks the log once: fills record/pending/synced counts and nextId_, returns corrupt + duplicate counts.
+// Walks the log once: fills record/pending/synced counts, nextId_ and lastChainHash_ (the chain
+// hash of the last valid record, so append() continues the chain correctly after a reboot),
+// returns corrupt + duplicate counts.
 bool LocalEventStore::scan(bool) {
     stats_.records = stats_.pending = stats_.synced = 0;
     uint32_t lastId = 0, corrupt = 0, dup = 0;
+    std::memset(lastChainHash_, 0, kChainHashSize);
     const size_t n = slotCount();
     uint8_t buf[kRecordSize];
     for (size_t i = 0; i < n; ++i) {
@@ -65,6 +69,7 @@ bool LocalEventStore::scan(bool) {
             continue;
         }
         lastId = r.localId;
+        std::memcpy(lastChainHash_, r.chainHash, kChainHashSize);
         ++stats_.records;
         (r.status == SyncStatus::Synced ? stats_.synced : stats_.pending)++;
     }
@@ -165,9 +170,13 @@ bool LocalEventStore::append(EventType type, uint8_t nodeId, const uint8_t* payl
     r.bootCount = stats_.bootCount;
     r.uptimeMs = uptimeMs;
     if (len) std::memcpy(r.payload, payload, len);
+    uint8_t chainIn[kChainInputSize];
+    chainHashInput(r, lastChainHash_, chainIn);
+    forest::utils::sha256(chainIn, kChainInputSize, r.chainHash);
     uint8_t buf[kRecordSize];
     encodeRecord(r, buf);
     if (!be_.write(kLogFile, slotCount() * kRecordSize, buf, kRecordSize)) return false;
+    std::memcpy(lastChainHash_, r.chainHash, kChainHashSize);
     ++nextId_;
     ++stats_.records;
     ++stats_.pending;
@@ -225,6 +234,41 @@ bool LocalEventStore::markAttempt(uint32_t localId) {
     if (!ready_ || !findSlot(localId, idx, r)) return false;
     if (r.attempts < 255) ++r.attempts;
     return writeSlot(idx, r);
+}
+
+ChainVerifyResult LocalEventStore::verifyChain() {
+    ChainVerifyResult result;
+    uint8_t buf[kRecordSize];
+    uint8_t prevHash[kChainHashSize] = {0};
+    uint32_t lastId = 0;
+    bool haveFirst = false;
+    const size_t n = slotCount();
+    for (size_t i = 0; i < n; ++i) {
+        EventRecord r;
+        if (!be_.read(kLogFile, i * kRecordSize, buf, kRecordSize) || decodeRecord(buf, r) != DecodeResult::Ok) continue;
+        if (r.localId <= lastId) continue;   // same dedupe rule as scan()
+        lastId = r.localId;
+        ++result.recordsChecked;
+        if (!haveFirst) {
+            // First record currently on flash: its declared previous-hash may point at history
+            // that compact()/dropOldest() legitimately removed. Accept it as the trusted root
+            // of what's on flash now rather than failing on it.
+            haveFirst = true;
+        } else {
+            uint8_t chainIn[kChainInputSize];
+            chainHashInput(r, prevHash, chainIn);
+            uint8_t expect[kChainHashSize];
+            forest::utils::sha256(chainIn, kChainInputSize, expect);
+            if (std::memcmp(expect, r.chainHash, kChainHashSize) != 0) {
+                result.ok = false;
+                result.breakAtSlot = i;
+                result.breakAtLocalId = r.localId;
+                return result;
+            }
+        }
+        std::memcpy(prevHash, r.chainHash, kChainHashSize);
+    }
+    return result;
 }
 
 bool LocalEventStore::clear() {

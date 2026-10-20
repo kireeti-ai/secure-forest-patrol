@@ -16,6 +16,9 @@
 #include "AcousticTrigger.h"
 #include "AudioCapture.h"
 #include "AudioPreprocessor.h"
+#if ACOUSTIC_DUMP_AUDIO
+#include <base64.h>
+#endif
 
 namespace forest::acoustic {
 namespace {
@@ -175,6 +178,14 @@ void inferenceTask(void*) {
         if (!g_ring->copyWindow(start, ACOUSTIC_WINDOW_SAMPLES, g_window)) {
             Serial.println("[ACOUSTIC] audio window unavailable (capture stalled?) - skipping");
         } else {
+#if ACOUSTIC_DUMP_AUDIO
+            // Raw 16 kHz/16-bit window, base64'd, framed for node-firmware/tools/capture_audio.py.
+            // Printed before preprocessing so it is exactly what the model consumed downstream.
+            Serial.println("[AUDIO] BEGIN");
+            Serial.println(base64::encode(reinterpret_cast<const uint8_t*>(g_window),
+                                           sizeof(int16_t) * ACOUSTIC_WINDOW_SAMPLES));
+            Serial.println("[AUDIO] END");
+#endif
             setState(State::Inference);
             Serial.println("[ACOUSTIC] Running inference");
             PreprocessOptions opt;

@@ -1,0 +1,16 @@
+{
+  "decision": "ACQUIRED_STAGING_ONLY_NO_ELIGIBLE_FILES",
+  "acquired_source_count": 2,
+  "acquired_file_count": 4485,
+  "eligible_file_count": 0,
+  "quarantined_file_count": 3156,
+  "duplicate_or_overlap_count": 1329,
+  "excluded_file_count": 0,
+  "blockers": [
+    "No verified original recording/session/device groups for IOAI or Vietnam files",
+    "Vietnam imagesvietnam_belize branch is explicitly derivative/ancestry-overlapping",
+    "Noise labels are not verified background negatives",
+    "No file was admitted to frozen or future training manifests"
+  ],
+  "proposed_training_manifest_generated": false
+}

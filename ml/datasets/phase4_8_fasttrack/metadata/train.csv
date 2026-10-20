@@ -1,0 +1,492 @@
+path,split,target,category
+audio/9af467af9f429584.wav,train,0,Dog
+audio/a3337468343825f9.wav,train,0,Dog
+audio/f90147541f13fd96.wav,train,0,Dog
+audio/6d92d64bb9b10b55.wav,train,0,Dog
+audio/52ffe91f38b385ef.wav,train,0,Dog
+audio/c0faabe6143d8001.wav,train,0,Dog
+audio/4cb75618e14867dc.wav,train,0,Dog
+audio/cc41b75b58d2f453.wav,train,0,Dog
+audio/43a67a05b586ca14.wav,train,0,Dog
+audio/a6700d970546b7df.wav,train,0,Dog
+audio/267ab2b37ef76229.wav,train,0,Dog
+audio/3f0f9291c4d81546.wav,train,0,Dog
+audio/175dc38b57b1862b.wav,val,0,Dog
+audio/16c5a2c346e71647.wav,val,0,Dog
+audio/3c2d4b2fb471512a.wav,val,0,Dog
+audio/da80b5f5521d9323.wav,val,0,Dog
+audio/5de54cf7bbcd7355.wav,val,0,Dog
+audio/516c17e3c87492fd.wav,val,0,Dog
+audio/8918edc50d601091.wav,val,0,Dog
+audio/940c138562c6ff2e.wav,val,0,Dog
+audio/ff1bff64e9dcd8e0.wav,train,1,Rooster
+audio/b7ca39514013b936.wav,train,1,Rooster
+audio/71bce9ad70d0bbf7.wav,train,1,Rooster
+audio/e045c1c9211b0ef6.wav,train,1,Rooster
+audio/7525fd9233f9c314.wav,train,1,Rooster
+audio/7fa5b402c83dae00.wav,train,1,Rooster
+audio/fd0296c2a6581ec3.wav,train,1,Rooster
+audio/85567ef042b310eb.wav,train,1,Rooster
+audio/ba3000a037f2d1df.wav,train,1,Rooster
+audio/c86bcf44f27dc2cc.wav,train,1,Rooster
+audio/92bfaaec321a08f0.wav,train,1,Rooster
+audio/a355df5aff80fb7a.wav,train,1,Rooster
+audio/d5c8e398a4affa06.wav,val,1,Rooster
+audio/df4832c4dfbdc4fa.wav,val,1,Rooster
+audio/c6a773b8ae680053.wav,val,1,Rooster
+audio/b84b756fb1f29398.wav,val,1,Rooster
+audio/8e61a255e253a3c4.wav,val,1,Rooster
+audio/3628947b230ad7ec.wav,val,1,Rooster
+audio/aa1dd751f37c0d3e.wav,val,1,Rooster
+audio/95f93827fd281e5b.wav,val,1,Rooster
+audio/40e9f141942b8814.wav,train,2,Pig
+audio/760e126eb5204f88.wav,train,2,Pig
+audio/b7b8c7d359bf3473.wav,train,2,Pig
+audio/9e269511deb65af4.wav,train,2,Pig
+audio/42522c863c600829.wav,train,2,Pig
+audio/10ee66f3d57f780b.wav,train,2,Pig
+audio/79b399209c1cf9c0.wav,train,2,Pig
+audio/0220f3766dcd024f.wav,train,2,Pig
+audio/65a815ed777fa297.wav,train,2,Pig
+audio/44804de448bc0c6c.wav,train,2,Pig
+audio/ebfb4578e99ca8f0.wav,train,2,Pig
+audio/fc0f0c3f68c50cf2.wav,train,2,Pig
+audio/0b71ef25691817b7.wav,val,2,Pig
+audio/6d92cec68acc1102.wav,val,2,Pig
+audio/871b04811231a696.wav,val,2,Pig
+audio/f7bb2e15c92bf658.wav,val,2,Pig
+audio/5cd425146c905b6c.wav,val,2,Pig
+audio/e78a7081ac42b03b.wav,val,2,Pig
+audio/e60c8348d51eb442.wav,val,2,Pig
+audio/98f5527e77bf2149.wav,val,2,Pig
+audio/5a4d6917a99763f6.wav,train,3,Cow
+audio/858924615a9507cb.wav,train,3,Cow
+audio/cd209d7f08a56a49.wav,train,3,Cow
+audio/f90ba078dc083546.wav,val,3,Cow
+audio/0705c0f93dcc0ea1.wav,val,3,Cow
+audio/324e7930cb6d36df.wav,val,3,Cow
+audio/fb0d97c877cfed61.wav,val,3,Cow
+audio/50b9bcadea0f19df.wav,val,3,Cow
+audio/df0e6f880a1d638f.wav,val,3,Cow
+audio/599ed78c43b013ce.wav,val,3,Cow
+audio/fde8ab738cf600c3.wav,val,3,Cow
+audio/12e484c7cf3523e0.wav,train,4,Frog
+audio/fffa4ae1dd1b5400.wav,train,4,Frog
+audio/48b6aa7a63ab9091.wav,train,4,Frog
+audio/c15672e5c12b7be4.wav,train,4,Frog
+audio/dea2c74a1472a061.wav,train,4,Frog
+audio/df9dd2c038c927ac.wav,train,4,Frog
+audio/e19a349f6181d01e.wav,train,4,Frog
+audio/21bbb2b611cc4f3b.wav,train,4,Frog
+audio/8843423d0a5a7647.wav,train,4,Frog
+audio/54f2bf9c5ed085f0.wav,train,4,Frog
+audio/13c93175872873a7.wav,train,4,Frog
+audio/18bad8db8beb8660.wav,train,4,Frog
+audio/19a79c34a93ac43e.wav,train,4,Frog
+audio/1b6b91224cd87076.wav,train,4,Frog
+audio/a76a2b4d98d45bfe.wav,train,4,Frog
+audio/5ad485a97cab2c79.wav,train,4,Frog
+audio/aa5021f85cf7b72c.wav,train,4,Frog
+audio/8b0c7ac5d5e6d737.wav,train,4,Frog
+audio/40e02845247df602.wav,train,4,Frog
+audio/b5b707a93a1c5e7f.wav,train,4,Frog
+audio/7528bb7ee6d7d2fc.wav,train,4,Frog
+audio/1990c92696a19e85.wav,train,4,Frog
+audio/f0fc6dc9e9c2917a.wav,train,4,Frog
+audio/409cf2815f181de1.wav,train,4,Frog
+audio/1aad8c607cfe24bd.wav,train,4,Frog
+audio/64cc5929c3584655.wav,train,4,Frog
+audio/bcaa5fb9474b9f40.wav,train,4,Frog
+audio/3f8238b95b3e4b71.wav,train,4,Frog
+audio/495c7a933f227872.wav,train,4,Frog
+audio/ea3e7179bf7b3a56.wav,train,4,Frog
+audio/e693abdb7c5af12c.wav,train,4,Frog
+audio/38cd415be22a226b.wav,train,4,Frog
+audio/5cc7c43d426a2a71.wav,train,4,Frog
+audio/45b9edacc1d3d3b6.wav,train,4,Frog
+audio/217dc78bd31a775c.wav,train,4,Frog
+audio/8900ebdb78710f3a.wav,val,4,Frog
+audio/f0b5b9e2dab3e25d.wav,val,4,Frog
+audio/4d98cd83fcfb0886.wav,val,4,Frog
+audio/246c1ec297328a97.wav,val,4,Frog
+audio/cc3ac1fe390246e9.wav,val,4,Frog
+audio/208d06fa36c786b4.wav,val,4,Frog
+audio/3860fdca72adf906.wav,val,4,Frog
+audio/1fad3dc2595baa3f.wav,val,4,Frog
+audio/4d3ca0c3d8e83a73.wav,val,4,Frog
+audio/dffdc1cc0691e172.wav,val,4,Frog
+audio/3cc6a0fcc0e21303.wav,val,4,Frog
+audio/50f71a11cb751d88.wav,val,4,Frog
+audio/6d3b62eaa9b12704.wav,val,4,Frog
+audio/64fb966a2e685a14.wav,val,4,Frog
+audio/1cc9bbf609f4957b.wav,val,4,Frog
+audio/1cb51583748aea94.wav,val,4,Frog
+audio/339a7798af5fabc1.wav,val,4,Frog
+audio/28d08f53bda53a78.wav,val,4,Frog
+audio/505a27ffa1550415.wav,val,4,Frog
+audio/c07599d79680c392.wav,val,4,Frog
+audio/5bca9ac25d9b6320.wav,val,4,Frog
+audio/f806a99f286bc428.wav,val,4,Frog
+audio/3957d57cd1ef67da.wav,val,4,Frog
+audio/39fd89617b895519.wav,train,5,Cat
+audio/eb8077aa99739ba7.wav,train,5,Cat
+audio/83243f55850032ea.wav,train,5,Cat
+audio/f19e9d6147fdd022.wav,train,5,Cat
+audio/05d7179699475f52.wav,train,5,Cat
+audio/8638f7b8eb35ef6b.wav,train,5,Cat
+audio/b7a1b4bffde90604.wav,train,5,Cat
+audio/ec45c9127bd08073.wav,train,5,Cat
+audio/3418d223a042465b.wav,train,5,Cat
+audio/149148cd07217246.wav,train,5,Cat
+audio/0a82ce9f42e497c6.wav,train,5,Cat
+audio/b01d0eb4fd95ceee.wav,train,5,Cat
+audio/8dca346d50665ff8.wav,val,5,Cat
+audio/9661b60b2cdb5321.wav,val,5,Cat
+audio/a8d52b54aaaaba8a.wav,val,5,Cat
+audio/946970257a0a978f.wav,val,5,Cat
+audio/11d1b56e9090ee8d.wav,val,5,Cat
+audio/7331743873fe0770.wav,val,5,Cat
+audio/9a3a0fbfed7eea4c.wav,val,5,Cat
+audio/ad6a7d238b73f397.wav,val,5,Cat
+audio/a33f0311c8ee3e7e.wav,train,6,Hen
+audio/54de9c6a0dbe01df.wav,train,6,Hen
+audio/f42913f0e7a88a2d.wav,train,6,Hen
+audio/fff8b2926f7bb478.wav,train,6,Hen
+audio/0d91cc3ce7b1e6c9.wav,train,6,Hen
+audio/7fdda351a8cdde4e.wav,train,6,Hen
+audio/83e8f9bc576322ff.wav,train,6,Hen
+audio/d678042b1c703f59.wav,train,6,Hen
+audio/9bf3a8d650b7ea5d.wav,train,6,Hen
+audio/95ad52f984e7308f.wav,train,6,Hen
+audio/b04cc2352d6e808f.wav,train,6,Hen
+audio/325da59464b54538.wav,train,6,Hen
+audio/ffa8295906a49498.wav,val,6,Hen
+audio/4d6cb2343927e259.wav,val,6,Hen
+audio/70d46f6d289672cd.wav,val,6,Hen
+audio/2300ab8db0b2783f.wav,val,6,Hen
+audio/09399795d757914b.wav,val,6,Hen
+audio/60350f3dc5c85138.wav,val,6,Hen
+audio/da537a0bca3c9edc.wav,val,6,Hen
+audio/b85c1adfa43253bb.wav,val,6,Hen
+audio/aa7667de1bca0ba2.wav,train,3,Cow
+audio/47ca5499fd71eb59.wav,train,3,Cow
+audio/e487644437592314.wav,train,3,Cow
+audio/44141b3d06d4b0cd.wav,train,3,Cow
+audio/65005fc634a7c8c1.wav,train,3,Cow
+audio/f12e28a22ec0f820.wav,train,3,Cow
+audio/5290bcc91a4e9284.wav,train,3,Cow
+audio/ffbce4effd98343f.wav,train,3,Cow
+audio/dc094527abb190a8.wav,train,3,Cow
+audio/b6941fc3f3a3534b.wav,train,3,Cow
+audio/4aabb63eaccf6bef.wav,train,3,Cow
+audio/cbb6a69822a97477.wav,train,3,Cow
+audio/3054dc4737d0c229.wav,train,3,Cow
+audio/a79f8e2e81f87636.wav,train,7,Sheep
+audio/2f80987c1e951281.wav,train,3,Cow
+audio/128c864a9e4bfa7e.wav,train,3,Cow
+audio/d161d6bcdb46838e.wav,train,7,Sheep
+audio/c6e6dcb8cb809ccb.wav,train,3,Cow
+audio/fe197b55fac781f4.wav,train,3,Cow
+audio/8e1e83c81bcd4004.wav,train,3,Cow
+audio/81ef8f3453d5fd01.wav,train,3,Cow
+audio/cb8ed9d7652d8efe.wav,train,7,Sheep
+audio/6480cd5b96c4f425.wav,val,7,Sheep
+audio/0747348427993753.wav,val,7,Sheep
+audio/58c8c520a924bd55.wav,val,7,Sheep
+audio/d58e2ba290f1b808.wav,val,7,Sheep
+audio/1e454d57174c3e66.wav,val,7,Sheep
+audio/6f75eedd6ac5edff.wav,val,7,Sheep
+audio/3bc83251181843e0.wav,val,7,Sheep
+audio/1e461e8aaac4a5bd.wav,val,7,Sheep
+audio/1760098efdd11965.wav,train,8,Crow
+audio/bd06206654d594ef.wav,train,8,Crow
+audio/d1ac371a7211c3e7.wav,train,8,Crow
+audio/b3b51785b5d2cb17.wav,train,8,Crow
+audio/b323c4e4c51519d1.wav,train,8,Crow
+audio/c58ec613d0e3f3e7.wav,train,8,Crow
+audio/fdd20737e6d6101a.wav,train,8,Crow
+audio/db398b9b17973a54.wav,train,8,Crow
+audio/b9e50f76f1d2e507.wav,train,8,Crow
+audio/425fffc7c15b946b.wav,train,8,Crow
+audio/3e1d49ec9b21334f.wav,train,8,Crow
+audio/b5630388a2608b8c.wav,train,8,Crow
+audio/86eee9f12c6cbfcd.wav,val,8,Crow
+audio/b3f83f04a66806f3.wav,val,8,Crow
+audio/eb9f3e355c3b1831.wav,val,8,Crow
+audio/c97103984c5bfda3.wav,val,8,Crow
+audio/32d178ee39da92e4.wav,val,8,Crow
+audio/f175145e4306cecb.wav,val,8,Crow
+audio/cdb6e3844ecb63e2.wav,val,8,Crow
+audio/eebe07a789c9cdd4.wav,val,8,Crow
+audio/ee28b06e0bb4fdbe.wav,train,9,Mouse Click
+audio/0c4598ff934d9da6.wav,train,9,Mouse Click
+audio/92818069c5035e55.wav,train,9,Mouse Click
+audio/b48c3e5b877776e3.wav,val,9,Mouse Click
+audio/830441173476a059.wav,val,9,Mouse Click
+audio/b7f68988df8eb452.wav,val,9,Mouse Click
+audio/7ceb1bdf7f8251f9.wav,val,9,Mouse Click
+audio/f6d4f3f5473e5f79.wav,val,9,Mouse Click
+audio/9968210d44a735f9.wav,val,9,Mouse Click
+audio/f866ad0d4d739ccb.wav,val,9,Mouse Click
+audio/7f3680981958063c.wav,val,9,Mouse Click
+audio/032bbcd5d22d57f4.wav,train,9,Mouse Click
+audio/a826804727d7e932.wav,train,9,Mouse Click
+audio/e24ac3e19c2a51a1.wav,train,9,Mouse Click
+audio/73ee03acb62c506e.wav,train,9,Mouse Click
+audio/b31b199eb5f416d1.wav,train,9,Mouse Click
+audio/5867b13bb9094bd4.wav,train,9,Mouse Click
+audio/bfafc82358fcf01c.wav,train,9,Mouse Click
+audio/15055ba3b396998b.wav,train,9,Mouse Click
+audio/05451ab28988939a.wav,train,9,Mouse Click
+audio/c4c117131ab5f8b0.wav,train,9,Mouse Click
+audio/39c560e6a12df57a.wav,train,9,Mouse Click
+audio/633bd41ae44a1c4e.wav,train,9,Mouse Click
+audio/2db626ed3ae26eb4.wav,train,9,Mouse Click
+audio/b3f2bd19f2fe6a25.wav,train,10,Keyboard Typing
+audio/900392abdd1b1d17.wav,train,10,Keyboard Typing
+audio/896dde0cfcaf5e41.wav,train,9,Mouse Click
+audio/e83f22f956074af1.wav,train,10,Keyboard Typing
+audio/63a89b939f0bd2c9.wav,train,9,Mouse Click
+audio/c731c8fc9d728128.wav,train,9,Mouse Click
+audio/62241a7143cfef45.wav,train,9,Mouse Click
+audio/f1ac82372222a754.wav,train,9,Mouse Click
+audio/f5f319da72057ef2.wav,train,9,Mouse Click
+audio/0be19fc4f2a327c4.wav,val,10,Keyboard Typing
+audio/bec0da783550b9f2.wav,val,10,Keyboard Typing
+audio/737a9bbc5452c52f.wav,val,10,Keyboard Typing
+audio/2cfe760f2975a4aa.wav,val,10,Keyboard Typing
+audio/85e035f9970fec02.wav,val,10,Keyboard Typing
+audio/6a780d50672ca45f.wav,val,10,Keyboard Typing
+audio/e9bda693d57ccb88.wav,val,10,Keyboard Typing
+audio/e3f67ee794d0d605.wav,val,10,Keyboard Typing
+audio/c2fe2376ebd19e53.wav,train,11,Thunderstorm
+audio/a2b65237eeb6b26a.wav,train,11,Thunderstorm
+audio/d5b37412afb7c2b4.wav,train,11,Thunderstorm
+audio/ab6f8396d2468b37.wav,train,11,Thunderstorm
+audio/257f1d0c5ab3d9e6.wav,train,11,Thunderstorm
+audio/85d525724a05feb5.wav,train,11,Thunderstorm
+audio/0dddaacca7cbaebf.wav,train,11,Thunderstorm
+audio/7695bcd40063974e.wav,val,11,Thunderstorm
+audio/972bec25a030f574.wav,val,11,Thunderstorm
+audio/3ffafd53316a56f5.wav,val,11,Thunderstorm
+audio/7510c1cf87ead5c7.wav,val,11,Thunderstorm
+audio/a713125942328eeb.wav,val,11,Thunderstorm
+audio/ca22b0fd8db8161f.wav,val,11,Thunderstorm
+audio/8113be42f93b40bb.wav,val,11,Thunderstorm
+audio/08fe089228b8b336.wav,val,11,Thunderstorm
+audio/300d31e516c7edc7.wav,val,11,Thunderstorm
+audio/6205747cce3279c4.wav,val,11,Thunderstorm
+audio/75b4b87c856e7827.wav,val,11,Thunderstorm
+audio/3f60f7c027923ec2.wav,val,11,Thunderstorm
+audio/fe91f3973a656752.wav,val,11,Thunderstorm
+audio/2fb7980f54d3d900.wav,val,11,Thunderstorm
+audio/3e46583ed81e9bdb.wav,val,11,Thunderstorm
+audio/18f8dcdc00472b5b.wav,val,11,Thunderstorm
+audio/08442588b0c7de8e.wav,val,11,Thunderstorm
+audio/a76378c26e818993.wav,val,11,Thunderstorm
+audio/cd0940e901157efb.wav,val,11,Thunderstorm
+audio/d587746b1f98e4b0.wav,val,11,Thunderstorm
+audio/388101a931d760a2.wav,val,11,Thunderstorm
+audio/ecc4b68fd1135220.wav,val,11,Thunderstorm
+audio/744582f150504df3.wav,val,11,Thunderstorm
+audio/2b87bde18426fadb.wav,train,12,Sea Waves
+audio/24ffeb1da25f489f.wav,train,12,Sea Waves
+audio/f07169aea2b878a7.wav,train,12,Sea Waves
+audio/addf835d8f4bf1ab.wav,train,12,Sea Waves
+audio/2bef64e2a1cba676.wav,train,12,Sea Waves
+audio/4512d04b816e82e2.wav,train,12,Sea Waves
+audio/ed88bee514e9a6b6.wav,train,12,Sea Waves
+audio/8ff8b3250520a162.wav,train,12,Sea Waves
+audio/6618a8ed310f4088.wav,train,12,Sea Waves
+audio/851182a32df9a2ec.wav,train,12,Sea Waves
+audio/d34c59fb61a5cbb3.wav,train,12,Sea Waves
+audio/eca8ba72f193f856.wav,train,12,Sea Waves
+audio/1ed8e1b5e7531326.wav,val,12,Sea Waves
+audio/b2b55b493b24a4b0.wav,val,12,Sea Waves
+audio/b4870dd6b8231382.wav,val,12,Sea Waves
+audio/4f5ea61e16bea8a5.wav,val,12,Sea Waves
+audio/76a2da6e4a3473cc.wav,val,12,Sea Waves
+audio/14bd9a0c5df5a964.wav,val,12,Sea Waves
+audio/2642d1ee4400802d.wav,val,12,Sea Waves
+audio/dde886107efa6142.wav,val,12,Sea Waves
+audio/70155e6281141395.wav,train,13,Bird Chirping
+audio/af140118687117ad.wav,train,13,Bird Chirping
+audio/ce12039050ce0a02.wav,train,13,Bird Chirping
+audio/f0a48c3aaca2227b.wav,train,13,Bird Chirping
+audio/6697e2c708fec434.wav,train,13,Bird Chirping
+audio/29f8817608ec5c5f.wav,train,13,Bird Chirping
+audio/3bfd287e14871e22.wav,train,13,Bird Chirping
+audio/af9961e88c7e6b39.wav,train,13,Bird Chirping
+audio/5e295d4e064b7e65.wav,train,13,Bird Chirping
+audio/ad83309c9fdb5218.wav,train,13,Bird Chirping
+audio/879159aa495a1629.wav,train,13,Bird Chirping
+audio/cc59e8e7bb3d34d4.wav,train,13,Bird Chirping
+audio/7779f534c59184f2.wav,train,13,Bird Chirping
+audio/263c7d56d523ed85.wav,train,13,Bird Chirping
+audio/1dbd823f4337bd34.wav,train,13,Bird Chirping
+audio/cb8b3f3164183343.wav,train,13,Bird Chirping
+audio/e94550ebce20eb60.wav,train,13,Bird Chirping
+audio/e85f0ebb3714e233.wav,train,13,Bird Chirping
+audio/4d8880f96a17fe21.wav,train,13,Bird Chirping
+audio/aed128a3c2d53b42.wav,train,13,Bird Chirping
+audio/70b7382a6b623bf1.wav,train,13,Bird Chirping
+audio/3c511f9a40207b78.wav,train,13,Bird Chirping
+audio/b1c94aa2fd898601.wav,train,13,Bird Chirping
+audio/d8a5abf7c14fb0a8.wav,train,13,Bird Chirping
+audio/cfe7537764a98c2d.wav,train,13,Bird Chirping
+audio/e6127ca81ce37f47.wav,train,13,Bird Chirping
+audio/9457e9fe9a599749.wav,train,13,Bird Chirping
+audio/f376febc97eeb849.wav,train,13,Bird Chirping
+audio/c595e5c0dd783f93.wav,train,13,Bird Chirping
+audio/ac16e75e30bc1df5.wav,train,13,Bird Chirping
+audio/b7c19a5e53131953.wav,train,13,Bird Chirping
+audio/d42aecfce5ebecd7.wav,train,13,Bird Chirping
+audio/30e06f809d793123.wav,train,13,Bird Chirping
+audio/38226faae3091619.wav,train,13,Bird Chirping
+audio/8f76e6c95df88e35.wav,train,13,Bird Chirping
+audio/c6dff5f5b02e3175.wav,val,13,Bird Chirping
+audio/5d6f6f3371ae1d7f.wav,val,13,Bird Chirping
+audio/af500752f5854fca.wav,val,13,Bird Chirping
+audio/20cabc5d4d373a0f.wav,val,13,Bird Chirping
+audio/87eeffa255da7d6b.wav,val,13,Bird Chirping
+audio/6537282eb79f56e5.wav,val,13,Bird Chirping
+audio/7818ede4e47d5366.wav,val,13,Bird Chirping
+audio/baaac22abb78513a.wav,val,13,Bird Chirping
+audio/bd3bb2fb1798f4a9.wav,val,13,Bird Chirping
+audio/c17e65515cef165b.wav,val,13,Bird Chirping
+audio/679d61aaca3a5793.wav,val,13,Bird Chirping
+audio/2661041268c6c494.wav,val,13,Bird Chirping
+audio/7ad982dac04da186.wav,val,13,Bird Chirping
+audio/88b7100093bc9e5f.wav,val,13,Bird Chirping
+audio/961711556adcca7f.wav,val,13,Bird Chirping
+audio/43884c27c77eb3f3.wav,val,13,Bird Chirping
+audio/31d4ee44b2f7560f.wav,val,13,Bird Chirping
+audio/f4658adb568813eb.wav,val,13,Bird Chirping
+audio/4dc7d2605698d0b4.wav,val,13,Bird Chirping
+audio/497b0c13d74287a3.wav,val,13,Bird Chirping
+audio/5c128218e882cbc8.wav,val,13,Bird Chirping
+audio/4f904ba4bc27447e.wav,val,13,Bird Chirping
+audio/aafe872d6e651b12.wav,val,13,Bird Chirping
+audio/336d89ffe23a26e8.wav,train,14,Wolf Howl
+audio/3b025b4489789cc8.wav,train,14,Wolf Howl
+audio/ff7e490a3d74e142.wav,train,14,Wolf Howl
+audio/aa27114d6b17976f.wav,train,14,Wolf Howl
+audio/c455aefbab7389b2.wav,train,14,Wolf Howl
+audio/95c3ca6e7dfd55c1.wav,train,14,Wolf Howl
+audio/4fac072336993c36.wav,train,14,Wolf Howl
+audio/b9e87665394a0a49.wav,train,14,Wolf Howl
+audio/e43fc19a2cd820d6.wav,train,14,Wolf Howl
+audio/08aeacc199cbbe57.wav,train,14,Wolf Howl
+audio/3f441f7f583ad1e6.wav,train,14,Wolf Howl
+audio/46f38ad19bb459a6.wav,train,14,Wolf Howl
+audio/00c2dcd120620389.wav,train,14,Wolf Howl
+audio/b6e130d572dbb239.wav,train,14,Wolf Howl
+audio/52d9f9f5bceebe7b.wav,train,14,Wolf Howl
+audio/b7802c1f548e0c47.wav,train,14,Wolf Howl
+audio/3a385782d341639f.wav,train,14,Wolf Howl
+audio/f59ea8a0396c9f60.wav,train,14,Wolf Howl
+audio/d783f3823fb847cf.wav,train,14,Wolf Howl
+audio/3296e0c86be6d971.wav,train,14,Wolf Howl
+audio/70fb05a85e07f172.wav,train,14,Wolf Howl
+audio/7e264e3ef6934e35.wav,train,14,Wolf Howl
+audio/a75efa762cba4f18.wav,train,14,Wolf Howl
+audio/12327cebc74af67e.wav,val,14,Wolf Howl
+audio/ef217b8cde6051d0.wav,val,14,Wolf Howl
+audio/fb46cf4cbab4b830.wav,val,14,Wolf Howl
+audio/269e0071c1f6e8ef.wav,val,14,Wolf Howl
+audio/7744c7a65b8cc362.wav,val,14,Wolf Howl
+audio/d0610fd4120116f8.wav,val,14,Wolf Howl
+audio/4dcddfc28e6cc78c.wav,val,14,Wolf Howl
+audio/7abb6c34dc3e9f01.wav,val,14,Wolf Howl
+audio/62699f9844bddc84.wav,val,14,Wolf Howl
+audio/d345d64a68694d08.wav,val,14,Wolf Howl
+audio/8657aa8dc2343e75.wav,val,14,Wolf Howl
+audio/7e1b1dee670b0387.wav,val,14,Wolf Howl
+audio/55a9bb06203bc8ec.wav,val,14,Wolf Howl
+audio/dc1d15b2fffcd9a6.wav,val,14,Wolf Howl
+audio/6f490101154ed0ac.wav,val,14,Wolf Howl
+audio/906e35007c370b13.wav,train,11,Thunderstorm
+audio/2b47c42b04da8d76.wav,train,11,Thunderstorm
+audio/e47e7304db9e7b53.wav,train,11,Thunderstorm
+audio/19ecdc0954a02f70.wav,train,11,Thunderstorm
+audio/3b3e81c9badd9a3a.wav,train,11,Thunderstorm
+audio/4987422abc41e34a.wav,train,11,Thunderstorm
+audio/06e93453a9b5de84.wav,train,11,Thunderstorm
+audio/24c0d8b36134d56d.wav,train,11,Thunderstorm
+audio/4ba44c44b8f329f8.wav,train,11,Thunderstorm
+audio/5aea9879905a70bd.wav,train,11,Thunderstorm
+audio/ab01fd6eba86f589.wav,train,11,Thunderstorm
+audio/cf660646801602e0.wav,train,11,Thunderstorm
+audio/3bca06f892a36b31.wav,train,11,Thunderstorm
+audio/9ca0c939a670bb53.wav,train,11,Thunderstorm
+audio/dd7e4b0104334b05.wav,train,11,Thunderstorm
+audio/b268a5bd2aecb7ed.wav,train,11,Thunderstorm
+audio/b8357941c869fa51.wav,train,11,Thunderstorm
+audio/94db1f9595c1afdd.wav,train,11,Thunderstorm
+audio/c00943b6a350b88e.wav,train,11,Thunderstorm
+audio/62ec3860ac11c7f9.wav,train,11,Thunderstorm
+audio/df3d4227d8447fe1.wav,train,11,Thunderstorm
+audio/f5821f05eb8b5283.wav,train,11,Thunderstorm
+audio/b9f379a6dabbcbfd.wav,train,11,Thunderstorm
+audio/41e7d8d188fe2605.wav,train,11,Thunderstorm
+audio/bba11d5d71e08b0a.wav,train,11,Thunderstorm
+audio/0d93142084124c90.wav,train,11,Thunderstorm
+audio/78e51fa046d59c7d.wav,train,11,Thunderstorm
+audio/03d82828e4a7135a.wav,train,11,Thunderstorm
+audio/772445146a3057c4.wav,train,11,Thunderstorm
+audio/78d074ff16222799.wav,train,11,Thunderstorm
+audio/966f6e8216492087.wav,train,11,Thunderstorm
+audio/e525757aee658f78.wav,train,11,Thunderstorm
+audio/611503c98084b2a8.wav,train,11,Thunderstorm
+audio/ddfed1f100951a1e.wav,train,11,Thunderstorm
+audio/b11571214abface0.wav,train,11,Thunderstorm
+audio/ba0fc5022346b5f2.wav,train,15,Rain
+audio/872ad91fe4d8d3a1.wav,train,11,Thunderstorm
+audio/92fb90321876d436.wav,train,11,Thunderstorm
+audio/1df93486b2fd45c7.wav,train,15,Rain
+audio/ad9af9154e5f9fcc.wav,train,11,Thunderstorm
+audio/9872a199f2468dd3.wav,train,15,Rain
+audio/35dfbb13c2dd4bf2.wav,train,11,Thunderstorm
+audio/84e9c7a421942a4f.wav,train,11,Thunderstorm
+audio/64ec405df98db7bf.wav,train,11,Thunderstorm
+audio/6eb2cc6670975221.wav,train,11,Thunderstorm
+audio/de721a80f790a502.wav,train,11,Thunderstorm
+audio/27b2bcc834c521fa.wav,train,11,Thunderstorm
+audio/be75e094460794a4.wav,train,11,Thunderstorm
+audio/15d773d4879ed73e.wav,train,11,Thunderstorm
+audio/e1186a7e67c3afcb.wav,train,11,Thunderstorm
+audio/d849403fd2d2c96c.wav,train,11,Thunderstorm
+audio/18c06ae86c529bcd.wav,train,15,Rain
+audio/c5a008b032041c93.wav,train,11,Thunderstorm
+audio/d18313281553af6c.wav,train,11,Thunderstorm
+audio/6898771d7b65bc9d.wav,train,11,Thunderstorm
+audio/09855a2e1fbccb0d.wav,train,11,Thunderstorm
+audio/d36d7839feea547a.wav,train,11,Thunderstorm
+audio/c78f10f9b2c3cfab.wav,train,15,Rain
+audio/f7bcdce8a795c0c6.wav,train,11,Thunderstorm
+audio/325bf5588075932f.wav,train,15,Rain
+audio/fe7eefb609cf7ddd.wav,train,15,Rain
+audio/82679de3fc4b8618.wav,train,11,Thunderstorm
+audio/89c7e434150569b1.wav,val,15,Rain
+audio/1439ae62f76a8fe5.wav,val,15,Rain
+audio/b9ed411826e5458b.wav,val,15,Rain
+audio/3de49ca94736033e.wav,val,15,Rain
+audio/0b880ee700490150.wav,val,15,Rain
+audio/23e9192a5ebc48d6.wav,val,15,Rain
+audio/ab21c6a79c4b6c93.wav,val,15,Rain
+audio/5e07082d7c33c3dc.wav,val,15,Rain
+audio/7256cc9b96d05313.wav,val,15,Rain
+audio/4f6cdea4a0771fde.wav,val,15,Rain
+audio/be0eb025fb851154.wav,val,15,Rain
+audio/5afbfd7920bfcd8e.wav,val,15,Rain
+audio/433a66151dc65c1b.wav,val,15,Rain
+audio/af8b824a95dbf157.wav,val,15,Rain
+audio/2c4af75c27a900ed.wav,val,15,Rain
+audio/d19da664f920f3c2.wav,val,15,Rain
+audio/2a1cd61c5a691f67.wav,val,15,Rain
+audio/34847d38cbc59cb4.wav,val,15,Rain
+audio/9df11d6a0810c9d6.wav,val,15,Rain
+audio/ee0bc2a528d0a08a.wav,val,15,Rain
+audio/d5cbb2c1d0a4efb5.wav,val,15,Rain
+audio/d8d257ef7ef4fabe.wav,val,15,Rain
+audio/55c502643d8e0c29.wav,val,15,Rain

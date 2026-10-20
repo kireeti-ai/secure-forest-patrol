@@ -19,6 +19,13 @@ namespace forest::config
 #ifndef FOREST_RFID_RST_PIN
 #define FOREST_RFID_RST_PIN 5
 #endif
+// Transmitted as part of every signed patrol event (Phase 2, docs/TAMPER_EVIDENCE_SECURITY_PLAN.md)
+// and covered by the signature - must match whatever this node is registered under in the
+// backend's checkpoint records, and is a build-time constant since officer identity (the RFID
+// scan) is per-event but which physical checkpoint this node sits at is not.
+#ifndef FOREST_CHECKPOINT_ID
+#define FOREST_CHECKPOINT_ID "CP1"
+#endif
 
     struct RadioConfig
     {

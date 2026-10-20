@@ -172,3 +172,9 @@
 
 // Model identity sent with events.
 #define ACOUSTIC_MODEL_VERSION "forest-acoustic-v1"
+
+// Dump every captured 1 s window (base64 PCM16) over Serial after each trigger, for building a
+// real labeled dataset from this exact hardware (see node-firmware/tools/capture_audio.py).
+#ifndef ACOUSTIC_DUMP_AUDIO
+#define ACOUSTIC_DUMP_AUDIO 0
+#endif

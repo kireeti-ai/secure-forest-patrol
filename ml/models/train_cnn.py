@@ -84,6 +84,46 @@ def build_final_model(input_shape, n_classes):
     return keras.Model(inputs, outputs, name="forest_acoustic_final")
 
 
+def build_final_large(input_shape, n_classes):
+    """~4x the channel widths of build_final_model. Still tiny for ESP32-S3 (the shipped
+    model uses 13KB of 3.3MB flash and 27KB of a 64KB tensor arena - both have 10-100x
+    headroom unused). Tests whether capacity, not just training procedure, was limiting
+    the model from holding both domain generalization and noise robustness at once."""
+    inputs = keras.Input(shape=input_shape)
+    x = keras.layers.Conv2D(32, 3, strides=2, padding='same')(inputs)
+    x = keras.layers.BatchNormalization()(x)
+    x = keras.layers.ReLU()(x)
+
+    x = keras.layers.DepthwiseConv2D(3, padding='same')(x)
+    x = keras.layers.BatchNormalization()(x)
+    x = keras.layers.ReLU()(x)
+    x = keras.layers.Conv2D(64, 1, padding='same')(x)  # pointwise
+    x = keras.layers.BatchNormalization()(x)
+    x = keras.layers.ReLU()(x)
+    x = keras.layers.MaxPool2D(2)(x)
+
+    x = keras.layers.DepthwiseConv2D(3, padding='same')(x)
+    x = keras.layers.BatchNormalization()(x)
+    x = keras.layers.ReLU()(x)
+    x = keras.layers.Conv2D(64, 1, padding='same')(x)  # pointwise
+    x = keras.layers.BatchNormalization()(x)
+    x = keras.layers.ReLU()(x)
+    x = keras.layers.MaxPool2D(2)(x)
+
+    x = keras.layers.DepthwiseConv2D(3, padding='same')(x)
+    x = keras.layers.BatchNormalization()(x)
+    x = keras.layers.ReLU()(x)
+    x = keras.layers.Conv2D(64, 1, padding='same')(x)  # pointwise
+    x = keras.layers.BatchNormalization()(x)
+    x = keras.layers.ReLU()(x)
+
+    x = keras.layers.GlobalAveragePooling2D()(x)
+    x = keras.layers.Dense(48, activation='relu')(x)
+    x = keras.layers.Dropout(0.2)(x)
+    outputs = keras.layers.Dense(n_classes, activation='softmax')(x)
+    return keras.Model(inputs, outputs, name="forest_acoustic_large")
+
+
 def evaluate(model, X, y, name):
     probs = model.predict(X, verbose=0)
     pred = np.argmax(probs, axis=1)
@@ -105,14 +145,31 @@ def evaluate(model, X, y, name):
 
 
 class AugmentedSequence(keras.utils.Sequence):
-    def __init__(self, mel, y, batch_size, mean, std, augment=True, seed=42):
+    """balanced=True draws each batch with equal class counts (via per-class index pools
+    sampled with replacement for minority classes), so gunshot - 3.6% of this dataset -
+    gets real gradient signal every batch instead of appearing in ~1 of every 3 batches."""
+    def __init__(self, mel, y, batch_size, mean, std, augment=True, seed=42, balanced=True,
+                 balance_strength=0.5, noise_snr_prob=0.15):
         self.mel = mel
         self.y = y
         self.batch_size = batch_size
         self.mean, self.std = mean, std
         self.augment = augment
+        self.balanced = balanced
+        self.noise_snr_prob = noise_snr_prob
+        # 0.0 = natural frequency (original bug), 1.0 = fully equal counts (over-corrects:
+        # tanks precision). Interpolate per-class target counts in log-frequency space.
+        self.balance_strength = balance_strength
         self.rng = np.random.RandomState(seed)
         self.indices = np.arange(len(mel))
+        self.n_classes = int(y.max()) + 1
+        self.class_pools = [np.where(y == c)[0] for c in range(self.n_classes)]
+        natural = np.array([len(p) for p in self.class_pools], dtype=np.float64)
+        natural_frac = natural / natural.sum()
+        equal_frac = np.full(self.n_classes, 1.0 / self.n_classes)
+        # interpolate in log space so it's a smooth blend of the two sampling distributions
+        blended = np.exp((1 - balance_strength) * np.log(natural_frac) + balance_strength * np.log(equal_frac))
+        self.target_frac = blended / blended.sum()
 
     def __len__(self):
         return int(np.ceil(len(self.mel) / self.batch_size))
@@ -120,12 +177,29 @@ class AugmentedSequence(keras.utils.Sequence):
     def on_epoch_end(self):
         self.rng.shuffle(self.indices)
 
+    def _balanced_batch_idx(self):
+        counts = np.round(self.target_frac * self.batch_size).astype(int)
+        counts[-1] = self.batch_size - counts[:-1].sum()  # fix rounding drift
+        idx = []
+        for c, pool in enumerate(self.class_pools):
+            n = max(0, counts[c])
+            if n == 0:
+                continue
+            idx.append(self.rng.choice(pool, size=n, replace=len(pool) < n))
+        batch_idx = np.concatenate(idx)
+        self.rng.shuffle(batch_idx)
+        return batch_idx
+
     def __getitem__(self, idx):
-        batch_idx = self.indices[idx * self.batch_size:(idx + 1) * self.batch_size]
+        if self.balanced:
+            batch_idx = self._balanced_batch_idx()
+        else:
+            batch_idx = self.indices[idx * self.batch_size:(idx + 1) * self.batch_size]
         mel_batch = self.mel[batch_idx]
         y_batch = self.y[batch_idx]
         if self.augment:
-            mel_batch = augment_batch(mel_batch, y_batch, BACKGROUND_IDX, self.rng, prob=0.5)
+            mel_batch = augment_batch(mel_batch, y_batch, BACKGROUND_IDX, self.rng, prob=0.5,
+                                       noise_snr_prob=self.noise_snr_prob)
         mel_batch = normalize(mel_batch, self.mean, self.std)
         X = mel_batch[..., np.newaxis].astype(np.float32)
         return X, y_batch
@@ -133,13 +207,19 @@ class AugmentedSequence(keras.utils.Sequence):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--variant', choices=['compact_cnn', 'final'], required=True)
+    parser.add_argument('--variant', choices=['compact_cnn', 'final', 'final_large'], required=True)
     parser.add_argument('--epochs', type=int, default=15)
     parser.add_argument('--batch-size', type=int, default=32)
     parser.add_argument('--lr', type=float, default=1e-3)
     parser.add_argument('--seed', type=int, default=42)
     parser.add_argument('--cache-dir', default=None, help='feature cache dir (default: datasets/features_cache)')
     parser.add_argument('--out-dir', default=None, help='output dir (default: models/<variant>)')
+    parser.add_argument('--balanced-batches', type=lambda s: s.lower() != 'false', default=True,
+                         help='sample each training batch with class-balanced counts (default: true)')
+    parser.add_argument('--balance-strength', type=float, default=0.5,
+                         help='0=natural frequency, 1=fully equal per-batch class counts (default: 0.5)')
+    parser.add_argument('--noise-snr-prob', type=float, default=0.15,
+                         help='probability of additive Gaussian-SNR noise augmentation per sample (default: 0.15)')
     args = parser.parse_args()
     global SEED
     SEED = args.seed
@@ -157,13 +237,22 @@ def main():
     input_shape = (n_mels, T, 1)
     n_classes = len(CLASSES)
 
-    class_weights_arr = compute_class_weight('balanced', classes=np.arange(n_classes), y=y_train)
-    class_weight = {i: w for i, w in enumerate(class_weights_arr)}
-    print("Class weights:", class_weight)
+    if args.balanced_batches:
+        # batches already have equal class counts; stacking loss-side class weights on top of
+        # that would double-compensate and over-bias toward the minority class.
+        class_weight = None
+        print("Balanced batch sampling enabled: per-batch class weighting disabled")
+    else:
+        class_weights_arr = compute_class_weight('balanced', classes=np.arange(n_classes), y=y_train)
+        class_weight = {i: w for i, w in enumerate(class_weights_arr)}
+        print("Class weights:", class_weight)
 
     if args.variant == 'compact_cnn':
         model = build_compact_cnn(input_shape, n_classes)
         out_dir = ML_ROOT / "models" / "compact_cnn"
+    elif args.variant == 'final_large':
+        model = build_final_large(input_shape, n_classes)
+        out_dir = ML_ROOT / "models" / "final_large"
     else:
         model = build_final_model(input_shape, n_classes)
         out_dir = ML_ROOT / "models" / "final"
@@ -176,7 +265,9 @@ def main():
     model.summary()
     n_params = model.count_params()
 
-    train_seq = AugmentedSequence(mel_train, y_train, args.batch_size, mean, std, augment=True, seed=SEED)
+    train_seq = AugmentedSequence(mel_train, y_train, args.batch_size, mean, std, augment=True, seed=SEED,
+                                   balanced=args.balanced_batches, balance_strength=args.balance_strength,
+                                   noise_snr_prob=args.noise_snr_prob)
     X_val = normalize(mel_val, mean, std)[..., np.newaxis].astype(np.float32)
     X_test = normalize(mel_test, mean, std)[..., np.newaxis].astype(np.float32)
     X_ext = normalize(mel_ext, mean, std)[..., np.newaxis].astype(np.float32)
@@ -207,7 +298,8 @@ def main():
         'epochs_requested': args.epochs, 'epochs_ran': len(history.history['loss']),
         'train_time_s': train_time_s,
         'feature_mean': float(mean), 'feature_std': float(std),
-        'class_weight': {str(k): float(v) for k, v in class_weight.items()},
+        'class_weight': {str(k): float(v) for k, v in class_weight.items()} if class_weight else None,
+        'balanced_batches': args.balanced_batches,
         'history': {k: [float(x) for x in v] for k, v in history.history.items()},
         'validation_metrics': val_metrics,
         'test_metrics': test_metrics,

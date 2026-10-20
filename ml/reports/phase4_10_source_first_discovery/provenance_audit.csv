@@ -1,0 +1,12 @@
+source_id,recording_id,session_id,device_id,grouping_method,ancestry,overlap,decision
+kenya_zenodo_21443074,no,no,no,provisional filename prefix only,unresolved,no coarse match; independence unverified,DEFERRED_PROVENANCE
+ioai_hf_2026,no,no,no,filename only,90 of 120 selected clips match local FSC22; remaining 30 unresolved,90/120 exact or decoded local FSC22 matches,REJECTED_DUPLICATE_SOURCE
+vietnam_zenodo_13893977,partial branch/file names,no,no,branch/file naming only,imagesvietnam_belize explicitly includes Belize ancestry,"1,239 mixed Belize branch plus 733 internal decoded repeats",REJECTED_DUPLICATE_SOURCE
+belize_mendeley_x48cwz364j,partial,partial,AudioMoth reported,location/time metadata reported,"primary Belize collection, but also ancestry in Vietnam mixed branch",ancestry overlap with Vietnam mixed branch; prior file access unavailable,ACCESS_UNAVAILABLE
+sensing_forest_zenodo_18909809,partial,partial,reported MEMS/RØDE,collection/session metadata,primary collection reported,already local,REJECTED_DUPLICATE_SOURCE
+rodopi_zenodo_5824433,yes,partial,partial,existing original recording IDs,primary collection,local/frozen training source,REJECTED_DUPLICATE_SOURCE
+outdoor_gunfire_zenodo_7004819,partial,partial,multiple edge devices reported,device/orientation metadata,primary firearm-range collection,not known; prior investigation,DEFERRED_LABELS
+illinois_idb_5664241,unknown,unknown,unknown,unknown,unknown,unknown,ACCESS_UNAVAILABLE
+fsd50k_zenodo_5117901,Freesound ID available,no,no,Freesound clip ID; no session grouping,Freesound uploader/source rights; per-clip provenance metadata exists,not checked; Freesound-derived and possible semantic overlap,DEFERRED_LICENSE
+arca23k_zenodo_5117901,Freesound ID available,no,no,Freesound ID,Freesound IDs and URLs in metadata,FSD/Freesound relationship; no local hash check performed,DEFERRED_LABELS
+audioset_google,YouTube video ID,no,no,YouTube video ID,YouTube video IDs are provided,unknown; exact hash audit impossible without raw audio,DEFERRED_LICENSE

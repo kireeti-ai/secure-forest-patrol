@@ -1,0 +1,3 @@
+claim,evidence,observed_license_text,per_file_status,attribution_status,restriction_status,gate,required_resolution
+FSC22 per-recording rights,local README/LICENSE; public FSC22 paper,README: CC0 dataset; smaller subset tagged FSC22 distributed under CC BY with attribution,UNRESOLVED,UNRESOLVED; no per-file attribution table,UNRESOLVED for individual Freesound-derived recordings,UNRESOLVED,"Recover each source ID as a Freesound record and preserve its license/uploader/attribution, or obtain authoritative publisher mapping."
+FSC22 dataset-level license,datasets/raw/fsc22/FSC22_repo/LICENSE,CC0 1.0 legal text present,NOT_SUFFICIENT,dataset-level only,cannot override third-party source rights,UNRESOLVED,File-level rights review.

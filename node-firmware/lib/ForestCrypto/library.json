@@ -1,0 +1,7 @@
+{
+  "name": "ForestCrypto",
+  "version": "1.0.0",
+  "description": "Per-node ECDSA P-256 identity (keygen, NVS storage, SHA-256+ECDSA signing) matching backend/app/services/crypto.py. Phase 2 of docs/TAMPER_EVIDENCE_SECURITY_PLAN.md.",
+  "frameworks": "arduino",
+  "platforms": "espressif32"
+}

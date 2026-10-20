@@ -1,0 +1,36 @@
+{
+  "audit_timestamp_utc": "2026-10-19T21:39:14.803524+00:00",
+  "script": "run_provenance_recovery.py",
+  "python": "3.10.13",
+  "soundfile": "0.14.0",
+  "input_manifest_sha256": "7ac3ac677e34f9efbaf12d86891d58b2ae638f92b80d51326e1c8d3c8698579c",
+  "input_duplicate_audit_sha256": "457ff9a164a7d5ab8c589fab2c648a62ef097deb1013f7f35451d74662907f4d",
+  "vietnam_archive_sha256": "f5070669d55a37502e95a9fcb2d13af5b26ff7eb5c94436cd11906f1b7a10595",
+  "vietnam_archive_md5_expected": "beaa5e5711246cea2dbad361ffb7cf02",
+  "staged_counts": {
+    "ioai": 120,
+    "vietnam": 4365,
+    "total": 4485
+  },
+  "generated_artifact_sha256": {
+    "ml/reports/phase4_9_source_provenance/SOURCE_PROVENANCE_REPORT.md": "a6c32683f43ebf35189a80a6013c7bf63b35dd8751a0488dc03b600965e6cd3c",
+    "ml/reports/phase4_9_source_provenance/class_source_coverage.json": "d881c86e211a6c80f465540bd3060c1ca647c5a72f18cfe6d416aa6d40b17aa9",
+    "ml/reports/phase4_9_source_provenance/ioai_provenance_audit.csv": "4f5b4a0144b4322cee6323c4e5157bfb579024036554bc89bc5ff761a3f3ef34",
+    "ml/reports/phase4_9_source_provenance/label_semantics_audit.csv": "60bff5f04b150ac4f5c569bffd2354490884800aff271c3e4a87be251547f705",
+    "ml/reports/phase4_9_source_provenance/license_attribution_audit.csv": "3081c8c03ca3ee47dd0d24ee61d5569aa934cb1a57329569efbd6b2f1198820c",
+    "ml/reports/phase4_9_source_provenance/provenance_decision.json": "51620c123b43392e07e5694f6809c152ffa54e835eef890a89b159ce0b5872a7",
+    "ml/reports/phase4_9_source_provenance/run_provenance_recovery.py": "2a68c3946ab5f0e3ba22822f497fb5ad11dd619ec8592dafc8de672b3ecb67e0",
+    "ml/reports/phase4_9_source_provenance/source_group_audit.csv": "56fdc872c1b9749fa4fba3a9201569c8ce608ddfd7df1a0fcb1c9dba09f90fbc",
+    "ml/reports/phase4_9_source_provenance/vietnam_provenance_audit.csv": "5fd0a97f87f31c335f245ee2a1597f1b33d96cb90ae61e1e25e7283612101325"
+  },
+  "unprocessed_files": [],
+  "protected_artifacts_changed": false,
+  "downloads_performed": 0,
+  "model_inference_started": false,
+  "model_training_started": false,
+  "threshold_tuning_started": false,
+  "preprocessing_changed": false,
+  "frozen_manifests_changed": false,
+  "firmware_changed": false,
+  "phase4_3_decisions_changed": false
+}

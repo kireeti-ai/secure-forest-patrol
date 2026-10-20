@@ -1,0 +1,271 @@
+{
+  "source_counts": [
+    "c3gd",
+    "esc50_hf",
+    "fsc22",
+    "rfcx_frugalai",
+    "rodopi"
+  ],
+  "partitions": {
+    "c3gd": {
+      "train_v1": {
+        "rows": 39,
+        "classes": {
+          "gunshot": {
+            "processed_segments": 39,
+            "original_recordings": 39
+          }
+        },
+        "distinct_original_recordings": 39
+      },
+      "validation_v1": {
+        "rows": 13,
+        "classes": {
+          "gunshot": {
+            "processed_segments": 13,
+            "original_recordings": 13
+          }
+        },
+        "distinct_original_recordings": 13
+      },
+      "test_v1": {
+        "rows": 7,
+        "classes": {
+          "gunshot": {
+            "processed_segments": 7,
+            "original_recordings": 7
+          }
+        },
+        "distinct_original_recordings": 7
+      },
+      "external_test_v1": {
+        "rows": 41,
+        "classes": {
+          "gunshot": {
+            "processed_segments": 41,
+            "original_recordings": 41
+          }
+        },
+        "distinct_original_recordings": 41
+      }
+    },
+    "esc50_hf": {
+      "train_v1": {
+        "rows": 2840,
+        "classes": {
+          "background": {
+            "processed_segments": 2581,
+            "original_recordings": 310
+          },
+          "chainsaw": {
+            "processed_segments": 259,
+            "original_recordings": 29
+          }
+        },
+        "distinct_original_recordings": 339
+      },
+      "validation_v1": {
+        "rows": 584,
+        "classes": {
+          "background": {
+            "processed_segments": 541,
+            "original_recordings": 67
+          },
+          "chainsaw": {
+            "processed_segments": 43,
+            "original_recordings": 5
+          }
+        },
+        "distinct_original_recordings": 72
+      },
+      "test_v1": {
+        "rows": 696,
+        "classes": {
+          "background": {
+            "processed_segments": 642,
+            "original_recordings": 76
+          },
+          "chainsaw": {
+            "processed_segments": 54,
+            "original_recordings": 6
+          }
+        },
+        "distinct_original_recordings": 82
+      },
+      "external_test_v1": {
+        "rows": 0,
+        "classes": {},
+        "distinct_original_recordings": 0
+      }
+    },
+    "fsc22": {
+      "train_v1": {
+        "rows": 5507,
+        "classes": {
+          "background": {
+            "processed_segments": 4768,
+            "original_recordings": 570
+          },
+          "chainsaw": {
+            "processed_segments": 474,
+            "original_recordings": 53
+          },
+          "gunshot": {
+            "processed_segments": 265,
+            "original_recordings": 51
+          }
+        },
+        "distinct_original_recordings": 674
+      },
+      "validation_v1": {
+        "rows": 1064,
+        "classes": {
+          "background": {
+            "processed_segments": 951,
+            "original_recordings": 114
+          },
+          "chainsaw": {
+            "processed_segments": 72,
+            "original_recordings": 8
+          },
+          "gunshot": {
+            "processed_segments": 41,
+            "original_recordings": 9
+          }
+        },
+        "distinct_original_recordings": 131
+      },
+      "test_v1": {
+        "rows": 1105,
+        "classes": {
+          "background": {
+            "processed_segments": 946,
+            "original_recordings": 113
+          },
+          "chainsaw": {
+            "processed_segments": 123,
+            "original_recordings": 14
+          },
+          "gunshot": {
+            "processed_segments": 36,
+            "original_recordings": 7
+          }
+        },
+        "distinct_original_recordings": 134
+      },
+      "external_test_v1": {
+        "rows": 0,
+        "classes": {},
+        "distinct_original_recordings": 0
+      }
+    },
+    "rfcx_frugalai": {
+      "train_v1": {
+        "rows": 1346,
+        "classes": {
+          "chainsaw": {
+            "processed_segments": 508,
+            "original_recordings": 103
+          },
+          "background": {
+            "processed_segments": 838,
+            "original_recordings": 168
+          }
+        },
+        "distinct_original_recordings": 271
+      },
+      "validation_v1": {
+        "rows": 330,
+        "classes": {
+          "chainsaw": {
+            "processed_segments": 115,
+            "original_recordings": 23
+          },
+          "background": {
+            "processed_segments": 215,
+            "original_recordings": 43
+          }
+        },
+        "distinct_original_recordings": 66
+      },
+      "test_v1": {
+        "rows": 311,
+        "classes": {
+          "chainsaw": {
+            "processed_segments": 118,
+            "original_recordings": 24
+          },
+          "background": {
+            "processed_segments": 193,
+            "original_recordings": 39
+          }
+        },
+        "distinct_original_recordings": 63
+      },
+      "external_test_v1": {
+        "rows": 0,
+        "classes": {},
+        "distinct_original_recordings": 0
+      }
+    },
+    "rodopi": {
+      "train_v1": {
+        "rows": 19009,
+        "classes": {
+          "chainsaw": {
+            "processed_segments": 852,
+            "original_recordings": 5
+          },
+          "background": {
+            "processed_segments": 18157,
+            "original_recordings": 5
+          }
+        },
+        "distinct_original_recordings": 5
+      },
+      "validation_v1": {
+        "rows": 5008,
+        "classes": {
+          "chainsaw": {
+            "processed_segments": 214,
+            "original_recordings": 2
+          },
+          "background": {
+            "processed_segments": 4794,
+            "original_recordings": 2
+          }
+        },
+        "distinct_original_recordings": 2
+      },
+      "test_v1": {
+        "rows": 0,
+        "classes": {},
+        "distinct_original_recordings": 0
+      },
+      "external_test_v1": {
+        "rows": 2680,
+        "classes": {
+          "chainsaw": {
+            "processed_segments": 575,
+            "original_recordings": 2
+          },
+          "background": {
+            "processed_segments": 2105,
+            "original_recordings": 2
+          }
+        },
+        "distinct_original_recordings": 2
+      }
+    }
+  },
+  "manifest_rows": {
+    "train_v1": 28741,
+    "validation_v1": 6999,
+    "test_v1": 2119,
+    "external_test_v1": 21059
+  },
+  "notes": [
+    "original_recordings are manifest identifiers; independent status is evaluated separately",
+    "segment counts are not independent observations"
+  ]
+}

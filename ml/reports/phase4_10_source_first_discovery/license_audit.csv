@@ -1,0 +1,12 @@
+source_id,license_status,license_evidence,file_level_rights,attribution,decision
+kenya_zenodo_21443074,documented but file-level applicability unresolved,https://zenodo.org/records/21443074,unresolved,recorded in Phase 4.7 audit,DEFERRED_PROVENANCE
+ioai_hf_2026,CC BY-SA 4.0 at dataset level; file-level ancestry unresolved,https://huggingface.co/datasets/pkasila/ioai26-ht1-nightwatch,90 of 120 selected clips match local FSC22; remaining 30 unresolved,IOAI/Kaggle/source attribution,REJECTED_DUPLICATE_SOURCE
+vietnam_zenodo_13893977,CC BY 4.0,https://zenodo.org/api/records/13893977,imagesvietnam_belize explicitly includes Belize ancestry,dataset citation and Zenodo attribution,REJECTED_DUPLICATE_SOURCE
+belize_mendeley_x48cwz364j,CC BY 4.0,https://data.mendeley.com/datasets/x48cwz364j/3,"primary Belize collection, but also ancestry in Vietnam mixed branch",dataset citation and attribution,ACCESS_UNAVAILABLE
+sensing_forest_zenodo_18909809,CC0,https://zenodo.org/records/18909809,primary collection reported,citation recommended,REJECTED_DUPLICATE_SOURCE
+rodopi_zenodo_5824433,already audited locally,https://zenodo.org/records/5824433,primary collection,existing dataset attribution,REJECTED_DUPLICATE_SOURCE
+outdoor_gunfire_zenodo_7004819,CC BY 4.0,https://zenodo.org/records/7004819,primary firearm-range collection,citation and attribution,DEFERRED_LABELS
+illinois_idb_5664241,not established,https://databank.illinois.edu/datasets/IDB-5664241,unknown,unknown,ACCESS_UNAVAILABLE
+fsd50k_zenodo_5117901,"mixed per-clip CC0, CC BY, CC BY-NC, CC Sampling+; dataset curation CC BY",https://huggingface.co/datasets/Fhrozen/FSD50k/blob/main/README.md,Freesound uploader/source rights; per-clip provenance metadata exists,per-clip attribution where required; dataset citation,DEFERRED_LICENSE
+arca23k_zenodo_5117901,CC BY dataset; source clips retain individual Freesound CC licenses,https://zenodo.org/records/5117901,Freesound IDs and URLs in metadata,per-clip source attribution plus dataset citation,DEFERRED_LABELS
+audioset_google,metadata dataset CC BY 4.0; ontology CC BY-SA 4.0; source-media rights not controlled,https://research.google.com/audioset/download.html,YouTube video IDs are provided,Google/AudioSet attribution and source-video obligations,DEFERRED_LICENSE

@@ -1,0 +1,12 @@
+source_id,dataset_name,licensing_score,recording_provenance_score,label_quality_score,environmental_relevance_score,independent_coverage_score,access_size_score,overlap_risk_score,total_score,rationale,qualification_status
+kenya_zenodo_21443074,Kenya forest audio,0,0,0,0,0,0,0,0,Known source already audited or blocked; not a new acquisition candidate.,DEFERRED_PROVENANCE
+ioai_hf_2026,IOAI26 HT1 Nightwatch,0,0,0,0,0,0,0,0,Known source already audited or blocked; not a new acquisition candidate.,REJECTED_DUPLICATE_SOURCE
+vietnam_zenodo_13893977,Vietnam forest gunshot benchmark,0,0,0,0,0,0,0,0,Known source already audited or blocked; not a new acquisition candidate.,REJECTED_DUPLICATE_SOURCE
+belize_mendeley_x48cwz364j,Belize forest gunshots/background,0,0,0,0,0,0,0,0,Known source already audited or blocked; not a new acquisition candidate.,ACCESS_UNAVAILABLE
+sensing_forest_zenodo_18909809,Sensing the Forest natural soundscape,0,0,0,0,0,0,0,0,Known source already audited or blocked; not a new acquisition candidate.,REJECTED_DUPLICATE_SOURCE
+rodopi_zenodo_5824433,Rodopi forest soundscape,0,0,0,0,0,0,0,0,Known source already audited or blocked; not a new acquisition candidate.,REJECTED_DUPLICATE_SOURCE
+outdoor_gunfire_zenodo_7004819,Outdoor Gunfire,0,0,0,0,0,0,0,0,Known source already audited or blocked; not a new acquisition candidate.,DEFERRED_LABELS
+illinois_idb_5664241,Illinois gunshot dataset,0,0,0,0,0,0,0,0,Known source already audited or blocked; not a new acquisition candidate.,ACCESS_UNAVAILABLE
+fsd50k_zenodo_5117901,FSD50K / Freesound Dataset 50K,2,2,2,1,1,1,1,10,"Good Freesound IDs and clip labels, but mixed rights, no sessions, no verified background, and a multi-GB archive.",DEFERRED_LICENSE
+arca23k_zenodo_5117901,ARCA23K / ARCA23K-FSD,1,2,0,1,1,1,1,7,"Per-source IDs exist, but the official record reports substantial automated label error and no exact chainsaw/background coverage.",DEFERRED_LABELS
+audioset_google,AudioSet,1,3,2,1,3,3,1,14,"Strong video/timestamp grouping, but raw audio rights/access are not supplied by the official release.",DEFERRED_LICENSE

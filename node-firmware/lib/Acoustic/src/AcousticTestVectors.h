@@ -518,9 +518,9 @@ inline constexpr int8_t kVec_gunshot[4040] = {
     -128, -128, -128, -128, -128, -128, -128, -128, -128, -128, -128, -128, -128, -128, -128, -128, -128, -128, -128, -128, -128, -128, -128, -128,
     -128, -128, -128, -128, -128, -128, -128, -128};
 inline constexpr KnownVector kKnownVectors[3] = {
-    {"background:fsc22_2_10264_0004", {104, -113, -119}, 0, kVec_background},
-    {"chainsaw:rfcx_rfcx_train_00031_chainsaw_0000", {-65, 65, -128}, 1, kVec_chainsaw},
-    {"gunshot:fsc22_15_11555_0006", {-112, -126, 110}, 2, kVec_gunshot}};
+    {"background:fsc22_2_10264_0004", {95, -96, -127}, 0, kVec_background},
+    {"chainsaw:rfcx_rfcx_train_00031_chainsaw_0000", {-8, 7, -128}, 1, kVec_chainsaw},
+    {"gunshot:fsc22_15_11555_0006", {-68, -114, 55}, 2, kVec_gunshot}};
 // PCM16 source window of kVec_gunshot (fsc22_15_11555_0006).
 inline constexpr int16_t kKnownPcmGunshot[16000] = {
     -769, -6021, -8144, -4607, -5420, -5975, -5555, -3323, -1917, -810, -1109, 1391, 6401, 5137, 2787, 597, -319, -673, -896, -3306, -4839, -4871, -4962, -6999,

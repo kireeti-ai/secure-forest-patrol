@@ -3,8 +3,17 @@
 #include "LittleFsBackend.h"
 #include "LocalEventStore.h"
 #include "DS3231.h"
+#include "NodeIdentity.h"
+#include "PatrolSigningBytes.h"
+#include "PatrolChainHash.h"
+#include "PatrolChainState.h"
+#include "SignedPatrolPayload.h"
+#include "SoftClock.h"
+#include "Hex.h"
+#include <base64.h>
 #include "RFID_RC522.h"   // our own RC522 SPI driver (lib/ForestSensors), no MFRC522 library
 #include "R307Fingerprint.h"
+#include "Lcd1602.h"
 #include <LoRa.h>
 
 #include "Config.h"
@@ -77,6 +86,34 @@
 #define FOREST_RGB_LED_PIN 48
 #endif
 constexpr std::uint8_t kLedLevel = 64;  // 0-255 brightness
+
+// RG1602A 16x2 LCD, 4-bit parallel (HD44780-compatible). DS3231 is not fitted on this
+// board, so its I2C pins (20/21) are free, but the LCD uses its own dedicated pins
+// below rather than taking those, in case the RTC is fitted later.
+#ifndef FOREST_LCD_RS_PIN
+#define FOREST_LCD_RS_PIN 2
+#endif
+#ifndef FOREST_LCD_EN_PIN
+#define FOREST_LCD_EN_PIN 15
+#endif
+#ifndef FOREST_LCD_D4_PIN
+#define FOREST_LCD_D4_PIN 41
+#endif
+#ifndef FOREST_LCD_D5_PIN
+// NOT GPIO19/20: those are hard-wired on the ESP32-S3 chip to the native USB D-/D+
+// lines used by this board's USB-Serial/JTAG port (the same port used to flash and
+// monitor it) -- driving them as a plain GPIO fights the USB PHY and never works
+// as a clean digital line while the board is connected over USB.
+#define FOREST_LCD_D5_PIN 42
+#endif
+#ifndef FOREST_LCD_D6_PIN
+#define FOREST_LCD_D6_PIN 47
+#endif
+#ifndef FOREST_LCD_D7_PIN
+// GPIO21 is the DS3231's I2C SDA pin, but no DS3231 is fitted on this board, so
+// it's free -- see the project README's "Known limits" / Status table.
+#define FOREST_LCD_D7_PIN 21
+#endif
 // RFID/fingerprint use red/green/amber; acoustic gets its own blue channel so a chainsaw/gunshot
 // flash can never be confused with (or stomp on) the "awaiting fingerprint" amber held by the
 // two-factor window -- see sendAcousticEvent(), which must restore amber afterward if still awaiting.
@@ -140,18 +177,69 @@ VerifyState verifyState = VerifyState::Idle;
 std::uint32_t verifyDeadlineMs = 0;
 ForestSensors::RfidUid pendingUid;
 std::uint16_t pendingExpectedPageId = 0;
+const char* pendingOfficerLabel = "";
 
 ForestSensors::RFID_RC522 rfid(SS_PIN, RST_PIN);
 ForestSensors::RfidUid cardUid;
 HardwareSerial fingerprintSerial(2);
 ForestSensors::R307Fingerprint fingerprint(fingerprintSerial, FOREST_FINGER_RX_PIN,
                                             FOREST_FINGER_TX_PIN, FOREST_FINGER_BAUD);
+ForestSensors::Lcd1602 lcd;
+
+// Shows the checkpoint's current state on the LCD. Called only on a state transition
+// (card tap, verification resolved, back to idle) -- never every loop() pass, since
+// each line write blocks for tens of microseconds to ~1.5ms (see Lcd1602.h).
+void showLcdIdle() {
+  lcd.setLine(0, "Ready");
+  lcd.setLine(1, "Tap card");
+}
+
+void showLcdAwaitingFingerprint(const char* officerLabel, std::uint32_t secondsLeft) {
+  char line0[17];
+  snprintf(line0, sizeof(line0), "Card: %s", officerLabel);
+  char line1[17];
+  snprintf(line1, sizeof(line1), "Finger? %lus", (unsigned long)secondsLeft);
+  lcd.setLine(0, line0);
+  lcd.setLine(1, line1);
+}
+
+void showLcdResult(VerifyStatus status, const char* label) {
+  switch (status) {
+    case VerifyStatus::Match:
+      lcd.setLine(0, "Verified");
+      lcd.setLine(1, label);
+      break;
+    case VerifyStatus::Mismatch:
+      lcd.setLine(0, "NOT verified");
+      lcd.setLine(1, "Wrong finger");
+      break;
+    case VerifyStatus::Timeout:
+      lcd.setLine(0, "NOT verified");
+      lcd.setLine(1, "No finger");
+      break;
+  }
+}
 
 // Local event store on the internal flash (LittleFS). Every RFID / acoustic event is written here as
 // PENDING_SYNC BEFORE it is transmitted and marked SYNCED once the radio completes the transmission.
 forest::storage::LittleFsBackend flashBackend;
 forest::storage::LocalEventStore eventStore(flashBackend, 512);
 bool storeReady = false;
+
+// Per-node ECDSA P-256 identity (Phase 2, docs/TAMPER_EVIDENCE_SECURITY_PLAN.md). Generated once
+// on first boot, persisted in NVS; signSha256() not yet wired into the RFID/acoustic event path
+// (that needs real timestamps/checkpoint/officer fields first) - 'k' is a bench command to
+// exercise and cross-verify the primitive itself against backend/app/services/crypto.py.
+forest::crypto::NodeIdentity nodeIdentity;
+bool identityReady = false;
+
+// No RTC chip on this board: real UTC time is learned opportunistically from the gateway's ACK
+// (see Constants.h::kAcknowledgementPayloadSizeWithTime) and estimated from millis() drift
+// between syncs. See lib/ForestTime/src/SoftClock.h for the accuracy/limitations tradeoff.
+forest::time::SoftClock softClock;
+// Hash-chain state for the backend-verified signed patrol event stream (distinct from Phase 1's
+// local tamper-evidence chain in LocalEventStore - see PatrolChainState.h for why there are two).
+forest::crypto::PatrolChainState patrolChain;
 forest::node::NodeManager nodeManager(forest::config::kDefaultFirmwareConfig.node, forest::node::DeviceRole::CheckpointNode);
 forest::protocol::PacketFactory packetFactory(nodeManager, forest::config::kDefaultFirmwareConfig.network);
 
@@ -187,6 +275,11 @@ static bool waitForGatewayAck(std::uint16_t sentSequence, std::uint32_t timeoutM
           ack.type == forest::protocol::PacketType::Acknowledgement && ack.destinationId == nodeManager.id() &&
           ack.payloadSize >= 2 &&
           static_cast<std::uint16_t>(ack.payload[0] | (ack.payload[1] << 8)) == sentSequence) {
+        if (ack.payloadSize >= forest::constants::kAcknowledgementPayloadSizeWithTime) {
+          const uint32_t gatewayUtc = static_cast<uint32_t>(ack.payload[2]) | (static_cast<uint32_t>(ack.payload[3]) << 8) |
+                                      (static_cast<uint32_t>(ack.payload[4]) << 16) | (static_cast<uint32_t>(ack.payload[5]) << 24);
+          softClock.onSync(gatewayUtc);
+        }
         return true;
       }
     }
@@ -200,7 +293,7 @@ static bool waitForGatewayAck(std::uint16_t sentSequence, std::uint32_t timeoutM
 // off / out of range / deaf). Runs from loop() only: loop() owns the SPI bus (RC522 <-> LoRa re-pinning).
 static TxResult transmitPayload(const std::uint8_t* payload, std::size_t len, const char* tag, bool hexDump) {
   forest::protocol::Packet packet;
-  std::array<std::uint8_t, 58> buffer{};
+  std::array<std::uint8_t, forest::constants::kMaxPacketSize> buffer{};
   std::size_t encodedSize = 0;
   if (!packetFactory.createData(0xFEU, payload, len, packet) ||
       !forest::protocol::Serializer::serialize(packet, buffer, encodedSize)) {
@@ -321,10 +414,65 @@ static void sendVerificationEvent(VerifyStatus status, const ForestSensors::Rfid
   forest::storage::EventRecord stored;
   const bool haveRec = storeEvent(forest::storage::EventType::Verification, payload.data(), off, stored);
   setStatusLed(status == VerifyStatus::Match ? 0 : kLedLevel, status == VerifyStatus::Match ? kLedLevel : 0);
+  showLcdResult(status, pendingOfficerLabel);
   const TxResult sent = transmitPayload(payload.data(), off, "VERIFY TX", true);
   if (haveRec) finishStoredEvent(stored, sent);
+
+  // Phase 2 (docs/TAMPER_EVIDENCE_SECURITY_PLAN.md): also send a signed, hash-chained patrol
+  // event alongside the legacy unsigned 'V' one above, once identity + a real timestamp are
+  // both available. Best-effort only for now - unlike the legacy path, this is not persisted
+  // to LocalEventStore (EventRecord's 24-byte payload cap is far smaller than a signed record)
+  // so a failed send here is not retried; the legacy path remains the reliable one.
+  char eventIso[32];
+  if (identityReady && softClock.nowIso8601Utc(eventIso, sizeof eventIso)) {
+    char nodeIdStr[16];
+    snprintf(nodeIdStr, sizeof nodeIdStr, "NODE_%02X", static_cast<unsigned>(FOREST_NODE_ID));
+    char officerUidHex[forest::crypto::kMaxOfficerUidLen * 2 + 1];
+    forest::utils::bytesToHex(uid.bytes, uid.size, officerUidHex);
+    const uint8_t rfidCode = 1;   // VALID - this function only runs for a card that already matched
+    const uint8_t fpCode = status == VerifyStatus::Match ? 1 : 2;   // MATCH : NO_MATCH
+    const char* rfidStr = "VALID";
+    const char* fpStr = fpCode == 1 ? "MATCH" : "NO_MATCH";
+
+    char payloadDigest[65];
+    forest::crypto::patrolPayloadDigestHex(FOREST_CHECKPOINT_ID, officerUidHex, rfidStr, fpStr, payloadDigest);
+    const uint32_t seq = patrolChain.nextSequence();
+    char recordHashHex[65];
+    forest::crypto::computeRecordHashHex(nodeIdStr, seq, eventIso, payloadDigest, patrolChain.previousHashHex(), recordHashHex);
+
+    uint8_t prevHashRaw[32] = {0}, recHashRaw[32];
+    if (patrolChain.previousHashHex()[0]) forest::utils::hexToBytes(patrolChain.previousHashHex(), 32, prevHashRaw);
+    forest::utils::hexToBytes(recordHashHex, 32, recHashRaw);
+
+    char canonical[512];
+    forest::crypto::buildPatrolSigningBytes(nodeIdStr, seq, eventIso, FOREST_CHECKPOINT_ID, officerUidHex,
+                                            rfidStr, fpStr, patrolChain.previousHashHex(), recordHashHex,
+                                            canonical, sizeof canonical);
+    uint8_t sig[forest::crypto::kMaxSignatureBytes];
+    size_t sigLen = 0;
+    if (nodeIdentity.signSha256(reinterpret_cast<const uint8_t*>(canonical), strlen(canonical), sig, sigLen)) {
+      uint32_t epoch = 0;
+      softClock.nowEpoch(epoch);
+      std::array<std::uint8_t, forest::constants::kMaxPayloadSize> signedPayload{};
+      const size_t len = forest::crypto::encodeSignedPatrolPayload(
+          seq, epoch, rfidCode, fpCode, FOREST_CHECKPOINT_ID, strlen(FOREST_CHECKPOINT_ID),
+          uid.bytes, uid.size, prevHashRaw, recHashRaw, sig, sigLen, signedPayload.data(), signedPayload.size());
+      if (len > 0) {
+        patrolChain.commit(recordHashHex);
+        const TxResult signedSent = transmitPayload(signedPayload.data(), len, "SIGNED PATROL TX", false);
+        Serial.printf("[SIGNED PATROL] seq=%lu record_hash=%s tx=%s\n", static_cast<unsigned long>(seq),
+                      recordHashHex, signedSent == TxResult::Failed ? "FAILED" : "SENT");
+      } else {
+        Serial.println("[SIGNED PATROL] encode FAILED (payload too large?) - not sent, sequence not advanced");
+      }
+    } else {
+      Serial.println("[SIGNED PATROL] sign FAILED - not sent");
+    }
+  }
+
   delay(status == VerifyStatus::Match ? 200 : 500);  // mismatch/timeout gets a longer, visible red
   setStatusLed(0, 0);
+  showLcdIdle();
 }
 
 static void pollFingerprint() {
@@ -342,7 +490,9 @@ static void pollFingerprint() {
     lastCountdownMs = millis();
     const std::int32_t remainingMs = static_cast<std::int32_t>(verifyDeadlineMs - millis());
     if (remainingMs > 0) {
-      Serial.printf(">>> PLACE FINGER NOW -- %ld s left <<<\n", (long)((remainingMs + 999) / 1000));
+      const std::uint32_t secondsLeft = (remainingMs + 999) / 1000;
+      Serial.printf(">>> PLACE FINGER NOW -- %lu s left <<<\n", (unsigned long)secondsLeft);
+      showLcdAwaitingFingerprint(pendingOfficerLabel, secondsLeft);
     }
   }
 
@@ -414,6 +564,42 @@ static void handleSerialCommand() {
       }
       case 'r': Serial.println("[LOCAL STORE] Rebooting..."); Serial.flush(); delay(100); ESP.restart(); break;
       case 'x': Serial.println(eventStore.clear() ? "[LOCAL STORE] Log erased" : "[LOCAL STORE] erase FAILED"); break;
+      case 'k': {   // bench: print pubkey + sign a demo canonical patrol message (Phase 2 identity)
+        if (!identityReady) { Serial.println("[IDENTITY] not ready"); break; }
+        char pubHex[forest::crypto::kPublicKeyBytes * 2 + 1];
+        nodeIdentity.publicKeyHex(pubHex, sizeof pubHex);
+        char iso[32];
+        if (!softClock.nowIso8601Utc(iso, sizeof iso)) {
+          Serial.println("[IDENTITY] no synced time yet (no gateway ACK with a time field received this boot) "
+                         "- using a placeholder timestamp for this demo signature only");
+          forest::crypto::formatIso8601Utc(2026, 1, 15, 10, 30, 0, iso, sizeof iso);
+        }
+        char canonical[256];
+        forest::crypto::buildPatrolSigningBytes("N01", 7, iso, "CP1", "OFF9", "VALID", "MATCH", "",
+                                                 "deadbeef", canonical, sizeof canonical);
+        uint8_t sig[forest::crypto::kMaxSignatureBytes];
+        size_t sigLen = 0;
+        if (!nodeIdentity.signSha256(reinterpret_cast<const uint8_t*>(canonical), strlen(canonical), sig, sigLen)) {
+          Serial.println("[IDENTITY] sign FAILED");
+          break;
+        }
+        Serial.printf("[IDENTITY] pubkey_hex=%s\n", pubHex);
+        Serial.printf("[IDENTITY] canonical=%s\n", canonical);
+        Serial.printf("[IDENTITY] signature_b64=%s\n", base64::encode(sig, sigLen).c_str());
+        Serial.println("[IDENTITY] cross-verify with: python3 node-firmware/tools/verify_node_signature.py "
+                       "<pubkey_hex> '<canonical>' <signature_b64>");
+        break;
+      }
+      case 'v': {   // verify the on-flash hash chain (Phase 1 tamper evidence, see EventRecord.h)
+        const auto res = eventStore.verifyChain();
+        if (res.ok) {
+          Serial.printf("[LOCAL STORE] Chain verify OK (%u records checked)\n", static_cast<unsigned>(res.recordsChecked));
+        } else {
+          Serial.printf("[LOCAL STORE] Chain verify FAILED at slot %u (local id %lu) - possible tampering\n",
+                        static_cast<unsigned>(res.breakAtSlot), static_cast<unsigned long>(res.breakAtLocalId));
+        }
+        break;
+      }
       default:
         Serial.println("[LOCAL STORE] commands: w=write TEST event  l=list  m=mark oldest pending synced  r=reboot  x=erase  t=driver check (RC522/RTC)");
     }
@@ -501,6 +687,22 @@ void setup() {
   const bool fingerprintOk = fingerprint.begin();
   Serial.println(fingerprintOk ? "R307S fingerprint: READY" : "R307S fingerprint: NOT FOUND (check UART wiring/power/password)");
 
+  lcd.begin(FOREST_LCD_RS_PIN, FOREST_LCD_EN_PIN, FOREST_LCD_D4_PIN, FOREST_LCD_D5_PIN,
+           FOREST_LCD_D6_PIN, FOREST_LCD_D7_PIN);
+  lcd.setLine(0, "Secure Patrol");
+  lcd.setLine(1, "Verification");
+  delay(2000);
+  showLcdIdle();
+
+  // Node identity (ECDSA P-256, generated once / loaded from NVS). A failure here must never
+  // stop the RFID node either - it only disables the 'k' bench-signing command for this boot.
+  identityReady = nodeIdentity.begin();
+  Serial.println(identityReady ? "[IDENTITY] ECDSA P-256 key ready" : "[IDENTITY] key init FAILED");
+  softClock.begin();
+  Serial.println(softClock.hasSynced() ? "[CLOCK] loaded last known UTC time from NVS (not yet re-synced this boot)"
+                                       : "[CLOCK] no time yet - waiting for a gateway ACK to sync");
+  patrolChain.begin();
+
   // Local event store (internal flash). A failure here must never stop the RFID node.
   storeReady = eventStore.begin();
   if (storeReady) {
@@ -515,7 +717,7 @@ void setup() {
 #if FOREST_VERBOSE_STORE
     printStore("Recovered");
 #endif
-    Serial.println("[LOCAL STORE] Serial commands: w=write TEST event  l=list  m=mark synced  r=reboot  x=erase");
+    Serial.println("[LOCAL STORE] Serial commands: w=write TEST event  l=list  m=mark synced  v=verify chain  k=identity/sign demo  r=reboot  x=erase");
   } else {
     Serial.println("[LOCAL STORE] Initialization FAILED - events will not be persisted");
   }
@@ -571,19 +773,25 @@ void loop() {
     verifyDeadlineMs = millis() + kVerifyWindowMs;
     pendingUid = cardUid;
     pendingExpectedPageId = card->fingerprintPageId;
+    pendingOfficerLabel = card->officerLabel;
     // A finger left resting on the sensor from a previous attempt (no clean lift-off since)
     // would otherwise be silently ignored by the driver's debounce -- force a fresh capture.
     fingerprint.rearm();
     setStatusLed(kLedLevel, kLedLevel);  // amber: awaiting second factor
     Serial.printf("[CARD] %s VALID -> amber light, awaiting fingerprint (expects page %u)\n",
                   card->officerLabel, card->fingerprintPageId);
+    showLcdAwaitingFingerprint(card->officerLabel, kVerifyWindowMs / 1000U);
   } else {
     setStatusLed(kLedLevel, 0);
     const char* knownLabel = findKnownCardLabel(cardUid);
     if (knownLabel != nullptr) {
       Serial.printf("[CARD] %s known, but NOT assigned to this checkpoint -> red light\n", knownLabel);
+      lcd.setLine(0, "Not your post");
+      lcd.setLine(1, knownLabel);
     } else {
       Serial.println("[CARD] UNKNOWN card (not registered to any officer) -> red light");
+      lcd.setLine(0, "Unknown card");
+      lcd.setLine(1, "Not registered");
     }
   }
 
@@ -623,5 +831,6 @@ void loop() {
   } else {
     delay(1000);  // invalid card: brief red, then back to idle before allowing the next scan
     setStatusLed(0, 0);
+    showLcdIdle();
   }
 }

@@ -1,0 +1,24 @@
+{
+  "decision": "BLOCKED_ON_UNRESOLVED_PROVENANCE_OR_LICENSE",
+  "class_specific_candidate": "C3GD gunshot-only subset is suitable for a separate admission review in principle, but remains blocked pending duplicate/near-duplicate audit of the proposed raw subset. It is not sufficient for the three-class classifier.",
+  "qualified_candidates": [],
+  "resolved_blockers": [
+    "C3GD dataset-level CC BY 4.0 evidence",
+    "C3GD file/event/platform/microphone metadata",
+    "Rodopi source IDs, TextGrid presence, and exact RP3/RP6 duplicate relationship",
+    "Sensing the Forest CC0 and collection-device context"
+  ],
+  "remaining_blockers": [
+    "FSC22 per-file Freesound identity/license/attribution",
+    "FSC22 parent/session/device independence",
+    "verified FSC22 and Sensing-the-Forest background-negative semantics",
+    "C3GD raw-subset duplicate and near-duplicate leakage",
+    "full three-class coverage from any single defensible candidate"
+  ],
+  "downloads_performed": 0,
+  "training_started": false,
+  "inference_started": false,
+  "relabeling_started": false,
+  "threshold_tuning_started": false,
+  "frozen_manifests_changed": false
+}

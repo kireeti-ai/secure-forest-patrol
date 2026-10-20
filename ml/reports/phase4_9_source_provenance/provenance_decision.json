@@ -1,0 +1,31 @@
+{
+  "decision": "QUARANTINED_PROVENANCE",
+  "total_candidates_audited": 4485,
+  "eligible_future_training_only": 0,
+  "license_quarantine_count": 0,
+  "provenance_quarantine_count": 2425,
+  "duplicate_overlap_count": 2060,
+  "label_quarantine_count": 0,
+  "excluded_count": 0,
+  "evidence_references": [
+    "ioai_provenance_audit.csv",
+    "vietnam_provenance_audit.csv",
+    "source_group_audit.csv",
+    "license_attribution_audit.csv",
+    "label_semantics_audit.csv",
+    "phase4_8_acquisition_manifest.csv",
+    "duplicate_and_leakage_audit.csv"
+  ],
+  "remaining_blockers": [
+    "No verified original recording/session/device groups",
+    "File-level third-party license applicability unresolved",
+    "Noise not verified background",
+    "Combined Vietnam test composition unresolved"
+  ],
+  "conditions_for_future_admission": [
+    "Publisher/source metadata identifies parent recording or defensible source group",
+    "File-level license/attribution applicability is documented",
+    "Human label review confirms event occupancy",
+    "All duplicate/overlap representatives are grouped before any future split"
+  ]
+}

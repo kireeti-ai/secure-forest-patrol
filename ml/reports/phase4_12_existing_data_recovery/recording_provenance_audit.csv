@@ -1,0 +1,10 @@
+dataset_id,source_url,manifest_recording_ids,verified_parent_recordings,verified_sessions,device_or_platform_groups,parent_session_evidence,unresolved_provenance,status
+rodopi,https://zenodo.org/records/5824433,7,9,0,0,9 frozen source IDs; TextGrid files locally present,background semantics require audit; exact duplicate groups exist within validation,UNRESOLVED
+sensing_forest,https://zenodo.org/records/18909809,0,0,0,0,34 frozen source IDs; local collection metadata,cannot convert absence of target annotation into verified background,FAIL
+fsc22,https://github.com/IRMIOT/FSC22,939,0,0,0,"2,025 source clips; FreeSound source filename metadata, no session/device/site",per-clip attribution and original-source independence unresolved; frozen source already used,UNRESOLVED
+esc50_hf,https://github.com/karolpiczak/ESC-50,493,0,0,0,493 frozen source IDs; source-level Freesound lineage not session/device,non-commercial restriction; “no target label” is not verified negative,UNRESOLVED
+rfcx_frugalai,https://huggingface.co/datasets/rfcx/frugalai,400,0,0,0,"400 source IDs in local manifest; dataset docs provide 12 kHz/3 s context, no session/device mapping",non-commercial restriction; source/session independence and negative semantics unresolved,UNRESOLVED
+c3gd,https://zenodo.org/records/22286299,59,100,4,48,100 frozen source IDs with C3GD event/platform/mic fields; raw metadata has file_id and clip_id,strong provenance but single-class and firearm-range domain,PASS
+kenya_phase4_5,https://zenodo.org/records/21443074,0,0,0,0,175 staged clips; 33 provisional filename groups; no verified parent/session/site,Phase 4.7 found 0 verified parent sources/sessions; quarantined,UNRESOLVED
+ioai_phase4_8,https://huggingface.co/datasets/pkasila/ioai26-ht1-nightwatch,0,0,0,0,120 clips; no parent/session/device fields; 90 exact local FSC22 matches,duplicate/ancestry and file-level rights unresolved,FAIL
+vietnam_phase4_8,https://zenodo.org/records/13893977,0,0,0,0,"4,365 clips; no verified parent/session/device; branch names provisional",Belize mixed branch and internal repeats; no training admission,FAIL

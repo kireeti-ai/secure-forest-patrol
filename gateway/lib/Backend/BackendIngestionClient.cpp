@@ -1,7 +1,10 @@
 #include "BackendIngestionClient.h"
 
 #include <ArduinoJson.h>
+#include <base64.h>
 #include <cstring>
+
+#include "CivilTime.h"
 
 namespace forest::backend {
 
@@ -10,6 +13,7 @@ constexpr const char* kTopicNodeStatus = "forest/events/node-status";
 constexpr const char* kTopicRfid = "forest/events/rfid";
 constexpr const char* kTopicAcoustic = "forest/events/acoustic";
 constexpr const char* kTopicVerification = "forest/events/verification";
+constexpr const char* kTopicPatrol = "forest/events/patrol";   // backend/app/services/mqtt_consumer.py::TOPIC_PATROL
 constexpr const char* kTopicGatewayStatus = "forest/events/gateway-status";
 constexpr int kProtocolVersion = 4;  // matches forest::protocol wire format
 
@@ -125,6 +129,11 @@ void BackendIngestionClient::tickWifi(std::uint32_t currentMs) {
                       WiFi.dnsIP().toString().c_str(),
                       WiFi.RSSI(),
                       WiFi.macAddress().c_str());
+        // UTC, no DST: the gateway's own system clock becomes the time source nodes with no RTC
+        // (see node-firmware/lib/ForestTime/SoftClock) sync from via the ACK payload. One-shot;
+        // the ESP32 SNTP client keeps it updated in the background after this.
+        configTime(0, 0, "pool.ntp.org", "time.nist.gov");
+        Serial.println("[WIFI] NTP sync requested");
         Serial.flush();
     } else if (!up && wifiState_ == LinkState::Connected) {
         wifiState_ = LinkState::Disconnected;
@@ -244,6 +253,9 @@ bool BackendIngestionClient::publishEnvelope(const ForestEventEnvelope& envelope
     if (envelope.hasVerification) {
         return publishVerification(envelope);
     }
+    if (envelope.hasPatrol) {
+        return publishPatrol(envelope);
+    }
 
     JsonDocument doc;
     char gatewayIdStr[8];
@@ -271,6 +283,55 @@ bool BackendIngestionClient::publishEnvelope(const ForestEventEnvelope& envelope
                   static_cast<unsigned>(envelope.sequenceNumber));
     const bool ok = mqttClient_.publish(kTopicNodeStatus, reinterpret_cast<const uint8_t*>(buffer), len, false);
     Serial.println(ok ? "[MQTT RESULT] PUBLISHED" : "[MQTT RESULT] FAILED");
+    return ok;
+}
+
+bool BackendIngestionClient::publishPatrol(const ForestEventEnvelope& envelope) {
+    char nodeIdStr[16];
+    snprintf(nodeIdStr, sizeof(nodeIdStr), "NODE_%02X", envelope.sourceId);
+
+    char officerUidHex[ForestEventEnvelope::kMaxUidLength * 2 + 1]{};
+    for (std::size_t i = 0; i < envelope.patrolOfficerUidLength; ++i) {
+        snprintf(officerUidHex + i * 2, 3, "%02x", envelope.patrolOfficerUid[i]);
+    }
+    char previousHashHex[ForestEventEnvelope::kPatrolHashBytes * 2 + 1]{};
+    char recordHashHex[ForestEventEnvelope::kPatrolHashBytes * 2 + 1]{};
+    bool previousIsGenesis = true;
+    for (std::size_t i = 0; i < ForestEventEnvelope::kPatrolHashBytes; ++i) {
+        if (envelope.patrolPreviousHash[i] != 0) previousIsGenesis = false;
+        snprintf(previousHashHex + i * 2, 3, "%02x", envelope.patrolPreviousHash[i]);
+        snprintf(recordHashHex + i * 2, 3, "%02x", envelope.patrolRecordHash[i]);
+    }
+
+    const forest::time::CivilUtc c = forest::time::epochToCivilUtc(static_cast<int64_t>(envelope.patrolEpoch));
+    char iso[32];
+    snprintf(iso, sizeof(iso), "%04lld-%02u-%02uT%02u:%02u:%02u+00:00", static_cast<long long>(c.year), c.month,
+             c.day, c.hour, c.minute, c.second);
+
+    JsonDocument doc;
+    doc["node_id"] = nodeIdStr;
+    doc["sequence"] = envelope.patrolSequence;
+    doc["checkpoint_id"] = envelope.patrolCheckpointId;
+    doc["officer_id"] = officerUidHex;
+    doc["rfid_result"] = envelope.patrolRfidResult == 1 ? "VALID" : "INVALID";
+    doc["fingerprint_result"] = envelope.patrolFingerprintResult == 1 ? "MATCH" : "NO_MATCH";
+    doc["event_created_at"] = iso;
+    doc["previous_hash"] = previousIsGenesis ? "GENESIS" : previousHashHex;
+    doc["record_hash"] = recordHashHex;
+    doc["signature"] = base64::encode(envelope.patrolSignature, envelope.patrolSignatureLength);
+    char gatewayIdStr[8];
+    snprintf(gatewayIdStr, sizeof(gatewayIdStr), "GW-%02X", config_.gatewayId);
+    JsonObject gw = doc["gateway"].to<JsonObject>();
+    gw["gateway_id"] = gatewayIdStr;
+    gw["rssi"] = envelope.rssiDbm;
+    gw["snr"] = envelope.snrDb;
+
+    char payload[640];
+    const size_t len = serializeJson(doc, payload, sizeof(payload));
+    const bool ok = mqttClient_.publish(kTopicPatrol, reinterpret_cast<const uint8_t*>(payload), len, false);
+    Serial.printf("[MQTT PUBLISH] topic=%s node=%s seq=%lu checkpoint=%s -> %s\n", kTopicPatrol, nodeIdStr,
+                  static_cast<unsigned long>(envelope.patrolSequence), envelope.patrolCheckpointId,
+                  ok ? "PUBLISHED" : "FAILED");
     return ok;
 }
 

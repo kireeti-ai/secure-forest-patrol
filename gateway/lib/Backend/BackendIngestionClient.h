@@ -72,6 +72,26 @@ struct ForestEventEnvelope {
     std::uint16_t verifyClaimedPageId{0};
     std::uint16_t verifyActualPageId{0};
     std::uint16_t verifyScore{0};
+
+    // Signed patrol event (Phase 2, docs/TAMPER_EVIDENCE_SECURITY_PLAN.md). Payload 'P' v1 - see
+    // node-firmware/lib/ForestCrypto/src/SignedPatrolPayload.h for the exact wire layout this
+    // must stay in lockstep with.
+    static constexpr std::size_t kMaxCheckpointIdLen = 16U;
+    static constexpr std::size_t kPatrolHashBytes = 32U;
+    static constexpr std::size_t kMaxSignatureBytes = 72U;
+
+    bool hasPatrol{false};
+    std::uint32_t patrolSequence{0};
+    std::uint32_t patrolEpoch{0};
+    std::uint8_t patrolRfidResult{0};          // 1=VALID, 2=INVALID
+    std::uint8_t patrolFingerprintResult{0};   // 1=MATCH, 2=NO_MATCH
+    char patrolCheckpointId[kMaxCheckpointIdLen + 1]{};
+    std::uint8_t patrolOfficerUid[kMaxUidLength]{};
+    std::uint8_t patrolOfficerUidLength{0};
+    std::uint8_t patrolPreviousHash[kPatrolHashBytes]{};
+    std::uint8_t patrolRecordHash[kPatrolHashBytes]{};
+    std::uint8_t patrolSignature[kMaxSignatureBytes]{};
+    std::uint8_t patrolSignatureLength{0};
 };
 
 enum class LinkState { Disconnected, Connecting, Connected };
@@ -116,6 +136,7 @@ private:
     bool publishRfid(const ForestEventEnvelope& envelope);
     bool publishAcoustic(const ForestEventEnvelope& envelope);
     bool publishVerification(const ForestEventEnvelope& envelope);
+    bool publishPatrol(const ForestEventEnvelope& envelope);
     void logLine(const char* line);
     static void networkTask(void* self);
 

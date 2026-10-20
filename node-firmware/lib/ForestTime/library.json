@@ -1,0 +1,7 @@
+{
+  "name": "ForestTime",
+  "version": "1.0.0",
+  "description": "Software UTC clock for nodes with no RTC chip: synced opportunistically from the gateway's ACK packet, estimated between syncs from millis() drift. Phase 2 timestamp source, docs/TAMPER_EVIDENCE_SECURITY_PLAN.md.",
+  "frameworks": "arduino",
+  "platforms": "espressif32"
+}

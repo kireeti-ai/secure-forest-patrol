@@ -1,0 +1,13 @@
+{
+  "decision": "NO_QUALIFIED_SOURCE_NO_DOWNLOAD",
+  "candidates_audited": 3,
+  "qualified_sources": [],
+  "downloads_performed": 0,
+  "hf_authentication_used": false,
+  "audio_downloaded": false,
+  "reason": "FSD50K fails the license gate until per-file rights are explicitly filtered and approved; it also lacks verified background/session grouping. ARCA23K fails label quality. AudioSet fails raw-audio license/access.",
+  "frozen_artifacts_changed": false,
+  "training_started": false,
+  "inference_started": false,
+  "phase5_started": false
+}

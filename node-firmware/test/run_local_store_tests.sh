@@ -4,5 +4,5 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 g++ -std=gnu++17 -O1 -Wall -Ilib/ForestStorage/src -Ilib/ForestSensors/src -Ilib/Utils/src -o /tmp/local_event_store_test \
     test/local_event_store_test.cpp lib/ForestStorage/src/EventRecord.cpp lib/ForestStorage/src/LocalEventStore.cpp \
-    lib/ForestSensors/src/SensorMath.cpp lib/Utils/src/Crc16.cpp
+    lib/ForestSensors/src/SensorMath.cpp lib/Utils/src/Crc16.cpp lib/Utils/src/Sha256.cpp
 /tmp/local_event_store_test

@@ -1,0 +1,58 @@
+{
+  "candidate_counts_by_source": {
+    "ioai": 120,
+    "vietnam": 4365
+  },
+  "candidate_counts_by_label": {
+    "ioai": {
+      "gunshot": 60,
+      "chainsaw": 60
+    },
+    "vietnam": {
+      "gunshot": 690,
+      "noise_unverified": 3675
+    }
+  },
+  "ioai_counts": {
+    "DUPLICATE_OR_OVERLAP": 90,
+    "QUARANTINED_PROVENANCE": 30
+  },
+  "vietnam_branch_counts": {
+    "imagesvietnam_belize_clips": 1239,
+    "imagesvietnamunbalanced_clips": 729,
+    "testdatacombined_clips": 2397
+  },
+  "vietnam_branch_dispositions": {
+    "imagesvietnam_belize_clips": {
+      "DUPLICATE_OR_OVERLAP": 1239
+    },
+    "imagesvietnamunbalanced_clips": {
+      "DUPLICATE_OR_OVERLAP": 728,
+      "QUARANTINED_PROVENANCE": 1
+    },
+    "testdatacombined_clips": {
+      "QUARANTINED_PROVENANCE": 2394,
+      "DUPLICATE_OR_OVERLAP": 3
+    }
+  },
+  "verified_parent_recordings": 90,
+  "verified_sessions": 0,
+  "provisional_groups": 4,
+  "unknown_source_counts": {
+    "ioai": 30,
+    "vietnam": 4365
+  },
+  "eligibility_counts": {
+    "DUPLICATE_OR_OVERLAP": 2060,
+    "QUARANTINED_PROVENANCE": 2425
+  },
+  "internal_vietnam_decoded_duplicate_rows": 733,
+  "documented_belize_branch_rows": 1239,
+  "remaining_blockers": [
+    "No original parent/session/device metadata for IOAI or Vietnam files",
+    "Dataset-level licenses do not establish file-level third-party rights",
+    "Noise is not a verified negative",
+    "Combined test ancestry is unresolved",
+    "No production training manifest permitted"
+  ]
+}
