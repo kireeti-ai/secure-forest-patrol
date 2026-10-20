@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { fetchGateways, GatewayStatus } from "../../../lib/api";
+import { fetchGateways, GatewayStatus, pickActiveGateway } from "../../../lib/api";
 import { Card } from "../../../components/ui/Card";
 import { SectionHeader } from "../../../components/ui/SectionHeader";
 import { StatusBadge } from "../../../components/ui/StatusBadge";
@@ -36,7 +36,7 @@ export default function GatewayPage() {
   useEffect(() => {
     async function load() {
       const gateways = await fetchGateways();
-      setGw(gateways[0] || null);
+      setGw(pickActiveGateway(gateways));
       setLoading(false);
     }
     loadRef.current = load;

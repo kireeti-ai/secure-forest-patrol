@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { fetchGateways } from "../../lib/api";
+import { fetchGateways, pickActiveGateway } from "../../lib/api";
 import { Notifications } from "./Notifications";
 
 type TopbarProps = {
@@ -35,7 +35,7 @@ export function Topbar({ sidebarOpen, onMenuClick }: TopbarProps) {
     async function checkStatus() {
       const gateways = await fetchGateways();
       if (!mounted) return;
-      const gateway = gateways[0];
+      const gateway = pickActiveGateway(gateways);
       if (gateway) {
         setGatewayStatus(gateway.status);
         if (!gateway.lastSeen) {

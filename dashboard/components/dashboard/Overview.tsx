@@ -7,6 +7,7 @@ import {
   fetchAcousticEvents,
   fetchGateways,
   fetchNodes,
+  pickActiveGateway,
   Checkpoint,
   AcousticEvent,
   GatewayStatus,
@@ -116,7 +117,7 @@ export function Overview() {
   const pendingAcousticReviews = acoustics.filter((a) => a.reviewStatus === "PENDING_REVIEW").length;
   const pendingSyncCount = checkpoints.reduce((acc, c) => acc + c.pendingRecords, 0);
 
-  const gw = gateways[0];
+  const gw = pickActiveGateway(gateways);
   const RECENT_MS = 2 * 60 * 1000;
   const gatewayFresh = !!gw?.lastSeen && Date.now() - new Date(gw.lastSeen).getTime() <= RECENT_MS;
   const liveCheckpoint = checkpoints.find((c) => c.state === "ONLINE");

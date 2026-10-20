@@ -231,6 +231,19 @@ export async function reviewAcousticEvent(eventId: string, decision: ReviewDecis
   return normalizeAcoustic(await res.json());
 }
 
+// The backend lists every gateway record that has ever reported in (alphabetically by
+// gatewayId), including old test/stale rows -- a deployment only ever has one real gateway
+// in use, so picking array index 0 silently showed whichever gatewayId happened to sort
+// first (e.g. a stale "GW-01" from an old test), not the one actually online. Preferring
+// online, then most recently seen, finds the gateway that's actually in use right now.
+export function pickActiveGateway(gateways: GatewayStatus[]): GatewayStatus | null {
+  if (gateways.length === 0) return null;
+  return [...gateways].sort((a, b) => {
+    if ((a.status === "ONLINE") !== (b.status === "ONLINE")) return a.status === "ONLINE" ? -1 : 1;
+    return new Date(b.lastSeen).getTime() - new Date(a.lastSeen).getTime();
+  })[0];
+}
+
 export async function fetchGateways(): Promise<GatewayStatus[]> {
   try {
     const res = await fetch(`${API_BASE_URL}/api/forest/gateways`, { cache: "no-store", headers: authHeaders() });

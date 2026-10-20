@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchGateways, fetchSyncHistory, GatewayStatus, SyncLog } from "../../lib/api";
+import { fetchGateways, fetchSyncHistory, pickActiveGateway, GatewayStatus, SyncLog } from "../../lib/api";
 import { Card } from "../ui/Card";
 import { SectionHeader } from "../ui/SectionHeader";
 import { StatusBadge } from "../ui/StatusBadge";
@@ -16,7 +16,7 @@ export function GatewayOverview() {
       const [syncData, gateways] = await Promise.all([fetchSyncHistory(), fetchGateways()]);
       if (!mounted) return;
       setHistory(syncData);
-      setGateway(gateways[0] ?? null);
+      setGateway(pickActiveGateway(gateways));
     }
     load();
     const interval = setInterval(load, 5000);
