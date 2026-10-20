@@ -110,10 +110,13 @@
 #define ACOUSTIC_COOLDOWN_MS 5000
 #endif
 // Send an event only if confidence >= this (0 = every gunshot/chainsaw
-// prediction, as specified). The shipped model has low precision (see docs);
-// raise this once field data exists.
+// prediction). Raised from the original 0.0f placeholder once field data
+// existed: a month of bench data showed 70% of detections (140/200) under
+// 80% confidence, including 10/200 under 50% -- less sure than a coin flip --
+// still being reported as real Gunshot/Chainsaw alerts. 0.80 keeps only the
+// confidence band the model itself is reasonably sure about.
 #ifndef ACOUSTIC_MIN_CONFIDENCE
-#define ACOUSTIC_MIN_CONFIDENCE 0.0f
+#define ACOUSTIC_MIN_CONFIDENCE 0.80f
 #endif
 
 // ---- INMP441 capture / ML window --------------------------------------------
