@@ -102,7 +102,12 @@ export default function RfidEventsPage() {
                     {e.reason && <div className="scan-reason">{e.reason}</div>}
                   </td>
                   <td>
-                    {e.fingerprint_result === null ? <span className="scan-sub">{"\u2014"}</span> :
+                    {e.fingerprint_result === null ?
+                      // All 5 officers now have an enrolled fingerprint (see enrollment command
+                      // in node-firmware), so a tap with no correlated second-factor attempt at
+                      // all is worth flagging, not a silent dash -- it means the card was tapped
+                      // alone, not that nothing happened.
+                      <StatusBadge label="No 2nd factor" tone="warning" /> :
                       <StatusBadge
                         label={e.fingerprint_result === "MATCH" ? "Match" : e.fingerprint_result === "NO_MATCH" ? "No match" : "Timeout"}
                         tone={e.fingerprint_result === "MATCH" ? "healthy" : e.fingerprint_result === "NO_MATCH" ? "danger" : "warning"} />}
