@@ -215,7 +215,7 @@ nb05 = [
     code("sys.path.insert(0, str(ML_ROOT/'models'))\n"
          "import tensorflow as tf\n"
          "from tensorflow import keras\n"
-         "from train_cnn import build_compact_cnn, load_split, normalize, CLASSES\n"
+         "from train_cnn import build_compact_cnn, load_split, normalize, AugmentedSequence, CLASSES\n"
          "np.random.seed(42); tf.random.set_seed(42)"),
     md("`build_compact_cnn(input_shape, n_classes)` builds Conv(16)->BN->ReLU->Pool -> "
        "Conv(32)->BN->ReLU->Pool -> GlobalAvgPool -> Dense(32) -> Dense(3, softmax) — imported "
@@ -223,19 +223,22 @@ nb05 = [
     code("mel_train, y_train = load_split('train')\n"
          "mel_val, y_val = load_split('validation')\n"
          "mean, std = mel_train.mean(), mel_train.std() + 1e-8\n"
-         "X_train = normalize(mel_train, mean, std)[..., np.newaxis].astype(np.float32)\n"
          "X_val = normalize(mel_val, mean, std)[..., np.newaxis].astype(np.float32)\n"
-         "input_shape = X_train.shape[1:]\n"
+         "input_shape = X_val.shape[1:]\n"
          "model = build_compact_cnn(input_shape, len(CLASSES))\n"
          "model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])\n"
          "model.summary()"),
     md("## Short live training run (5 epochs, for notebook demonstration; the full 15-epoch "
-       "early-stopped run used for model selection is `models/compact_cnn/`)"),
-    code("from sklearn.utils.class_weight import compute_class_weight\n"
-         "cw = compute_class_weight('balanced', classes=np.arange(3), y=y_train)\n"
-         "class_weight = {i: w for i, w in enumerate(cw)}\n"
-         "history = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=5,\n"
-         "                     batch_size=32, class_weight=class_weight, verbose=2)"),
+       "early-stopped run used for model selection is `models/compact_cnn/`)\n\n"
+       "Uses the same `AugmentedSequence` the real training script uses: `balanced=True` draws "
+       "each batch with equal class counts (interpolated toward natural frequency by "
+       "`balance_strength`) instead of only reweighting the loss, so gunshot — 3.6% of the "
+       "dataset — gets real gradient signal every batch; `noise_snr_prob=0.15` adds additive "
+       "Gaussian-SNR noise augmentation on top of the existing gain/shift/mix/SpecAugment set."),
+    code("train_seq = AugmentedSequence(mel_train, y_train, batch_size=32, mean=mean, std=std,\n"
+         "                              augment=True, balanced=True, balance_strength=0.5,\n"
+         "                              noise_snr_prob=0.15, seed=42)\n"
+         "history = model.fit(train_seq, validation_data=(X_val, y_val), epochs=5, verbose=2)"),
     code("fig, ax = plt.subplots(figsize=(5,4))\n"
          "ax.plot(history.history['loss'], label='train loss')\n"
          "ax.plot(history.history['val_loss'], label='val loss')\n"
