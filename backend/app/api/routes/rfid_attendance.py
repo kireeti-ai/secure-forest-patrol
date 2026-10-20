@@ -1,4 +1,4 @@
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 
 import re
 
@@ -11,6 +11,7 @@ from app.api.dependencies.database import get_db
 from app.core.security import hash_password, require_roles
 from app.models.checkpoint import Checkpoint
 from app.models.operator_checkpoint_access import OperatorCheckpointAccess
+from app.models.patrol_event import PatrolEvent
 from app.models.rfid import Attendance, RfidEvent, VerificationEvent
 from app.models.user import User
 from app.services.attendance_state import absent_after, attendance_day, attendance_timezone, presence_state
@@ -161,6 +162,36 @@ def remove_employee(employee_id: str, db: Session = Depends(get_db), _: User = D
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
+_VERIFY_WINDOW = timedelta(seconds=20)  # matches the node's own "PLACE FINGER NOW" countdown
+
+
+def _fingerprint_result_for(row: RfidEvent, patrol_candidates: list[PatrolEvent],
+                            verification_candidates: list[VerificationEvent]) -> str | None:
+    """The second factor that followed this card tap, if any.
+
+    A card tap (RfidEvent) and its fingerprint outcome are two separate records with no shared
+    key -- correlated here by (node_id, uid) plus the fingerprint result landing within the
+    node's own verification window right after the tap. Signed nodes report MATCH/NO_MATCH
+    directly on the patrol event; older/legacy nodes still produce a VerificationEvent
+    (MATCH/MISMATCH/TIMEOUT) -- normalized to the same MATCH/NO_MATCH/TIMEOUT vocabulary here.
+    """
+    uid_key = _hex_uid_key(row.rfid_uid)
+    best: tuple[float, str] | None = None
+    for p in patrol_candidates:
+        if p.node_id != row.node_id or _hex_uid_key(p.officer_id) != uid_key:
+            continue
+        delta = (p.event_created_at - row.timestamp).total_seconds()
+        if 0 <= delta <= _VERIFY_WINDOW.total_seconds() and (best is None or delta < best[0]):
+            best = (delta, "MATCH" if p.fingerprint_result == "MATCH" else "NO_MATCH")
+    for v in verification_candidates:
+        if v.node_id != row.node_id or _hex_uid_key(v.claimed_uid) != uid_key:
+            continue
+        delta = (v.timestamp - row.timestamp).total_seconds()
+        if 0 <= delta <= _VERIFY_WINDOW.total_seconds() and (best is None or delta < best[0]):
+            best = (delta, "NO_MATCH" if v.status == "MISMATCH" else v.status)
+    return best[1] if best else None
+
+
 @router.get("/rfid-events")
 def list_rfid_events(db: Session = Depends(get_db), _: User = Depends(require_roles(*_OFFICER_ROLES))) -> list[dict]:
     rows = list(db.scalars(select(RfidEvent).order_by(RfidEvent.timestamp.desc()).limit(200)))
@@ -172,6 +203,14 @@ def list_rfid_events(db: Session = Depends(get_db), _: User = Depends(require_ro
             .join(OperatorCheckpointAccess, OperatorCheckpointAccess.user_id == User.id)
             .where(User.employee_id.is_not(None))):
         assigned_by_employee.setdefault(employee_id, []).append(checkpoint_id)
+
+    oldest = min((r.timestamp for r in rows), default=datetime.now(timezone.utc))
+    window_end = datetime.now(timezone.utc) + _VERIFY_WINDOW
+    patrol_candidates = list(db.scalars(select(PatrolEvent).where(
+        PatrolEvent.event_created_at >= oldest, PatrolEvent.event_created_at <= window_end)))
+    verification_candidates = list(db.scalars(select(VerificationEvent).where(
+        VerificationEvent.timestamp >= oldest, VerificationEvent.timestamp <= window_end)))
+
     result = []
     for row in rows:
         checkpoint_id = checkpoint_by_node.get(row.node_id)
@@ -180,8 +219,13 @@ def list_rfid_events(db: Session = Depends(get_db), _: User = Depends(require_ro
             "employee_id": row.employee_id, "node_id": row.node_id, "sequence": row.sequence,
             "status": row.status, "rssi": row.rssi, "snr": row.snr, "timestamp": row.timestamp.isoformat(),
             "reason": invalid_reason(checkpoint_id, assigned_by_employee.get(row.employee_id, [])) if row.status == "INVALID" else None,
+            "fingerprint_result": _fingerprint_result_for(row, patrol_candidates, verification_candidates),
         })
     return result
+
+
+def _hex_uid_key(uid: str | None) -> str:
+    return re.sub(r"[^0-9a-f]", "", (uid or "").lower())
 
 
 @router.get("/verification-events")
@@ -189,6 +233,15 @@ def list_verification_events(status: str | None = None, db: Session = Depends(ge
                              _: User = Depends(require_roles(*_OFFICER_ROLES))) -> list[dict]:
     """Two-factor checkpoint results (card + fingerprint). Pass ``status=MISMATCH`` to see
     only possible proxy attempts (fingerprint did not match the claimed card's officer).
+
+    Two sources feed this, because node firmware stopped sending the legacy unsigned 'V'
+    packet once a node has an identity/clock and signs patrol events instead (see
+    node-firmware/src/main.cpp::sendVerificationEvent and docs/TAMPER_EVIDENCE_SECURITY_PLAN.md):
+    older/legacy rows in ``verification_events`` (richer: carries actual_page_id/score, who the
+    finger actually belonged to), and signed ``patrol_events`` rows with
+    ``fingerprint_result == 'NO_MATCH'`` (the only record of a mismatch a signed node produces
+    today -- the signed wire payload is a MATCH/NO_MATCH flag only, so actual_page_id/score are
+    not available for these and come back null).
     """
     query = select(VerificationEvent).order_by(VerificationEvent.timestamp.desc()).limit(200)
     if status:
@@ -197,6 +250,9 @@ def list_verification_events(status: str | None = None, db: Session = Depends(ge
                          db.execute(select(User.employee_id, User.full_name).where(User.employee_id.is_not(None)))}
     checkpoint_by_node = {nid: cid for nid, cid in db.execute(
         select(Checkpoint.node_id, Checkpoint.checkpoint_id).where(Checkpoint.node_id.is_not(None)))}
+    users_by_uid_key = {_hex_uid_key(uid): (employee_id, name) for uid, employee_id, name in
+                        db.execute(select(User.rfid_uid, User.employee_id, User.full_name)
+                                   .where(User.rfid_uid.is_not(None)))}
     result = []
     for row in db.scalars(query):
         result.append({
@@ -209,6 +265,21 @@ def list_verification_events(status: str | None = None, db: Session = Depends(ge
             "score": row.score, "node_id": row.node_id, "sequence": row.sequence,
             "timestamp": row.timestamp.isoformat(),
         })
+    if status is None or status == "MISMATCH":
+        patrol_query = (select(PatrolEvent).where(PatrolEvent.fingerprint_result == "NO_MATCH")
+                        .order_by(PatrolEvent.event_created_at.desc()).limit(200))
+        for row in db.scalars(patrol_query):
+            claimed_employee_id, claimed_name = users_by_uid_key.get(_hex_uid_key(row.officer_id), (None, None))
+            result.append({
+                "id": f"patrol:{row.id}", "status": "MISMATCH", "checkpoint_id": row.checkpoint_id,
+                "claimed_uid": row.officer_id, "claimed_employee_id": claimed_employee_id,
+                "claimed_name": claimed_name,
+                "claimed_page_id": None, "actual_page_id": None,
+                "actual_employee_id": None, "actual_name": None,
+                "score": None, "node_id": row.node_id, "sequence": row.sequence,
+                "timestamp": row.event_created_at.isoformat(),
+            })
+        result.sort(key=lambda r: r["timestamp"], reverse=True)
     return result
 
 

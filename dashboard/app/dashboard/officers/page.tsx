@@ -115,8 +115,8 @@ export default function OfficersPage() {
                 <tr key={e.id}>
                   <td>{e.checkpoint_id ?? e.node_id}</td>
                   <td>{e.claimed_name ?? e.claimed_employee_id ?? e.claimed_uid}</td>
-                  <td>{e.actual_name ?? e.actual_employee_id ?? (e.actual_page_id === 65535 ? "none presented" : `page ${e.actual_page_id}`)}</td>
-                  <td className="num t-mono">{e.score}</td>
+                  <td>{e.actual_name ?? e.actual_employee_id ?? (e.actual_page_id === null ? "—" : e.actual_page_id === 65535 ? "none presented" : `page ${e.actual_page_id}`)}</td>
+                  <td className="num t-mono">{e.score ?? "—"}</td>
                   <td className="num t-mono">{clock(e.timestamp)}</td>
                 </tr>
               ))}

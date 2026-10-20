@@ -76,14 +76,15 @@ export default function RfidEventsPage() {
           <thead>
             <tr>
               <th className="c-time">Time</th><th className="c-node">Node</th><th className="c-cp">Checkpoint</th>
-              <th className="c-off">Officer</th><th className="c-uid">Card</th><th>Status</th><th className="c-sig num">Signal</th>
+              <th className="c-off">Officer</th><th className="c-uid">Card</th><th>Status</th><th>Fingerprint</th><th className="c-sig num">Signal</th>
             </tr>
           </thead>
           <tbody>
             {shown.map((e) => {
               const t = new Date(e.timestamp);
+              const fpMismatch = e.fingerprint_result === "NO_MATCH";
               return (
-                <tr key={e.id} className={e.status === "INVALID" ? "scan-invalid" : undefined}>
+                <tr key={e.id} className={e.status === "INVALID" || fpMismatch ? "scan-invalid" : undefined}>
                   <td>
                     <span className="t-time">{t.toLocaleTimeString([], { hour12: false })}</span>
                     <span className="t-date">{t.toLocaleDateString([], { day: "2-digit", month: "short", year: "numeric" })}</span>
@@ -93,8 +94,18 @@ export default function RfidEventsPage() {
                   <td>{e.employee_id || <span className="scan-sub">Unregistered</span>}</td>
                   <td className="t-mono">{e.uid}</td>
                   <td>
+                    {/* The card tap alone can only ever say the card was recognized -- it says
+                        nothing about who presented the matching finger. Showing that outcome
+                        here too (not just on the separate Proxy attempts view) keeps a reader of
+                        this table alone from assuming "Authorized" means fully verified. */}
                     <StatusBadge label={e.status.charAt(0) + e.status.slice(1).toLowerCase()} tone={TONE[e.status as keyof typeof TONE] ?? "neutral"} />
                     {e.reason && <div className="scan-reason">{e.reason}</div>}
+                  </td>
+                  <td>
+                    {e.fingerprint_result === null ? <span className="scan-sub">{"\u2014"}</span> :
+                      <StatusBadge
+                        label={e.fingerprint_result === "MATCH" ? "Match" : e.fingerprint_result === "NO_MATCH" ? "No match" : "Timeout"}
+                        tone={e.fingerprint_result === "MATCH" ? "healthy" : e.fingerprint_result === "NO_MATCH" ? "danger" : "warning"} />}
                   </td>
                   <td className="num t-mono">
                     {e.rssi ?? "\u2014"} dBm
@@ -104,7 +115,7 @@ export default function RfidEventsPage() {
               );
             })}
             {shown.length === 0 && (
-              <tr><td colSpan={7} className="scan-empty">{events.length === 0 ? "No scans yet." : "No scans match this filter."}</td></tr>
+              <tr><td colSpan={8} className="scan-empty">{events.length === 0 ? "No scans yet." : "No scans match this filter."}</td></tr>
             )}
           </tbody>
         </table>
